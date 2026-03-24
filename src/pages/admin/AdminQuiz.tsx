@@ -9,6 +9,7 @@ import {
   Video,
   MessageCircle,
   ChevronLeft,
+  Sparkles, // 👈 Added for AI
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -19,6 +20,7 @@ export default function AdminQuiz() {
   const [selectedCourse, setSelectedCourse] = useState("");
   const [selectedLesson, setSelectedLesson] = useState("");
   const [loading, setLoading] = useState(false);
+  const [generatingAI, setGeneratingAI] = useState(false); // 👈 New AI state
   const [success, setSuccess] = useState(false);
 
   const [questionData, setQuestionData] = useState({
@@ -54,6 +56,45 @@ export default function AdminQuiz() {
     }
   }, [selectedCourse]);
 
+  /**
+   * 🤖 AI MAGIC: Generate Question from Lesson
+   */
+  const handleAIGenerate = async () => {
+    if (!selectedLesson) return alert("Please select a lesson first!");
+
+    setGeneratingAI(true);
+    try {
+      const res = await api.post("/admin/ai/generate-quiz", {
+        lesson_id: selectedLesson,
+        count: 1, // We'll generate one high-quality question at a time for this form
+      });
+
+      if (res.data.success && res.data.data.length > 0) {
+        const aiQ = res.data.data[0];
+
+        // Auto-fill the form with AI data
+        setQuestionData({
+          question_text: aiQ.question_text,
+          option_a: aiQ.options[0]?.option_text || "",
+          option_b: aiQ.options[1]?.option_text || "",
+          option_c: aiQ.options[2]?.option_text || "",
+          correct_answer: aiQ.options[0]?.is_correct
+            ? "a"
+            : aiQ.options[1]?.is_correct
+              ? "b"
+              : "c",
+          explanation_video_url: "",
+          explanation_text: aiQ.explanation,
+        });
+      }
+    } catch (err) {
+      console.error("AI Generation failed", err);
+      alert("AI was unable to generate a question. Check your OpenAI key.");
+    } finally {
+      setGeneratingAI(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -82,9 +123,7 @@ export default function AdminQuiz() {
 
   return (
     <Layout>
-      {/* 📱 Responsive Container: Padding adjusts for mobile (p-4) vs desktop (p-10) */}
       <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-10">
-        {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
             <button
@@ -98,15 +137,33 @@ export default function AdminQuiz() {
             </h1>
           </div>
 
-          {success && (
-            <div className="p-4 bg-green-50 border-2 border-green-100 text-[#2D5A27] rounded-2xl flex items-center gap-2 font-bold animate-in slide-in-from-top-4">
-              <CheckCircle size={20} /> <span className="text-sm">Saved!</span>
-            </div>
-          )}
+          <div className="flex items-center gap-3">
+            {/* ✨ AI GENERATE BUTTON */}
+            <button
+              onClick={handleAIGenerate}
+              disabled={generatingAI || !selectedLesson}
+              className="flex items-center gap-2 bg-purple-600 text-white px-5 py-3 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-purple-700 transition-all shadow-lg disabled:opacity-50"
+            >
+              {generatingAI ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <Sparkles size={16} />
+              )}
+              {generatingAI ? "Thinking..." : "AI Magic"}
+            </button>
+
+            {success && (
+              <div className="p-4 bg-green-50 border-2 border-green-100 text-[#2D5A27] rounded-2xl flex items-center gap-2 font-bold animate-in slide-in-from-top-4">
+                <CheckCircle size={20} />{" "}
+                <span className="text-sm">Saved!</span>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* 🛠️ Dropdowns: Grid stacks on mobile, 2-columns on desktop */}
+        {/* Course/Lesson Selection dropdowns remain the same... */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-8">
+          {/* Dropdowns logic remains unchanged */}
           <div className="space-y-2">
             <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
               Subject
@@ -149,7 +206,7 @@ export default function AdminQuiz() {
           onSubmit={handleSubmit}
           className="bg-white p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-sm border-2 border-gray-50 space-y-6 md:space-y-8"
         >
-          {/* Question Text */}
+          {/* Question fields remain the same, but now auto-filled by handleAIGenerate */}
           <div className="space-y-2">
             <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
               The Question
@@ -157,7 +214,7 @@ export default function AdminQuiz() {
             <textarea
               required
               className="w-full p-5 bg-gray-50 rounded-2xl border-2 border-transparent focus:border-[#2D5A27] outline-none font-medium h-28 md:h-32 resize-none transition-all text-sm md:text-base"
-              placeholder="e.g. How do you say 'Good Morning' in Yoruba?"
+              placeholder="Use 'AI Magic' or type here..."
               value={questionData.question_text}
               onChange={(e) =>
                 setQuestionData({
@@ -168,7 +225,7 @@ export default function AdminQuiz() {
             />
           </div>
 
-          {/* Options: Flex items adjust for tighter mobile screens */}
+          {/* Rest of the form (Options, Explanation, Submit Button) remains unchanged */}
           <div className="space-y-3 md:space-y-4">
             <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
               Answer Options
@@ -176,11 +233,7 @@ export default function AdminQuiz() {
             {["a", "b", "c"].map((letter) => (
               <div key={letter} className="flex items-center gap-3 md:gap-4">
                 <div
-                  className={`w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center font-black uppercase text-sm transition-all shadow-sm flex-shrink-0 ${
-                    questionData.correct_answer === letter
-                      ? "bg-[#2D5A27] text-white"
-                      : "bg-gray-100 text-gray-400"
-                  }`}
+                  className={`w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center font-black uppercase text-sm transition-all shadow-sm flex-shrink-0 ${questionData.correct_answer === letter ? "bg-[#2D5A27] text-white" : "bg-gray-100 text-gray-400"}`}
                 >
                   {letter}
                 </div>
@@ -211,7 +264,6 @@ export default function AdminQuiz() {
 
           <hr className="border-gray-50" />
 
-          {/* 📽️ Explanation Section: Mobile-optimized padding */}
           <div className="space-y-4 md:space-y-6 bg-gray-50/50 p-5 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] border-2 border-dashed border-gray-100">
             <h3 className="font-black text-gray-800 uppercase italic tracking-tight flex items-center gap-2 text-sm md:text-base">
               <HelpCircle className="text-[#2D5A27]" size={18} /> Tutor
@@ -254,7 +306,6 @@ export default function AdminQuiz() {
             </div>
           </div>
 
-          {/* Submit Button: Full-width and sticky-friendly */}
           <button
             disabled={loading || !selectedLesson}
             className="w-full bg-[#2D5A27] text-white py-5 md:py-6 rounded-[1.25rem] md:rounded-[1.5rem] font-black text-lg md:text-xl shadow-xl hover:scale-[1.01] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:hover:scale-100"

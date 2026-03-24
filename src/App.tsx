@@ -10,6 +10,8 @@ import { useAuth } from "./hooks/useAuth";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import ParentPortal from "./pages/ParentPortal";
+import ParentProgressView from "./pages/ParentProgressView"; // 👈 Public Family View
+import StudentAnalytics from "./pages/student/StudentAnalytics";
 
 // --- Student Pages ---
 import Courses from "./pages/Courses";
@@ -17,7 +19,7 @@ import CourseDetail from "./pages/CourseDetail";
 import LessonPlayer from "./pages/LessonPlayer";
 import Leaderboard from "./pages/Leaderboard";
 import RewardsCatalog from "./pages/student/RewardsCatalog";
-import StudentChat from "./pages/student/StudentChat"; // ✅ Imported
+import StudentChat from "./pages/student/StudentChat";
 
 // --- Admin Pages ---
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -26,26 +28,47 @@ import AdminAddLesson from "./pages/admin/AdminAddLesson";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminQuiz from "./pages/admin/AdminQuiz";
 import AdminRedemptions from "./pages/admin/AdminRedemptions";
-import ManageRewards from "./pages/admin/ManageRewards"; // 👈 ADDED THIS MISSING IMPORT
-import AdminChatList from "./pages/admin/AdminChatList"; // ✅ Imported
+import ManageRewards from "./pages/admin/ManageRewards";
+import AdminChatList from "./pages/admin/AdminChatList";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminParentPortal from "./pages/admin/AdminParentPortal";
+import AdminLessonList from "./pages/admin/AdminLessonList";
+import AdminEditLesson from "./pages/admin/AdminEditLesson";
 
 function App() {
   const { user, loading } = useAuth();
 
-  // Global Loading State
+  // Global Loading State with FricaLearn Branding
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen font-black text-2xl text-frica-green animate-pulse">
-        Loading FricaLearn...
+      <div className="flex items-center justify-center h-screen bg-gray-50">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-[#2D5A27] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="font-black text-2xl text-[#2D5A27] animate-pulse italic uppercase tracking-tighter">
+            FricaLearn...
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
     <Router>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 font-sans selection:bg-[#2D5A27] selection:text-white">
         <Routes>
-          {/* --- Root Redirect Logic --- */}
+          {/* --- 🌍 PUBLIC ROUTES (No Login Required) --- */}
+          <Route
+            path="/login"
+            element={!user ? <Login /> : <Navigate to="/dashboard" />}
+          />
+
+          {/* 👨‍👩‍👧‍👦 The Public Parent View */}
+          <Route
+            path="/parent/view/:studentId"
+            element={<ParentProgressView />}
+          />
+
+          {/* --- 🏠 ROOT REDIRECT --- */}
           <Route
             path="/"
             element={
@@ -53,12 +76,7 @@ function App() {
             }
           />
 
-          <Route
-            path="/login"
-            element={!user ? <Login /> : <Navigate to="/dashboard" />}
-          />
-
-          {/* --- Student Protected Routes --- */}
+          {/* --- 🎓 STUDENT PROTECTED ROUTES --- */}
           <Route
             path="/dashboard"
             element={user ? <Dashboard /> : <Navigate to="/login" />}
@@ -75,6 +93,13 @@ function App() {
             path="/lessons/:id"
             element={user ? <LessonPlayer /> : <Navigate to="/login" />}
           />
+
+          {/* 📊 Personal Analytics (Optional userId for Admin View) */}
+          <Route
+            path="/analytics/:userId?"
+            element={user ? <StudentAnalytics /> : <Navigate to="/login" />}
+          />
+
           <Route
             path="/leaderboard"
             element={user ? <Leaderboard /> : <Navigate to="/login" />}
@@ -84,16 +109,11 @@ function App() {
             element={user ? <RewardsCatalog /> : <Navigate to="/login" />}
           />
           <Route
-            path="/parent"
-            element={user ? <ParentPortal /> : <Navigate to="/login" />}
-          />
-          <Route
             path="/messages"
             element={user ? <StudentChat /> : <Navigate to="/login" />}
           />
 
-          {/* --- Admin Protected Routes (Founder's Control Room) --- */}
-          {/* Note: All these paths use user?.is_admin == 1 for security */}
+          {/* --- 🔐 ADMIN PROTECTED ROUTES (is_admin == 1) --- */}
           <Route
             path="/admin"
             element={
@@ -104,6 +124,43 @@ function App() {
               )
             }
           />
+
+          {/* 🚀 FIXED: Lesson Manager (List View) */}
+          <Route
+            path="/admin/lessons"
+            element={
+              user?.is_admin == 1 ? (
+                <AdminLessonList />
+              ) : (
+                <Navigate to="/dashboard" />
+              )
+            }
+          />
+
+          {/* 🚀 FIXED: Added the Edit Lesson Page */}
+          <Route
+            path="/admin/edit-lesson/:id"
+            element={
+              user?.is_admin == 1 ? (
+                <AdminEditLesson />
+              ) : (
+                <Navigate to="/dashboard" />
+              )
+            }
+          />
+
+          {/* 🚀 FIXED: Changed path to /admin/add-lesson to match Sidebar.tsx */}
+          <Route
+            path="/admin/add-lesson"
+            element={
+              user?.is_admin == 1 ? (
+                <AdminAddLesson />
+              ) : (
+                <Navigate to="/dashboard" />
+              )
+            }
+          />
+
           <Route
             path="/admin/courses"
             element={
@@ -114,22 +171,36 @@ function App() {
               )
             }
           />
+
           <Route
-            path="/admin/lessons/new"
+            path="/admin/users"
             element={
               user?.is_admin == 1 ? (
-                <AdminAddLesson />
+                <AdminUsers />
               ) : (
                 <Navigate to="/dashboard" />
               )
             }
           />
+
+          <Route
+            path="/admin/parents"
+            element={
+              user?.is_admin == 1 ? (
+                <AdminParentPortal />
+              ) : (
+                <Navigate to="/dashboard" />
+              )
+            }
+          />
+
           <Route
             path="/admin/questions"
             element={
               user?.is_admin == 1 ? <AdminQuiz /> : <Navigate to="/dashboard" />
             }
           />
+
           <Route
             path="/admin/rewards"
             element={
@@ -140,6 +211,7 @@ function App() {
               )
             }
           />
+
           <Route
             path="/admin/manage-rewards"
             element={
@@ -150,6 +222,7 @@ function App() {
               )
             }
           />
+
           <Route
             path="/admin/analytics"
             element={
@@ -160,6 +233,7 @@ function App() {
               )
             }
           />
+
           <Route
             path="/admin/chats"
             element={
@@ -171,7 +245,7 @@ function App() {
             }
           />
 
-          {/* --- 404 Redirect --- */}
+          {/* --- 404 FALLBACK --- */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>

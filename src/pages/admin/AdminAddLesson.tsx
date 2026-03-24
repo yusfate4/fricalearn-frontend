@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 import Layout from "../../components/Layout";
-import FileUpload from "../../components/FileUpload"; // 👈 IMPORTING OUR NEW COMPONENT
+import FileUpload from "../../components/FileUpload";
 import {
   CheckCircle,
   Loader2,
   AlertCircle,
   ArrowLeft,
   ChevronRight,
-  BookOpen
+  Mic, // 👈 Added for the new field icon
 } from "lucide-react";
 
 export default function AdminAddLesson() {
@@ -18,13 +18,13 @@ export default function AdminAddLesson() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  // 1. The new state to track if we are on Step 1 or Step 2
   const [createdLessonId, setCreatedLessonId] = useState<number | null>(null);
 
   const [courseId, setCourseId] = useState("");
   const [title, setTitle] = useState("");
+  const [practiceWord, setPracticeWord] = useState(""); // 👈 NEW STATE FOR AI
   const [content, setContent] = useState("");
-  const [videoUrl, setVideoUrl] = useState(""); // For YouTube links
+  const [videoUrl, setVideoUrl] = useState("");
 
   useEffect(() => {
     api
@@ -34,7 +34,6 @@ export default function AdminAddLesson() {
           ? res.data
           : res.data.data || [];
         setCourses(verifiedCourses);
-        // Auto-select the first course if available
         if (verifiedCourses.length > 0) {
           setCourseId(verifiedCourses[0].id.toString());
         }
@@ -45,26 +44,24 @@ export default function AdminAddLesson() {
       });
   }, []);
 
-  // STEP 1: Submit Basic Info
   const handleCreateDetails = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setErrorMessage("");
 
     try {
-      // Notice we are NOT sending files here, just text data!
       const response = await api.post("/admin/lessons", {
         course_id: courseId,
         title: title,
+        practice_word: practiceWord, // 👈 SENDING TO LARAVEL
         content: content,
         video_url: videoUrl,
       });
-      
-      // We grab the ID of the new lesson and move to Step 2
+
       setCreatedLessonId(response.data.id);
     } catch (err: any) {
       setErrorMessage(
-        err.response?.data?.message || "Failed to create lesson details."
+        err.response?.data?.message || "Failed to create lesson details.",
       );
     } finally {
       setLoading(false);
@@ -76,7 +73,7 @@ export default function AdminAddLesson() {
       <div className="max-w-4xl mx-auto p-4 md:p-10">
         <button
           onClick={() => navigate("/admin/courses")}
-          className="flex items-center gap-2 text-gray-400 hover:text-frica-green mb-8 font-black uppercase text-xs tracking-widest transition-all"
+          className="flex items-center gap-2 text-gray-400 hover:text-[#2D5A27] mb-8 font-black uppercase text-xs tracking-widest transition-all"
         >
           <ArrowLeft size={16} /> Back to Curriculum
         </button>
@@ -86,7 +83,9 @@ export default function AdminAddLesson() {
             Add New Lesson
           </h1>
           <p className="text-gray-500 font-bold mt-1">
-            {createdLessonId ? "Step 2: Attach Media" : "Step 1: Lesson Details"}
+            {createdLessonId
+              ? "Step 2: Attach Media"
+              : "Step 1: Lesson Details"}
           </p>
         </div>
 
@@ -96,17 +95,20 @@ export default function AdminAddLesson() {
           </div>
         )}
 
-        {/* --- STEP 1: LESSON DETAILS FORM --- */}
         {!createdLessonId ? (
-          <form onSubmit={handleCreateDetails} className="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-sm border-2 border-gray-50 animate-in fade-in slide-in-from-bottom-4">
+          <form
+            onSubmit={handleCreateDetails}
+            className="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-sm border-2 border-gray-50 animate-in fade-in slide-in-from-bottom-4"
+          >
             <div className="space-y-6">
-              
               <div className="space-y-2">
-                <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Assign to Subject</label>
+                <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">
+                  Assign to Subject
+                </label>
                 <select
                   required
                   value={courseId}
-                  className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-frica-green rounded-2xl font-bold outline-none appearance-none transition-all"
+                  className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-[#2D5A27] rounded-2xl font-bold outline-none appearance-none transition-all"
                   onChange={(e) => setCourseId(e.target.value)}
                 >
                   <option value="">-- Select Yoruba, Hausa, or Igbo --</option>
@@ -118,36 +120,58 @@ export default function AdminAddLesson() {
                 </select>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Lesson Name</label>
-                <input
-                  type="text"
-                  value={title}
-                  placeholder="e.g. Greetings in Yoruba"
-                  className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-frica-green rounded-2xl font-bold outline-none transition-all"
-                  onChange={(e) => setTitle(e.target.value)}
-                  required
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">
+                    Lesson Name
+                  </label>
+                  <input
+                    type="text"
+                    value={title}
+                    placeholder="e.g. Greetings in Yoruba"
+                    className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-[#2D5A27] rounded-2xl font-bold outline-none transition-all"
+                    onChange={(e) => setTitle(e.target.value)}
+                    required
+                  />
+                </div>
+
+                {/* 🎙️ NEW: PRACTICE WORD FIELD */}
+                <div className="space-y-2">
+                  <label className="text-xs font-black text-orange-400 uppercase tracking-widest ml-1 flex items-center gap-2">
+                    <Mic size={14} /> AI Practice Word (Speak & Earn)
+                  </label>
+                  <input
+                    type="text"
+                    value={practiceWord}
+                    placeholder="e.g. Bawo ni"
+                    className="w-full p-5 bg-orange-50 border-2 border-dashed border-orange-200 focus:border-orange-400 rounded-2xl font-black text-[#2D5A27] outline-none transition-all italic"
+                    onChange={(e) => setPracticeWord(e.target.value)}
+                  />
+                </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">Teaching Notes / Content</label>
+                <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">
+                  Teaching Notes / Content
+                </label>
                 <textarea
                   required
                   value={content}
                   placeholder="What will the children learn in this lesson?"
-                  className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-frica-green rounded-2xl h-32 font-medium outline-none transition-all resize-none"
+                  className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-[#2D5A27] rounded-2xl h-32 font-medium outline-none transition-all resize-none"
                   onChange={(e) => setContent(e.target.value)}
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">YouTube Video URL (Optional)</label>
+                <label className="text-xs font-black text-gray-400 uppercase tracking-widest ml-1">
+                  YouTube Video URL (Optional)
+                </label>
                 <input
                   type="url"
                   value={videoUrl}
                   placeholder="https://youtube.com/watch?v=..."
-                  className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-frica-green rounded-2xl font-bold outline-none transition-all"
+                  className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-[#2D5A27] rounded-2xl font-bold outline-none transition-all"
                   onChange={(e) => setVideoUrl(e.target.value)}
                 />
               </div>
@@ -157,30 +181,36 @@ export default function AdminAddLesson() {
                 type="submit"
                 className="w-full bg-[#2D5A27] text-white py-5 rounded-[1.5rem] font-black text-xl shadow-lg hover:shadow-green-900/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
               >
-                {loading ? <Loader2 className="animate-spin" /> : "Save Details & Proceed to Media"}
+                {loading ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  "Save Details & Proceed to Media"
+                )}
                 {!loading && <ChevronRight size={20} />}
               </button>
             </div>
           </form>
         ) : (
-          /* --- STEP 2: MEDIA UPLOAD --- */
           <div className="animate-in fade-in slide-in-from-right-8 duration-500">
             <div className="bg-green-50 border border-green-100 p-6 rounded-[2rem] flex items-center gap-4 mb-8">
-              <div className="bg-white p-2 rounded-full text-frica-green shadow-sm">
+              <div className="bg-white p-2 rounded-full text-[#2D5A27] shadow-sm">
                 <CheckCircle size={24} />
               </div>
               <div>
-                <h3 className="font-black text-green-800 text-lg">Lesson Details Saved!</h3>
-                <p className="text-green-600 text-sm font-bold">Now, you can directly upload MP4s, PDFs, or Images.</p>
+                <h3 className="font-black text-green-800 text-lg">
+                  Lesson Details Saved!
+                </h3>
+                <p className="text-green-600 text-sm font-bold">
+                  Now, you can directly upload MP4s, PDFs, or Images.
+                </p>
               </div>
             </div>
 
-            {/* 🔥 THE FILE UPLOAD WIDGET 🔥 */}
-            <FileUpload 
-              lessonId={createdLessonId} 
+            <FileUpload
+              lessonId={createdLessonId}
               onUploadSuccess={() => {
                 console.log("File uploaded successfully.");
-              }} 
+              }}
             />
 
             <button

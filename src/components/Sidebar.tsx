@@ -14,7 +14,10 @@ import {
   Menu,
   X,
   PlusCircle,
-  MessageSquare, // 👈 1. Added MessageSquare icon
+  MessageSquare,
+  BarChart3,
+  UserPlus,
+  BookText, // 👈 New: For Curriculum/Lesson List
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
@@ -55,7 +58,7 @@ export default function Sidebar() {
       >
         <div className="flex justify-between items-center mb-10 px-4 mt-2 md:mt-0">
           <div>
-            <h2 className="text-2xl font-black text-[#F4B400] tracking-tighter">
+            <h2 className="text-2xl font-black text-[#F4B400] tracking-tighter uppercase italic">
               FricaLearn
             </h2>
             <p className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em]">
@@ -90,6 +93,15 @@ export default function Sidebar() {
               active={isActive("/courses")}
               onClick={closeSidebar}
             />
+
+            <SidebarLink
+              to="/analytics"
+              icon={<BarChart3 size={20} className="text-blue-300" />}
+              label="My Progress"
+              active={isActive("/analytics")}
+              onClick={closeSidebar}
+            />
+
             <SidebarLink
               to="/leaderboard"
               icon={<Users size={20} />}
@@ -105,10 +117,9 @@ export default function Sidebar() {
               onClick={closeSidebar}
             />
 
-            {/* 👈 2. NEW: Student Messages Link */}
             <SidebarLink
               to="/messages"
-              icon={<MessageSquare size={20} className="text-blue-300" />}
+              icon={<MessageSquare size={20} />}
               label="Messages"
               active={isActive("/messages")}
               onClick={closeSidebar}
@@ -127,6 +138,23 @@ export default function Sidebar() {
                   active={isActive("/admin")}
                   onClick={closeSidebar}
                 />
+
+                <SidebarLink
+                  to="/admin/users"
+                  icon={<Users size={20} className="text-green-400" />}
+                  label="Student Analytics"
+                  active={isActive("/admin/users")}
+                  onClick={closeSidebar}
+                />
+                <SidebarLink
+                  to="/admin/parents"
+                  icon={<UserPlus size={20} className="text-blue-400" />}
+                  label="Parent Access"
+                  active={isActive("/admin/parents")}
+                  onClick={closeSidebar}
+                />
+
+                {/* 📚 CURRICULUM SECTION */}
                 <SidebarLink
                   to="/admin/courses"
                   icon={<GraduationCap size={20} />}
@@ -134,13 +162,24 @@ export default function Sidebar() {
                   active={isActive("/admin/courses")}
                   onClick={closeSidebar}
                 />
+
+                {/* 🚀 NEW: THE LESSON MANAGER */}
                 <SidebarLink
-                  to="/admin/lessons/new"
-                  icon={<Video size={20} />}
-                  label="Upload Content"
-                  active={isActive("/admin/lessons/new")}
+                  to="/admin/lessons" // 👈 Matches the route we discussed
+                  icon={<BookText size={20} className="text-orange-300" />}
+                  label="Lesson Manager"
+                  active={isActive("/admin/lessons")}
                   onClick={closeSidebar}
                 />
+
+                <SidebarLink
+                  to="/admin/add-lesson" // 👈 Changed from /admin/lessons/new to match your file naming
+                  icon={<Video size={20} />}
+                  label="Quick Upload"
+                  active={isActive("/admin/add-lesson")}
+                  onClick={closeSidebar}
+                />
+
                 <SidebarLink
                   to="/admin/questions"
                   icon={<HelpCircle size={20} />}
@@ -148,6 +187,7 @@ export default function Sidebar() {
                   active={isActive("/admin/questions")}
                   onClick={closeSidebar}
                 />
+
                 <SidebarLink
                   to="/admin/rewards"
                   icon={<Package size={20} className="text-orange-400" />}
@@ -163,10 +203,9 @@ export default function Sidebar() {
                   onClick={closeSidebar}
                 />
 
-                {/* 👈 3. NEW: Admin Chat Management Link */}
                 <SidebarLink
                   to="/admin/chats"
-                  icon={<MessageSquare size={20} className="text-green-400" />}
+                  icon={<MessageSquare size={20} />}
                   label="Student Chats"
                   active={isActive("/admin/chats")}
                   onClick={closeSidebar}
@@ -204,7 +243,7 @@ function SidebarLink({ to, icon, label, active, onClick }: any) {
       onClick={onClick}
       className={`flex items-center gap-3 px-4 py-3 rounded-2xl font-bold transition-all ${
         active
-          ? "bg-white/10 text-white shadow-inner"
+          ? "bg-white/10 text-white shadow-inner scale-[1.02]"
           : "text-white/60 hover:text-white hover:bg-white/5"
       }`}
     >
