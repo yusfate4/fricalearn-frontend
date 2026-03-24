@@ -8,6 +8,9 @@ import {
   FileText,
   Download,
   Presentation,
+  Video,
+  Image as ImageIcon,
+  Volume2,
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import SuccessModal from "../components/SuccessModal";
@@ -19,7 +22,7 @@ export default function LessonPlayer() {
   // --- States ---
   const [lesson, setLesson] = useState<any>(null);
   const [showQuiz, setShowQuiz] = useState(false);
-  const [quizFailed, setQuizFailed] = useState(false); // 👈 Fixed: Moved inside component
+  const [quizFailed, setQuizFailed] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -28,7 +31,8 @@ export default function LessonPlayer() {
   // --- Helpers ---
   const getEmbedUrl = (url: string) => {
     if (!url) return "";
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const regExp =
+      /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     const match = url.match(regExp);
     return match && match[2].length === 11
       ? `https://www.youtube.com/embed/${match[2]}`
@@ -93,7 +97,7 @@ export default function LessonPlayer() {
       }
     } else {
       setQuizFailed(true);
-      setScore(finalScore); // Store final score to display to student
+      setScore(finalScore);
     }
   };
 
@@ -117,34 +121,38 @@ export default function LessonPlayer() {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto p-6">
+      <div className="max-w-4xl mx-auto p-4 md:p-6">
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center text-gray-500 mb-8 hover:text-frica-green font-bold transition-colors"
+          className="flex items-center text-gray-500 mb-8 hover:text-frica-green font-bold transition-colors uppercase tracking-widest text-xs"
         >
-          <ArrowLeft size={20} className="mr-2" /> Back to Course
+          <ArrowLeft size={16} className="mr-2" /> Back to Course
         </button>
 
         {!showQuiz ? (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h1 className="text-4xl font-black mb-8 text-gray-800 tracking-tight">
+            <h1 className="text-4xl md:text-5xl font-black mb-8 text-gray-800 tracking-tighter italic">
               {lesson.title}
             </h1>
 
-            <div className="aspect-video w-full bg-black rounded-[2rem] overflow-hidden shadow-2xl mb-10 border-4 border-white">
-              <iframe
-                className="w-full h-full"
-                src={getEmbedUrl(lesson.video_url)}
-                title={lesson.title}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              ></iframe>
-            </div>
+            {/* --- LEGACY: YOUTUBE PLAYER (Only shows if URL exists) --- */}
+            {lesson.video_url && (
+              <div className="aspect-video w-full bg-black rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl mb-10 border-4 border-white">
+                <iframe
+                  className="w-full h-full"
+                  src={getEmbedUrl(lesson.video_url)}
+                  title={lesson.title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
+            )}
 
-            <div className="bg-white p-10 rounded-[2.5rem] shadow-sm border border-gray-100 mb-10">
-              <div className="flex items-center gap-2 mb-6">
+            {/* --- LESSON TEXT NOTES --- */}
+            <div className="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-sm border-2 border-gray-50 mb-10">
+              <div className="flex items-center gap-3 mb-6">
                 <div className="w-2 h-8 bg-frica-green rounded-full"></div>
-                <h2 className="text-2xl font-black text-gray-800">
+                <h2 className="text-2xl font-black text-gray-800 italic uppercase tracking-tighter">
                   Lesson Notes
                 </h2>
               </div>
@@ -153,11 +161,88 @@ export default function LessonPlayer() {
               </div>
             </div>
 
+            {/* 🔥 NEW: RENDER UPLOADED MEDIA (MP4s, PDFs, Images, Audio) 🔥 */}
+            {lesson.contents && lesson.contents.length > 0 && (
+              <div className="mb-10 space-y-6">
+                {lesson.contents.map((content: any) => (
+                  <div
+                    key={content.id}
+                    className="bg-white p-4 md:p-6 rounded-[2.5rem] shadow-sm border-2 border-gray-50 overflow-hidden"
+                  >
+                    {/* Render Video */}
+                    {content.content_type === "video" && (
+                      <div className="w-full bg-black rounded-[1.5rem] overflow-hidden shadow-inner border-4 border-gray-900">
+                        <video
+                          src={`http://127.0.0.1:8000${content.file_url}`}
+                          controls
+                          className="w-full h-auto max-h-[500px]"
+                          controlsList="nodownload"
+                        >
+                          Your browser does not support the video tag.
+                        </video>
+                      </div>
+                    )}
+
+                    {/* Render Image */}
+                    {content.content_type === "image" && (
+                      <img
+                        src={`http://127.0.0.1:8000${content.file_url}`}
+                        alt="Lesson Visual"
+                        className="w-full h-auto rounded-[1.5rem] object-cover border-2 border-gray-50"
+                      />
+                    )}
+
+                    {/* Render Document (PDF) */}
+                    {content.content_type === "document" && (
+                      <div className="flex flex-col sm:flex-row items-center justify-between bg-green-50 p-6 rounded-[1.5rem] border border-green-100 gap-4">
+                        <div className="flex items-center gap-4 w-full">
+                          <div className="bg-white p-3 md:p-4 rounded-2xl text-frica-green shadow-sm">
+                            <FileText size={32} />
+                          </div>
+                          <div>
+                            <h4 className="font-black text-gray-800 text-lg md:text-xl tracking-tight">
+                              Lesson Worksheet
+                            </h4>
+                            <p className="text-sm text-gray-500 font-bold">
+                              Download to complete the exercises
+                            </p>
+                          </div>
+                        </div>
+                        <a
+                          href={`http://127.0.0.1:8000${content.file_url}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-full sm:w-auto bg-[#2D5A27] text-white px-8 py-4 rounded-xl font-black shadow-lg hover:shadow-green-900/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2 whitespace-nowrap"
+                        >
+                          <Download size={18} /> Download PDF
+                        </a>
+                      </div>
+                    )}
+
+                    {/* Render Audio */}
+                    {content.content_type === "audio" && (
+                      <div className="bg-blue-50 p-6 md:p-8 rounded-[1.5rem] border border-blue-100 w-full flex flex-col gap-4">
+                        <div className="flex items-center gap-2 text-blue-800 font-black uppercase tracking-widest text-xs">
+                          <Volume2 size={16} /> Pronunciation Guide
+                        </div>
+                        <audio controls className="w-full rounded-full">
+                          <source
+                            src={`http://127.0.0.1:8000${content.file_url}`}
+                          />
+                        </audio>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* --- LEGACY: ATTACHMENTS (kept so old lessons don't break) --- */}
             {lesson.attachments && lesson.attachments.length > 0 && (
-              <div className="bg-green-50/50 p-10 rounded-[2.5rem] border-2 border-dashed border-green-100 mb-10">
-                <h3 className="text-xl font-black mb-6 text-[#2D5A27] flex items-center gap-3">
-                  <FileText size={28} />
-                  Lesson Materials
+              <div className="bg-gray-50 p-8 md:p-10 rounded-[2.5rem] border-2 border-dashed border-gray-200 mb-10">
+                <h3 className="text-xl font-black mb-6 text-gray-800 flex items-center gap-3 tracking-tighter uppercase italic">
+                  <FileText size={24} className="text-gray-400" />
+                  Additional Materials
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {lesson.attachments.map((file: any) => (
@@ -166,7 +251,7 @@ export default function LessonPlayer() {
                       href={`http://127.0.0.1:8000${file.file_path}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-between p-5 bg-white rounded-2xl border border-green-100 hover:shadow-xl hover:border-frica-green transition-all group"
+                      className="flex items-center justify-between p-5 bg-white rounded-2xl border-2 border-transparent hover:border-gray-200 hover:shadow-sm transition-all group"
                     >
                       <div className="flex items-center space-x-4">
                         {file.file_type === "pptx" ? (
@@ -174,33 +259,39 @@ export default function LessonPlayer() {
                         ) : (
                           <FileText className="text-blue-500" size={24} />
                         )}
-                        <span className="font-bold text-gray-700 truncate max-w-[180px]">
+                        <span className="font-bold text-gray-600 truncate max-w-[150px] md:max-w-[180px]">
                           {file.file_name}
                         </span>
                       </div>
-                      <Download size={20} className="text-gray-300 group-hover:text-frica-green" />
+                      <Download
+                        size={20}
+                        className="text-gray-300 group-hover:text-frica-green"
+                      />
                     </a>
                   ))}
                 </div>
               </div>
             )}
 
-            <div className="flex justify-center pb-20">
+            <div className="flex justify-center pb-20 pt-10">
               <button
                 onClick={() => setShowQuiz(true)}
-                className="flex items-center gap-3 bg-[#2D5A27] text-white px-12 py-5 rounded-[2rem] font-black text-2xl hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-green-200"
+                className="flex items-center gap-3 bg-gray-900 text-white px-12 py-6 rounded-[2rem] font-black text-2xl hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-gray-900/20"
               >
-                <HelpCircle size={28} />
+                <HelpCircle size={28} className="text-yellow-400" />
                 Take the Quiz!
               </button>
             </div>
           </div>
         ) : (
-          <div className="bg-white p-12 rounded-[3rem] shadow-2xl border-4 border-frica-green animate-in zoom-in duration-300">
+          /* --- QUIZ SECTION --- */
+          <div className="bg-white p-8 md:p-12 rounded-[3rem] shadow-2xl border-4 border-gray-50 animate-in zoom-in duration-300">
             {quizFailed ? (
               <div className="text-center py-10 animate-in fade-in zoom-in">
                 <div className="text-7xl mb-6">🦒</div>
-                <h2 className="text-3xl font-black text-gray-800 mb-2">Almost There!</h2>
+                <h2 className="text-3xl font-black text-gray-800 mb-2">
+                  Almost There!
+                </h2>
                 <p className="text-gray-500 font-bold mb-8 text-lg">
                   You got <span className="text-red-500">{score}</span> out of{" "}
                   {lesson.questions.length} correct. <br />
@@ -235,18 +326,21 @@ export default function LessonPlayer() {
             ) : lesson.questions && lesson.questions.length > 0 ? (
               <>
                 <div className="flex justify-between items-center mb-10">
-                  <span className="px-4 py-2 bg-green-50 text-frica-green rounded-full font-black text-sm uppercase tracking-widest">
-                    Question {currentQuestionIndex + 1} of {lesson.questions.length}
+                  <span className="px-5 py-2.5 bg-gray-100 text-gray-600 rounded-full font-black text-xs uppercase tracking-widest">
+                    Question {currentQuestionIndex + 1} of{" "}
+                    {lesson.questions.length}
                   </span>
-                  <div className="h-2 w-32 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-3 w-32 md:w-48 bg-gray-100 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-frica-green transition-all duration-500"
-                      style={{ width: `${((currentQuestionIndex + 1) / lesson.questions.length) * 100}%` }}
+                      style={{
+                        width: `${((currentQuestionIndex + 1) / lesson.questions.length) * 100}%`,
+                      }}
                     ></div>
                   </div>
                 </div>
 
-                <h2 className="text-3xl font-black mb-10 text-gray-800 leading-tight">
+                <h2 className="text-3xl md:text-4xl font-black mb-12 text-gray-800 leading-tight tracking-tight">
                   {lesson.questions[currentQuestionIndex]?.question_text}
                 </h2>
 
@@ -255,9 +349,15 @@ export default function LessonPlayer() {
                     <button
                       key={opt}
                       onClick={() => handleAnswer(opt)}
-                      className="w-full text-left p-6 rounded-3xl border-2 border-gray-100 hover:border-frica-green hover:bg-green-50 transition-all font-bold text-xl text-gray-700 flex justify-between items-center group active:scale-[0.98]"
+                      className="w-full text-left p-6 md:p-8 rounded-[2rem] border-2 border-gray-100 hover:border-frica-green hover:bg-green-50 transition-all font-bold text-xl text-gray-700 flex justify-between items-center group active:scale-[0.98]"
                     >
-                      <span>{lesson.questions[currentQuestionIndex]?.[`option_${opt}`]}</span>
+                      <span>
+                        {
+                          lesson.questions[currentQuestionIndex]?.[
+                            `option_${opt}`
+                          ]
+                        }
+                      </span>
                       <div className="w-8 h-8 rounded-full border-2 border-gray-200 group-hover:border-frica-green group-hover:bg-white flex items-center justify-center transition-all">
                         <div className="w-3 h-3 bg-frica-green rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
                       </div>
@@ -267,12 +367,17 @@ export default function LessonPlayer() {
               </>
             ) : (
               <div className="text-center py-16">
-                <HelpCircle size={80} className="mx-auto text-gray-200 mb-6" />
-                <h2 className="text-3xl font-black text-gray-800 mb-4">No Quiz Ready Yet!</h2>
-                <p className="text-gray-500 font-bold mb-10">Our teachers are still preparing the questions for this lesson.</p>
+                <HelpCircle size={80} className="mx-auto text-gray-100 mb-6" />
+                <h2 className="text-3xl font-black text-gray-800 mb-4 tracking-tight">
+                  No Quiz Ready Yet!
+                </h2>
+                <p className="text-gray-500 font-medium mb-10">
+                  Our teachers are still preparing the questions for this
+                  lesson.
+                </p>
                 <button
                   onClick={() => setShowQuiz(false)}
-                  className="bg-gray-100 text-gray-600 px-10 py-4 rounded-2xl font-black text-lg hover:bg-gray-200 transition-colors"
+                  className="bg-gray-50 text-gray-600 border-2 border-gray-100 px-10 py-4 rounded-2xl font-black text-lg hover:bg-gray-100 transition-colors"
                 >
                   Go Back to Lesson
                 </button>
