@@ -1,129 +1,279 @@
 import React, { useState, useEffect } from "react";
-import api from "../../api/axios";
 import Layout from "../../components/Layout";
-import { Plus, BookOpen, GraduationCap, Edit3, Image as ImageIcon } from "lucide-react";
-import CourseModal from "./CourseModal";
+import api from "../../api/axios";
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+  Upload,
+  PlusCircle,
+  Loader2,
+  CheckCircle2,
+  AlertCircle,
+  Save,
+} from "lucide-react";
 
 export default function AdminCourses() {
-  const [courses, setCourses] = useState<any[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedCourse, setSelectedCourse] = useState<any>(null); // 👈 New state for Editing
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const fetchCourses = async () => {
+  // 🚀 Check if we were sent here from the "Edit" button
+  const editData = location.state?.editCourse;
+
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState<{
+    type: "success" | "error";
+    msg: string;
+  } | null>(null);
+
+  // 🚀 Initialize form with editData if it exists
+  const [formData, setFormData] = useState({
+    id: editData?.id || null,
+    title: editData?.title || "",
+    description: editData?.description || "",
+    category: editData?.category || "Yoruba",
+    subject: editData?.subject || "Language & Culture",
+    level: editData?.level || "Beginner",
+    price_ngn: editData?.price_ngn || "30000",
+    price_gbp: editData?.price_gbp || "20",
+    image: null as File | null,
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setStatus(null);
+
+    const data = new FormData();
+    data.append("title", formData.title);
+    data.append("description", formData.description);
+    data.append("category", formData.category);
+    data.append("subject", formData.subject);
+    data.append("level", formData.level);
+    data.append("price_ngn", formData.price_ngn);
+    data.append("price_gbp", formData.price_gbp);
+
+    // Only append image if a new one was selected
+    if (formData.image) data.append("image", formData.image);
+
     try {
-      const res = await api.get("/admin/courses");
-      const verifiedData = Array.isArray(res.data) ? res.data : res.data?.data || [];
-      setCourses(verifiedData);
-    } catch (error) {
-      console.error("Error fetching subjects:", error);
-      setCourses([]);
+      if (formData.id) {
+        // 📝 EDIT MODE: Use POST but spoof PUT for Laravel file support
+        data.append("_method", "PUT");
+        await api.post(`/admin/courses/${formData.id}`, data, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        setStatus({ type: "success", msg: "Course Updated! Redirecting..." });
+      } else {
+        // ✨ CREATE MODE
+        await api.post("/admin/courses", data, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        setStatus({ type: "success", msg: "Course Launched! Redirecting..." });
+      }
+
+      setTimeout(() => {
+        navigate("/admin/courses/list");
+      }, 2000);
+    } catch (err: any) {
+      setStatus({
+        type: "error",
+        msg: err.response?.data?.message || "Save failed. Check details.",
+      });
+    } finally {
+      setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchCourses();
-  }, []);
-
-  // --- Handlers ---
-  const handleAddNew = () => {
-    setSelectedCourse(null); // Clear selection for a fresh form
-    setIsModalOpen(true);
-  };
-
-  const handleEdit = (course: any) => {
-    setSelectedCourse(course); // Set the specific course to edit
-    setIsModalOpen(true);
   };
 
   return (
     <Layout>
-      <div className="max-w-6xl mx-auto p-6">
-        <div className="flex justify-between items-center mb-10">
-          <div>
-            <h1 className="text-3xl font-black text-gray-800 tracking-tight">
-              Manage Subjects
-            </h1>
-            <p className="text-gray-500 font-medium">
-              Curate the FricaLearn curriculum
-            </p>
-          </div>
-          <button
-            onClick={handleAddNew} // 👈 Updated
-            className="bg-frica-green text-white px-6 py-4 rounded-2xl font-black flex items-center gap-2 shadow-lg hover:scale-105 transition-all shadow-green-100"
-          >
-            <Plus size={20} /> Add New Subject
-          </button>
+      <div className="max-w-4xl mx-auto p-4 md:p-12">
+        <div className="mb-10">
+          <h1 className="text-4xl font-black text-gray-800 italic uppercase tracking-tighter">
+            {formData.id ? "Update Subject" : "Add New Subject"}
+          </h1>
+          <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">
+            {formData.id
+              ? `Editing: ${formData.title}`
+              : "Fill in the details to publish a new course"}
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {courses.map((course: any) => (
-            <div
-              key={course.id}
-              className="group bg-white border-2 border-gray-100 p-2 rounded-[2.5rem] hover:border-frica-green transition-all shadow-sm flex flex-col"
-            >
-              {/* --- Mini Thumbnail --- */}
-              <div className="h-32 w-full bg-gray-50 rounded-[2rem] overflow-hidden mb-4 relative">
-                <img 
-                   src={course.thumbnail_url || 'https://via.placeholder.com/300'} 
-                   className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
-                   alt={course.title}
-                />
-                <div className="absolute top-3 right-3">
-                   <button 
-                     onClick={() => handleEdit(course)} // 👈 Open Edit Mode
-                     className="bg-white/90 backdrop-blur-sm p-3 rounded-xl text-frica-green shadow-sm hover:bg-frica-green hover:text-white transition-all active:scale-95"
-                   >
-                     <Edit3 size={18} />
-                   </button>
-                </div>
-              </div>
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-8 bg-white p-6 md:p-10 rounded-[2.5rem] md:rounded-[3.5rem] shadow-xl border-2 border-gray-50"
+        >
+          {/* Image Upload Area */}
+          <div className="space-y-2">
+            <label className="text-[10px] font-black uppercase text-gray-400 ml-4 tracking-widest">
+              Course Cover Image{" "}
+              {formData.id && "(Leave blank to keep current)"}
+            </label>
+            <label className="flex flex-col items-center justify-center w-full h-48 border-4 border-dashed border-gray-100 rounded-[2rem] cursor-pointer hover:border-[#2D5A27] transition-all bg-gray-50/50">
+              <input
+                type="file"
+                className="hidden"
+                accept="image/*"
+                onChange={(e) =>
+                  setFormData({ ...formData, image: e.target.files![0] })
+                }
+              />
+              <Upload className="text-gray-300 mb-2" size={32} />
+              <span className="text-[10px] font-black text-gray-400 uppercase tracking-tight px-4 text-center">
+                {formData.image
+                  ? formData.image.name
+                  : "Select JPG/PNG (Max 5MB)"}
+              </span>
+            </label>
+          </div>
 
-              <div className="px-4 pb-6">
-                <div className="flex items-center gap-2 mb-2">
-                    <span className="bg-green-50 text-frica-green text-[10px] font-black px-2 py-1 rounded-lg uppercase tracking-widest">
-                        {course.subject}
-                    </span>
-                    <span className="text-[10px] font-bold text-gray-300 uppercase italic">
-                        {course.level}
-                    </span>
-                </div>
-                
-                <h3 className="text-xl font-black text-gray-800 mb-4 line-clamp-1">
-                  {course.title}
-                </h3>
-                
-                <div className="flex items-center justify-between pt-4 border-t border-gray-50">
-                  <div className="flex items-center gap-2 text-gray-400 font-bold text-xs uppercase tracking-tighter">
-                    <GraduationCap size={16} className="text-frica-green" />
-                    <span>0 Students</span>
-                  </div>
-                  <div className="bg-gray-50 p-2 rounded-lg text-gray-300">
-                    <BookOpen size={14} />
-                  </div>
-                </div>
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase text-gray-400 ml-4">
+                Course Title
+              </label>
+              <input
+                required
+                type="text"
+                value={formData.title}
+                placeholder="e.g. Yoruba for Kids"
+                className="w-full p-5 bg-gray-50 rounded-2xl outline-none focus:ring-4 ring-[#2D5A27]/5 font-bold text-gray-700"
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
+              />
             </div>
-          ))}
-        </div>
 
-        {courses.length === 0 && (
-          <div className="text-center py-20 bg-gray-50 rounded-[3rem] border-2 border-dashed border-gray-200 animate-in fade-in zoom-in">
-            <p className="text-gray-400 font-bold">
-              No subjects created yet. Start by adding Yoruba!
-            </p>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase text-gray-400 ml-4">
+                Level
+              </label>
+              <select
+                value={formData.level}
+                className="w-full p-5 bg-gray-50 rounded-2xl font-bold outline-none border-2 border-transparent focus:border-[#2D5A27]"
+                onChange={(e) =>
+                  setFormData({ ...formData, level: e.target.value })
+                }
+              >
+                <option value="Beginner">Beginner (Ages 5-10)</option>
+                <option value="Intermediate">Intermediate (Ages 11-15)</option>
+                <option value="Advanced">Advanced</option>
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase text-gray-400 ml-4">
+                Language Category
+              </label>
+              <select
+                value={formData.category}
+                className="w-full p-5 bg-gray-50 rounded-2xl font-bold outline-none border-2 border-transparent focus:border-[#2D5A27]"
+                onChange={(e) =>
+                  setFormData({ ...formData, category: e.target.value })
+                }
+              >
+                <option value="Yoruba">Yoruba</option>
+                <option value="Hausa">Hausa</option>
+                <option value="Igbo">Igbo</option>
+                <option value="English">English</option>
+                <option value="Maths">Maths</option>
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase text-gray-400 ml-4">
+                Subject Type
+              </label>
+              <select
+                value={formData.subject}
+                className="w-full p-5 bg-gray-50 rounded-2xl font-bold outline-none border-2 border-transparent focus:border-[#2D5A27]"
+                onChange={(e) =>
+                  setFormData({ ...formData, subject: e.target.value })
+                }
+              >
+                <option value="Language & Culture">Language & Culture</option>
+                <option value="History & Heritage">History & Heritage</option>
+                <option value="Folklore & Stories">Folklore & Stories</option>
+              </select>
+            </div>
           </div>
-        )}
 
-        {/* --- MODAL (Now handles both Create and Edit) --- */}
-        <CourseModal
-          isOpen={isModalOpen}
-          course={selectedCourse} // 👈 Pass the selected course
-          onClose={() => {
-            setIsModalOpen(false);
-            setSelectedCourse(null); // Reset when closing
-          }}
-          onRefresh={fetchCourses}
-        />
+          <div className="space-y-2">
+            <label className="text-[10px] font-black uppercase text-gray-400 ml-4">
+              Description
+            </label>
+            <textarea
+              required
+              rows={4}
+              value={formData.description}
+              className="w-full p-5 bg-gray-50 rounded-2xl outline-none font-medium text-gray-700"
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase text-gray-400 ml-4">
+                Price (Naira ₦)
+              </label>
+              <input
+                type="number"
+                value={formData.price_ngn}
+                className="w-full p-5 bg-gray-50 rounded-2xl font-black text-gray-800"
+                onChange={(e) =>
+                  setFormData({ ...formData, price_ngn: e.target.value })
+                }
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase text-gray-400 ml-4">
+                Price (Pounds £)
+              </label>
+              <input
+                type="number"
+                value={formData.price_gbp}
+                className="w-full p-5 bg-gray-50 rounded-2xl font-black text-gray-800"
+                onChange={(e) =>
+                  setFormData({ ...formData, price_gbp: e.target.value })
+                }
+              />
+            </div>
+          </div>
+
+          {status && (
+            <div
+              className={`p-5 rounded-[1.5rem] flex items-center gap-4 animate-in zoom-in duration-300 ${
+                status.type === "success"
+                  ? "bg-green-50 text-green-700 border-2 border-green-100"
+                  : "bg-red-50 text-red-700 border-2 border-red-100"
+              }`}
+            >
+              {status.type === "success" ? (
+                <CheckCircle2 size={24} />
+              ) : (
+                <AlertCircle size={24} />
+              )}
+              <span className="font-black uppercase italic tracking-tight text-xs">
+                {status.msg}
+              </span>
+            </div>
+          )}
+
+          <button
+            disabled={loading}
+            type="submit"
+            className="w-full bg-[#2D5A27] text-white py-6 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs shadow-2xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-4 disabled:opacity-50"
+          >
+            {loading ? (
+              <Loader2 className="animate-spin" size={24} />
+            ) : (
+              <>
+                {formData.id ? <Save size={20} /> : <PlusCircle size={20} />}
+                {formData.id ? "Update Changes" : "Launch Course"}
+              </>
+            )}
+          </button>
+        </form>
       </div>
     </Layout>
   );

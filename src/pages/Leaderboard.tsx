@@ -1,35 +1,36 @@
 import React, { useEffect, useState } from "react";
 import api from "../api/axios";
 import Layout from "../components/Layout";
-import { Medal, Trophy, User, Info, Star } from "lucide-react";
+import { Medal, Trophy, User, Info, Star, Loader2 } from "lucide-react";
 
 export default function Leaderboard() {
   const [players, setPlayers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
-    // 🚀 Hits the route we fixed in api.php
-    api
-      .get("/gamification/leaderboard")
-      .then((res) => {
-        const leaderboardData = Array.isArray(res.data)
-          ? res.data
-          : res.data.data || [];
-        setPlayers(leaderboardData);
-      })
-      .catch((err) => {
-        console.error("Leaderboard error:", err);
-        setPlayers([]);
-      })
-      .finally(() => setLoading(false));
+    fetchLeaderboard();
   }, []);
+
+  const fetchLeaderboard = async () => {
+    setLoading(true);
+    try {
+      // 🚀 Hits GamificationController@getLeaderboard
+      const res = await api.get("/gamification/leaderboard");
+      const leaderboardData = Array.isArray(res.data) ? res.data : [];
+      setPlayers(leaderboardData);
+    } catch (err) {
+      console.error("Leaderboard sync failed:", err);
+      setPlayers([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getMedalColor = (index: number) => {
     if (index === 0) return "text-yellow-500";
     if (index === 1) return "text-gray-400";
     if (index === 2) return "text-orange-500";
-    return "text-green-600/20";
+    return "text-green-600/10";
   };
 
   return (
@@ -49,51 +50,53 @@ export default function Leaderboard() {
             FricaLearn Champions
           </h1>
           <p className="text-gray-400 font-bold mt-2 uppercase tracking-widest text-sm">
-            Top Diaspora Learners this Week
+            Top Diaspora Learners
           </p>
         </div>
 
-        <div className="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border-4 border-white animate-in zoom-in duration-500">
+        <div className="bg-white rounded-[3.5rem] shadow-2xl overflow-hidden border-4 border-white animate-in zoom-in duration-500">
           {loading ? (
-            <div className="p-20 text-center font-black text-gray-300 italic uppercase animate-pulse">
-              Gathering scores...
+            <div className="p-32 flex flex-col items-center justify-center">
+              <Loader2 className="w-10 h-10 text-[#2D5A27] animate-spin mb-4" />
+              <p className="font-black text-gray-300 italic uppercase tracking-widest text-xs">
+                Syncing Global Scores...
+              </p>
             </div>
           ) : players.length > 0 ? (
-            players.map((entry: any, index: number) => {
+            players.map((profile: any, index: number) => {
               /**
-               * 🚀 THE FIX: Data Mapping
-               * The API returns LeaderboardEntry objects.
-               * User info is in entry.student, Profile info is in entry.student.student_profile
+               * 🚀 DATA MAPPING FIX:
+               * Your Controller returns StudentProfile with 'user' relation.
                */
-              const user = entry.student;
-              const profile = user?.student_profile;
-              const weeklyPoints = entry.points ?? 0; // Current week points
-              const rank = profile?.rank ?? "Omode"; // Cultural title
-              const language = profile?.learning_language ?? "Yoruba";
+              const studentName = profile.user?.name || "Student";
+              const totalPoints = profile.total_points || 0;
+              const rankTitle = profile.rank || "Akeko";
+              const track = profile.learning_language || "Yoruba";
 
               return (
                 <div
-                  key={entry.id}
-                  className={`flex items-center justify-between p-6 md:p-8 border-b last:border-0 transition-all hover:bg-green-50/20 ${
-                    index < 3 ? "bg-green-50/40" : ""
+                  key={profile.id}
+                  className={`flex items-center justify-between p-6 md:p-10 border-b last:border-0 transition-all hover:bg-green-50/30 ${
+                    index < 3 ? "bg-green-50/20" : ""
                   }`}
                 >
-                  <div className="flex items-center space-x-6">
+                  <div className="flex items-center space-x-6 md:space-x-10">
                     <span
-                      className={`text-3xl font-black w-10 text-center ${getMedalColor(index)} italic`}
+                      className={`text-4xl font-black w-12 text-center ${getMedalColor(index)} italic tracking-tighter`}
                     >
                       {index + 1}
                     </span>
 
                     <div className="relative">
-                      <div className="w-14 h-14 bg-white rounded-2xl shadow-sm border-2 border-gray-50 flex items-center justify-center">
-                        <User size={28} className="text-gray-300" />
+                      <div className="w-16 h-16 bg-gray-50 rounded-[1.5rem] border-2 border-gray-100 flex items-center justify-center shadow-inner overflow-hidden">
+                        {/* If you add avatars later, replace <User /> with <img> */}
+                        <User size={32} className="text-gray-300" />
                       </div>
                       {index === 0 && (
-                        <div className="absolute -top-3 -left-3 rotate-[-20deg] animate-bounce">
+                        <div className="absolute -top-4 -left-4 rotate-[-15deg] drop-shadow-md">
                           <Star
-                            size={24}
-                            className="text-yellow-400"
+                            size={28}
+                            className="text-yellow-400 animate-pulse"
                             fill="currentColor"
                           />
                         </div>
@@ -101,15 +104,15 @@ export default function Leaderboard() {
                     </div>
 
                     <div>
-                      <p className="text-2xl font-black text-gray-800 leading-none mb-2 italic uppercase tracking-tighter">
-                        {user?.name || "Anonymous Learner"}
-                      </p>
-                      <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 bg-[#2D5A27]/10 text-[#2D5A27] text-[10px] font-black rounded uppercase tracking-tighter">
-                          {language}
+                      <h3 className="text-2xl md:text-3xl font-black text-gray-800 leading-none mb-2 italic uppercase tracking-tighter">
+                        {studentName}
+                      </h3>
+                      <div className="flex items-center gap-3">
+                        <span className="px-3 py-1 bg-[#2D5A27]/10 text-[#2D5A27] text-[9px] font-black rounded-lg uppercase tracking-widest">
+                          {track} track
                         </span>
-                        <span className="text-[10px] text-orange-500 font-black uppercase italic">
-                          {rank}
+                        <span className="text-[9px] text-orange-500 font-black uppercase italic tracking-widest">
+                          {rankTitle}
                         </span>
                       </div>
                     </div>
@@ -117,25 +120,25 @@ export default function Leaderboard() {
 
                   <div className="text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <p className="text-3xl font-black text-[#2D5A27] italic tracking-tighter">
-                        {weeklyPoints.toLocaleString()}
+                      <p className="text-3xl md:text-4xl font-black text-[#2D5A27] italic tracking-tighter">
+                        {totalPoints.toLocaleString()}
                       </p>
                       <span className="text-[10px] font-black text-gray-300 uppercase italic">
-                        pts
+                        xp
                       </span>
                     </div>
                     {index < 3 && (
-                      <div className="flex items-center justify-end gap-1 mt-1">
+                      <div className="flex items-center justify-end gap-2 mt-2">
                         <Medal size={16} className={getMedalColor(index)} />
-                        <span
-                          className={`text-[9px] font-black uppercase tracking-widest ${getMedalColor(index)}`}
+                        <p
+                          className={`text-[10px] font-black uppercase tracking-[0.2em] ${getMedalColor(index)}`}
                         >
                           {index === 0
-                            ? "Gold Legend"
+                            ? "Oga Ogo"
                             : index === 1
-                              ? "Silver Star"
-                              : "Bronze Brave"}
-                        </span>
+                              ? "Star Learner"
+                              : "Rising Hero"}
+                        </p>
                       </div>
                     )}
                   </div>
@@ -144,23 +147,29 @@ export default function Leaderboard() {
             })
           ) : (
             /* --- EMPTY STATE --- */
-            <div className="p-20 text-center">
-              <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Info size={40} className="text-gray-200" />
+            <div className="p-32 text-center">
+              <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner">
+                <Info size={48} className="text-gray-200" />
               </div>
-              <h3 className="text-2xl font-black text-gray-800 mb-2 uppercase italic tracking-tighter">
-                No Champions Yet!
+              <h3 className="text-3xl font-black text-gray-800 mb-4 uppercase italic tracking-tighter">
+                Arena is Empty
               </h3>
-              <p className="text-gray-400 font-bold max-w-xs mx-auto text-sm leading-relaxed">
-                The week has just started! Be the first to complete a lesson and
-                claim the #1 spot.
+              <p className="text-gray-400 font-bold max-w-xs mx-auto text-sm leading-relaxed mb-8">
+                No students have earned points yet. Be the first to claim the
+                top spot!
               </p>
+              <button
+                onClick={() => (window.location.href = "/courses")}
+                className="bg-[#2D5A27] text-white px-10 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:scale-105 transition-all shadow-xl"
+              >
+                Go Earn Some XP
+              </button>
             </div>
           )}
         </div>
 
-        <p className="text-center mt-10 text-gray-300 text-[10px] font-black uppercase tracking-[0.3em] italic">
-          Weekly scores reset every Monday at 12:00 AM
+        <p className="text-center mt-12 text-gray-300 text-[10px] font-black uppercase tracking-[0.4em] italic opacity-60">
+          Rankings are updated in real-time based on total XP
         </p>
       </div>
     </Layout>

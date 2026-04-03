@@ -9,31 +9,82 @@ import {
   PlayCircle,
   Zap,
   ChevronRight,
-  Award,
+  ArrowLeftCircle,
+  Loader2,
 } from "lucide-react";
+import { useAuth } from "../hooks/useAuth";
+import { LiveClassCard } from "../components/LiveClass/LiveClassCard";
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [liveClasses, setLiveClasses] = useState<any[]>([]);
+
+  const isImpersonating = localStorage.getItem("is_impersonating") === "true";
+  const activeStudentId = localStorage.getItem("active_student_id");
+
+  const fetchDashboardData = async () => {
+    setLoading(true);
+    try {
+      let studentInfo;
+      // Fetch Live Classes first
+      const liveRes = await api.get("/live-classes");
+
+      if (isImpersonating && activeStudentId) {
+        /**
+         * 👨‍👩‍👧‍👦 PARENT VIEW:
+         * Fetches data for the specific child being viewed.
+         */
+        const childRes = await api.get(
+          `/parent/active-student/${activeStudentId}`,
+        );
+        studentInfo = childRes.data;
+
+        // 🕵️ DEBUG: Log to see if 'current_track' is coming from the backend
+        console.log("Student Data Received:", studentInfo);
+      } else {
+        /**
+         * 🎓 STUDENT VIEW:
+         * Standard dashboard for logged-in students.
+         */
+        const meRes = await api.get("/me");
+        studentInfo = meRes.data;
+      }
+
+      setData(studentInfo);
+      setLiveClasses(Array.isArray(liveRes.data) ? liveRes.data : []);
+    } catch (err) {
+      console.error("Dashboard Sync failed", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    api
-      .get("/me")
-      .then((res) => {
-        setData(res.data);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
+    // Safety check: If a parent lands here without impersonating, send them back
+    if (user && user.role === "parent" && !isImpersonating) {
+      navigate("/parent/dashboard");
+      return;
+    }
+    fetchDashboardData();
+  }, [user, navigate, isImpersonating, activeStudentId]);
+
+  const handleExitView = () => {
+    localStorage.removeItem("is_impersonating");
+    localStorage.removeItem("active_student_id");
+    localStorage.removeItem("active_course_id"); // Clean up the course ID too
+    window.location.href = "/parent/dashboard";
+  };
 
   if (loading)
     return (
       <Layout>
         <div className="flex flex-col items-center justify-center h-[60vh]">
-          <div className="w-12 h-12 border-4 border-[#2D5A27] border-t-transparent rounded-full animate-spin mb-4"></div>
+          <Loader2 className="w-12 h-12 text-[#2D5A27] animate-spin mb-4" />
           <p className="font-black text-gray-400 uppercase tracking-widest text-xs italic">
-            Syncing your progress...
+            Syncing Student Progress...
           </p>
         </div>
       </Layout>
@@ -42,173 +93,178 @@ export default function Dashboard() {
   const profile = data?.student_profile;
   const totalPoints = profile?.total_points || 0;
 
-  // Dynamic Level Calculation for Progress Bar
+  // Logic for the XP Bar (assuming 500 XP per level)
   const currentLevelPoints = totalPoints % 500;
-  const progressPercent = (currentLevelPoints / 500) * 100;
+  const progressPercent = Math.min((currentLevelPoints / 500) * 100, 100);
+
+  /**
+   * 🚀 DYNAMIC TRACK LOGIC:
+   * 1. Priority 1: 'current_track' (Passed from ParentController)
+   * 2. Priority 2: 'learning_language' (From the static profile)
+   * 3. Fallback: "Discovering..."
+   */
+  const displayTrack =
+    data?.current_track || profile?.learning_language || "Discovering...";
 
   return (
     <Layout>
+      {/* 🚀 IMPERSONATION BANNER */}
+      {isImpersonating && (
+        <div className="bg-yellow-400 p-3 mb-6 rounded-2xl flex items-center justify-between px-6 shadow-lg mx-4 md:mx-10 mt-6 animate-in slide-in-from-top duration-500">
+          <div className="flex items-center gap-3">
+            <ShieldCheck size={20} className="text-yellow-900" />
+            <p className="text-[10px] font-black text-yellow-900 uppercase tracking-widest">
+              Viewing as Student: <span className="italic">{data?.name}</span>
+            </p>
+          </div>
+          <button
+            onClick={handleExitView}
+            className="flex items-center gap-2 bg-yellow-900 text-white px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-tighter hover:bg-black transition-all active:scale-95"
+          >
+            <ArrowLeftCircle size={14} /> Exit to Parent Portal
+          </button>
+        </div>
+      )}
+
       <div className="max-w-6xl mx-auto p-4 md:p-10">
         <div className="mb-10 animate-in fade-in slide-in-from-left duration-500">
-          <h1 className="text-4xl font-black text-gray-800 mb-2 italic uppercase tracking-tighter">
+          <h1 className="text-4xl md:text-5xl font-black text-gray-800 mb-2 italic uppercase tracking-tighter leading-none">
             Ẹ káàbọ̀, {data?.name}! 👋
           </h1>
-          <p className="text-gray-500 font-bold text-lg">
+          <p className="text-gray-500 font-bold text-lg mt-3">
             You are officially a{" "}
-            <span className="text-[#2D5A27]">{profile?.rank}</span>. Ready for
-            more?
+            <span className="text-[#2D5A27] font-black underline decoration-yellow-400 decoration-4">
+              {profile?.rank || "Akeko"}
+            </span>
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
-          {/* --- DYNAMIC LEVEL & PROGRESS CARD --- */}
+          {/* XP Progress Card */}
           <div className="lg:col-span-2 bg-white p-8 rounded-[2.5rem] shadow-xl border-4 border-white relative overflow-hidden group">
-            <div className="absolute -top-10 -right-10 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-              <Trophy size={200} />
-            </div>
-
             <div className="flex items-center gap-5 mb-8">
-              <div className="bg-yellow-400 p-5 rounded-[2rem] text-white shadow-xl shadow-yellow-100 animate-pulse">
+              <div className="bg-yellow-400 p-5 rounded-[2rem] text-white shadow-xl shadow-yellow-100">
                 <Star size={36} fill="white" />
               </div>
               <div>
                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
                   Current Status
                 </p>
-                <h2 className="text-4xl font-black text-gray-800 italic uppercase tracking-tight">
-                  Level {profile?.current_level || 1}
+                <h2 className="text-4xl font-black text-gray-800 italic uppercase tracking-tight leading-none">
+                  Level{" "}
+                  {profile?.current_level || Math.floor(totalPoints / 500) + 1}
                 </h2>
               </div>
             </div>
 
-            <div className="space-y-4">
-              <div className="flex justify-between items-end">
+            <div className="space-y-4 relative z-10">
+              <div className="flex justify-between items-end px-1">
                 <p className="text-xs font-black text-gray-500 uppercase tracking-widest">
                   Rank:{" "}
-                  <span className="text-[#2D5A27] italic">{profile?.rank}</span>
+                  <span className="text-[#2D5A27] italic">
+                    {profile?.rank || "Akeko"}
+                  </span>
                 </p>
                 <p className="text-[10px] font-black text-gray-400 uppercase">
-                  {profile?.xp_to_next_level} XP left to next level
+                  {Math.max(500 - currentLevelPoints, 0)} XP to Next Level
                 </p>
               </div>
-
-              {/* Level Progress Bar */}
               <div className="h-8 w-full bg-gray-100 rounded-3xl p-1.5 border-2 border-gray-50 overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-[#2D5A27] via-green-500 to-yellow-400 rounded-2xl transition-all duration-1000 flex items-center justify-end px-3 shadow-inner"
+                  className="h-full bg-gradient-to-r from-[#2D5A27] to-green-500 rounded-2xl transition-all duration-1000"
                   style={{ width: `${progressPercent}%` }}
-                >
-                  <Zap
-                    size={12}
-                    className="text-white animate-bounce"
-                    fill="white"
-                  />
-                </div>
+                ></div>
               </div>
-
-              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">
-                Your total journey: {totalPoints} Points earned so far!
-              </p>
             </div>
           </div>
 
-          {/* Quick Stats Sidebar */}
+          {/* Points Sidebar */}
           <div className="space-y-6">
             <div className="bg-[#2D5A27] p-8 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden">
               <div className="absolute -bottom-4 -right-4 opacity-10">
                 <Zap size={100} />
               </div>
               <p className="text-[10px] font-black opacity-60 uppercase tracking-widest mb-1">
-                Total Points
+                Total XP Earned
               </p>
               <h3 className="text-6xl font-black mb-6 tracking-tighter italic">
                 {totalPoints}
               </h3>
               <button
                 onClick={() => navigate("/leaderboard")}
-                className="w-full flex items-center justify-center gap-2 text-[10px] font-black bg-white/10 py-4 rounded-2xl hover:bg-white/20 transition-all uppercase tracking-widest border border-white/5"
+                className="w-full py-4 bg-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white/20 transition-all border border-white/5"
               >
-                View Global Ranks <ChevronRight size={14} />
+                View Global Ranks{" "}
+                <ChevronRight size={14} className="inline ml-1" />
               </button>
             </div>
 
-            {/* Learning Language Badge */}
+            {/* 🎯 THE TRACK BADGE: Now uses 'displayTrack' */}
             <div className="bg-white p-6 rounded-[2rem] border-2 border-gray-50 flex items-center gap-4 shadow-sm">
               <div className="bg-blue-50 p-4 rounded-2xl text-blue-500 shadow-inner">
                 <BookOpen size={24} />
               </div>
               <div>
                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                  Learning
+                  Active Track
                 </p>
                 <p className="text-xl font-black text-gray-800 italic uppercase">
-                  {profile?.learning_language || "Yoruba"}
+                  {displayTrack}
                 </p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* --- BADGE SHOWCASE --- */}
-        <div className="mb-10">
-          <h3 className="text-xl font-black text-gray-800 uppercase tracking-tighter italic mb-6 flex items-center gap-2">
-            <Award className="text-yellow-500" /> My Badges
-          </h3>
-          <div className="flex flex-wrap gap-4">
-            {profile?.badges?.length > 0 ? (
-              profile.badges.map((badge: any) => (
-                <div
-                  key={badge.id}
-                  className="bg-white px-6 py-4 rounded-[1.5rem] border-2 border-gray-100 flex items-center gap-3 shadow-sm hover:scale-105 transition-transform cursor-help group relative"
-                >
-                  <div className="text-2xl">🏅</div>
-                  <span className="font-black text-gray-700 uppercase italic text-xs">
-                    {badge.name}
-                  </span>
-
-                  {/* Hover Tooltip for Badge Description */}
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-48 p-4 bg-gray-900 text-white text-[10px] rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20 shadow-xl">
-                    <p className="font-bold mb-1 uppercase text-yellow-400">
-                      {badge.name}
-                    </p>
-                    <p className="opacity-80">{badge.description}</p>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="w-full p-8 rounded-[2rem] border-2 border-dashed border-gray-100 text-center">
-                <p className="text-gray-300 font-bold uppercase italic text-sm">
-                  Finish 5 lessons to earn your first badge!
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Hero Quick Action */}
-        <div className="bg-gradient-to-br from-[#2D5A27] via-[#1a3a17] to-black rounded-[3rem] p-10 md:p-14 text-white flex flex-col md:flex-row items-center justify-between shadow-2xl relative overflow-hidden group border-t-4 border-green-400/20">
+        {/* Action CTA */}
+        <div className="bg-gradient-to-br from-[#2D5A27] to-black rounded-[3.5rem] p-10 md:p-14 text-white flex flex-col md:flex-row items-center justify-between shadow-2xl relative overflow-hidden group">
           <div className="relative z-10 text-center md:text-left">
-            <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight italic tracking-tighter">
-              Your next adventure <br />
-              is waiting!
+            <h2 className="text-4xl md:text-5xl font-black mb-8 leading-tight italic tracking-tighter">
+              Your next adventure <br /> is waiting!
             </h2>
-            <p className="text-green-100 font-bold text-lg max-w-md opacity-80 mb-8 italic">
-              "A child who washes his hands clean will dine with elders." — Keep
-              practicing Ayo!
-            </p>
             <button
               onClick={() => navigate("/courses")}
-              className="bg-yellow-400 text-black px-12 py-6 rounded-[2.5rem] font-black text-2xl flex items-center gap-4 hover:scale-110 active:scale-95 transition-all shadow-2xl shadow-yellow-900/40 uppercase italic tracking-tight mx-auto md:mx-0"
+              className="bg-yellow-400 text-black px-12 py-6 rounded-[2.5rem] font-black text-2xl flex items-center gap-4 hover:scale-105 transition-all shadow-xl uppercase italic tracking-tight"
             >
-              <PlayCircle size={32} />
-              <span>Play Now</span>
+              <PlayCircle size={32} /> Start Lesson
             </button>
           </div>
-          <div className="hidden md:block opacity-10 group-hover:opacity-20 transition-all duration-700 group-hover:rotate-12 scale-150">
-            <PlayCircle size={250} />
-          </div>
         </div>
+
+        {/* Live Classes Section */}
+        {liveClasses.length > 0 && (
+          <section className="mt-16 animate-in fade-in slide-in-from-bottom duration-700">
+            <h2 className="text-3xl font-black text-gray-800 uppercase italic tracking-tighter mb-8 px-2">
+              Active Tribe Meetings
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {liveClasses.map((lc) => (
+                <LiveClassCard key={lc.id} liveClass={lc} />
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </Layout>
+  );
+}
+
+// Simple Icon Component for the Banner
+function ShieldCheck({ size, className }: any) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      <path d="m9 12 2 2 4-4" />
+    </svg>
   );
 }

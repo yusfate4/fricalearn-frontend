@@ -77,11 +77,17 @@ export default function CourseDetail() {
             <div className="md:w-1/3 aspect-video md:aspect-auto relative bg-gray-100">
               <img
                 src={
-                  course.thumbnail_url ||
-                  "https://images.unsplash.com/photo-1528747045269-390fe33c19f2?auto=format&fit=crop&q=80"
+                  course.thumbnail_url?.startsWith("http")
+                    ? course.thumbnail_url
+                    : `http://127.0.0.1:8000/storage/${course.thumbnail_url}` // 🚀 Add the storage prefix
                 }
                 className="w-full h-full object-cover"
                 alt={course.title}
+                onError={(e: any) => {
+                  // Fallback if the image is actually missing from the server
+                  e.target.src =
+                    "https://images.unsplash.com/photo-1528747045269-390fe33c19f2?auto=format&fit=crop&q=80";
+                }}
               />
             </div>
 

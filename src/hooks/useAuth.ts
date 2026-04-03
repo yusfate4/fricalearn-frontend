@@ -23,7 +23,8 @@ export const useAuth = () => {
             setUser(response.data);
         } catch (error) {
             setUser(null);
-            localStorage.removeItem('auth_token');
+            // 🚀 FIX 1: Use 'token' here
+            localStorage.removeItem('token'); 
         } finally {
             setLoading(false);
         }
@@ -33,14 +34,17 @@ export const useAuth = () => {
         try {
             await api.post('/logout');
         } finally {
-            localStorage.removeItem('auth_token');
+            // 🚀 FIX 2: Use 'token' here
+            localStorage.removeItem('token');
+            localStorage.removeItem('is_impersonating'); // Clear this too!
             setUser(null);
             window.location.href = '/login';
         }
     };
 
     useEffect(() => {
-        if (localStorage.getItem('auth_token')) {
+        // 🚀 FIX 3: This was the main bug! It was looking for the wrong key.
+        if (localStorage.getItem('token')) {
             fetchUser();
         } else {
             setLoading(false);

@@ -1,127 +1,12 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import Layout from "../components/Layout";
-import {
-  ArrowLeft,
-  HelpCircle,
-  FileText,
-  Volume2,
-  Mic,
-  RotateCcw,
-  Loader2,
-} from "lucide-react";
+import { ArrowLeft, HelpCircle, FileText, Loader2 } from "lucide-react";
 import confetti from "canvas-confetti";
 import SuccessModal from "../components/SuccessModal";
 import StudentQuiz from "../components/StudentQuiz";
-import LevelUpModal from "../components/LevelUpModal"; // 👈 New Import
-
-/**
- * 🎙️ AI Pronunciation Trainer Component
- */
-function PronunciationTrainer({ word }: { word: string }) {
-  const [isRecording, setIsRecording] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<{
-    score: number;
-    feedback: string;
-  } | null>(null);
-  const mediaRecorder = useRef<MediaRecorder | null>(null);
-
-  const startRecording = async () => {
-    setResult(null);
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorder.current = new MediaRecorder(stream);
-      const chunks: Blob[] = [];
-      mediaRecorder.current.ondataavailable = (e) => chunks.push(e.data);
-      mediaRecorder.current.onstop = async () => {
-        const audioBlob = new Blob(chunks, { type: "audio/webm" });
-        const formData = new FormData();
-        formData.append("audio", audioBlob, "recording.webm");
-        formData.append("expected_text", word);
-        setLoading(true);
-        try {
-          const res = await api.post("/ai/verify-pronunciation", formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-          });
-          setResult(res.data);
-        } catch (err) {
-          console.error("AI check failed", err);
-        } finally {
-          setLoading(false);
-        }
-      };
-      mediaRecorder.current.start();
-      setIsRecording(true);
-      setTimeout(() => {
-        if (mediaRecorder.current?.state === "recording") stopRecording();
-      }, 3500);
-    } catch (err) {
-      alert("Microphone access is needed!");
-    }
-  };
-
-  const stopRecording = () => {
-    if (mediaRecorder.current?.state !== "inactive")
-      mediaRecorder.current?.stop();
-    setIsRecording(false);
-  };
-
-  return (
-    <div className="bg-[#FFFBF5] p-6 sm:p-10 md:p-12 rounded-[2rem] sm:rounded-[3rem] border-2 border-orange-100 mb-12 text-center relative overflow-hidden group shadow-sm transition-all hover:shadow-md mx-2 sm:mx-0">
-      <Volume2
-        className="absolute -right-6 -top-6 text-orange-100/40 rotate-12 hidden sm:block"
-        size={140}
-      />
-      <div className="relative z-10 flex flex-col items-center">
-        <div className="bg-orange-100 text-orange-600 px-4 py-1.5 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-widest mb-6 shadow-sm">
-          Challenge: Speak & Earn 20 Coins! 💰
-        </div>
-        <p className="text-gray-400 font-bold text-[10px] uppercase tracking-widest mb-2">
-          Tap the mic and say:
-        </p>
-        <h3 className="text-2xl sm:text-4xl md:text-5xl font-black text-[#2D5A27] italic uppercase tracking-tighter mb-8 px-2 leading-tight">
-          "{word}"
-        </h3>
-        {!result ? (
-          <button
-            onClick={isRecording ? stopRecording : startRecording}
-            disabled={loading}
-            className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center transition-all shadow-2xl ${
-              isRecording
-                ? "bg-red-500 animate-pulse scale-110"
-                : "bg-[#2D5A27] hover:scale-105 active:scale-95"
-            }`}
-          >
-            {loading ? (
-              <Loader2 className="text-white animate-spin" size={28} />
-            ) : (
-              <Mic className="text-white" size={32} />
-            )}
-          </button>
-        ) : (
-          <div className="animate-in zoom-in duration-300">
-            <div
-              className={`text-5xl sm:text-6xl font-black italic mb-2 ${result.score >= 80 ? "text-[#2D5A27]" : "text-orange-500"}`}
-            >
-              {result.score}%
-            </div>
-            <p className="text-gray-500 font-bold text-xs sm:text-sm italic mb-6 max-w-[250px] sm:max-w-xs mx-auto leading-relaxed px-4">
-              "{result.feedback}"
-            </p>
-            <button
-              onClick={() => setResult(null)}
-              className="text-[10px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-2 mx-auto hover:text-[#2D5A27] transition-colors"
-            >
-              <RotateCcw size={14} /> Try Again
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
+import LevelUpModal from "../components/LevelUpModal";
 
 export default function LessonPlayer() {
   const { id } = useParams();
@@ -166,28 +51,34 @@ export default function LessonPlayer() {
     if (passed) {
       setQuizFailed(false);
 
-      // Standard Success Feedback
-      const audio = new Audio("/sounds/success.mp3");
-      audio.volume = 0.4;
-      audio.play().catch(() => {});
-
       try {
         const percentageScore = Math.round(
           (score / lesson.questions.length) * 100,
         );
-
-        // Call backend - this now returns leveled_up boolean
         const response = await api.post(`/lessons/${id}/complete`, {
           score: percentageScore,
           points: score * 10,
         });
 
-        // Handle Level Up Celebration
         if (response.data.leveled_up) {
+          const levelUpAudio = new Audio("/sounds/level-up-epic.mp3");
+          levelUpAudio.volume = 0.6;
+          levelUpAudio.play().catch(() => {});
+
           setNewLevel(response.data.new_level);
           setIsLevelModalOpen(true);
+
+          confetti({
+            particleCount: 250,
+            spread: 100,
+            origin: { y: 0.5 },
+            colors: ["#F4B400", "#2D5A27", "#ffffff"],
+          });
         } else {
-          // Standard confetti for single lesson success
+          const audio = new Audio("/sounds/success.mp3");
+          audio.volume = 0.4;
+          audio.play().catch(() => {});
+
           confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
           setIsModalOpen(true);
         }
@@ -202,11 +93,15 @@ export default function LessonPlayer() {
   if (loading)
     return (
       <Layout>
-        <div className="p-20 text-center font-bold text-gray-400 italic">
-          Loading...
+        <div className="p-20 flex flex-col items-center justify-center">
+          <Loader2 className="animate-spin text-[#2D5A27] mb-4" size={40} />
+          <p className="font-bold text-gray-400 italic">
+            Gathering your lesson...
+          </p>
         </div>
       </Layout>
     );
+
   if (!lesson)
     return (
       <Layout>
@@ -290,6 +185,7 @@ export default function LessonPlayer() {
                         <a
                           href={`http://127.0.0.1:8000${content.file_url}`}
                           target="_blank"
+                          rel="noreferrer"
                           className="w-full sm:w-auto bg-[#2D5A27] text-white px-8 py-4 rounded-xl font-black shadow-xl text-sm uppercase"
                         >
                           GET PDF
@@ -301,16 +197,6 @@ export default function LessonPlayer() {
               </div>
             )}
 
-            {/* AI Pronunciation Section */}
-            {(lesson.practice_word ||
-              lesson.title.toLowerCase().includes("yoruba")) && (
-              <PronunciationTrainer
-                word={
-                  lesson.practice_word || lesson.title.replace("Lesson: ", "")
-                }
-              />
-            )}
-
             <div className="flex justify-center py-6 sm:py-10">
               <button
                 onClick={() => {
@@ -319,7 +205,8 @@ export default function LessonPlayer() {
                 }}
                 className="flex items-center gap-3 sm:gap-4 bg-gray-900 text-white px-8 py-5 sm:px-14 sm:py-7 rounded-[1.5rem] font-black text-xl sm:text-2xl hover:bg-[#2D5A27] hover:scale-105 transition-all shadow-2xl w-full sm:w-auto justify-center"
               >
-                <HelpCircle size={24} className="text-yellow-400" /> Challenge!
+                <HelpCircle size={24} className="text-yellow-400" /> Start Quiz
+                Challenge!
               </button>
             </div>
           </div>
@@ -352,7 +239,7 @@ export default function LessonPlayer() {
           </div>
         )}
 
-        {/* 🏆 Standard Success Modal */}
+        {/* 🏆 Success Modals */}
         <SuccessModal
           isOpen={isModalOpen}
           title="Ẹ kú iṣẹ́!"
@@ -361,7 +248,6 @@ export default function LessonPlayer() {
           onConfirm={() => navigate("/dashboard")}
         />
 
-        {/* 🎊 Level Up Celebration Modal */}
         <LevelUpModal
           level={newLevel || 1}
           isOpen={isLevelModalOpen}

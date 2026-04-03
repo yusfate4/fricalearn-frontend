@@ -5,40 +5,85 @@ import {
   Navigate,
 } from "react-router-dom";
 import { useAuth } from "./hooks/useAuth";
+import { useEffect, useState } from "react";
 
-// --- Shared & Auth Pages ---
+// --- 🌍 SHARED & AUTH PAGES ---
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
-import ParentPortal from "./pages/ParentPortal";
-import ParentProgressView from "./pages/ParentProgressView"; // 👈 Public Family View
+import ParentProgressView from "./pages/ParentProgressView";
 import StudentAnalytics from "./pages/student/StudentAnalytics";
+import LiveRoom from "./pages/LiveRoom";
 
-// --- Student Pages ---
+// --- 👨‍👩‍👧‍👦 PARENT PORTAL PAGES ---
+import ParentDashboard from "./pages/parent/ParentDashboard";
+import ParentMessages from "./pages/parent/ParentMessages";
+import SelectCourses from "./pages/parent/SelectCourses";
+import PaymentPage from "./pages/parent/PaymentPage";
+
+// --- 🎓 STUDENT PAGES ---
 import Courses from "./pages/Courses";
 import CourseDetail from "./pages/CourseDetail";
 import LessonPlayer from "./pages/LessonPlayer";
 import Leaderboard from "./pages/Leaderboard";
 import RewardsCatalog from "./pages/student/RewardsCatalog";
-import StudentChat from "./pages/student/StudentChat";
+import MyRewards from "./pages/student/MyRewards";
+import OluChat from "./pages/student/OluChat";
 
-// --- Admin Pages ---
+// --- 🔐 ADMIN PAGES ---
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminCourses from "./pages/admin/AdminCourses";
 import AdminAddLesson from "./pages/admin/AdminAddLesson";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminQuiz from "./pages/admin/AdminQuiz";
 import AdminRedemptions from "./pages/admin/AdminRedemptions";
-import ManageRewards from "./pages/admin/ManageRewards";
+import ManageMarketplace from "./pages/admin/ManageMarketplace";
 import AdminChatList from "./pages/admin/AdminChatList";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminParentPortal from "./pages/admin/AdminParentPortal";
 import AdminLessonList from "./pages/admin/AdminLessonList";
 import AdminEditLesson from "./pages/admin/AdminEditLesson";
+import ManageLiveClasses from "./pages/admin/ManageLiveClasses";
+import AdminPayments from "./pages/admin/AdminPayments";
+import AdminMasterSchedule from "./pages/admin/AdminMasterSchedule";
+import AdminCourseList from "./pages/admin/AdminCourseList";
+import AdminPaymentVerify from "./pages/admin/AdminPaymentVerify";
 
 function App() {
   const { user, loading } = useAuth();
+  
+  // 🔄 Sync Impersonation state with LocalStorage
+  const [isImpersonating, setIsImpersonating] = useState(
+    localStorage.getItem("is_impersonating") === "true"
+  );
 
-  // Global Loading State with FricaLearn Branding
+  useEffect(() => {
+    const checkImpersonation = () => {
+      const active = localStorage.getItem("is_impersonating") === "true";
+      setIsImpersonating(active);
+    };
+
+    // Listen for storage changes from other tabs/windows
+    window.addEventListener("storage", checkImpersonation);
+    
+    // Safety interval for updates in the same window (e.g. clicking 'Enter Classroom')
+    const interval = setInterval(checkImpersonation, 500);
+
+    return () => {
+      window.removeEventListener("storage", checkImpersonation);
+      clearInterval(interval);
+    };
+  }, []);
+
+  // 👑 Unified Admin Check
+  const isActuallyAdmin = user?.role === "admin" || Number(user?.is_admin) === 1;
+
+  // 🛡️ GATEKEEPER LOGIC: Who can enter the Classroom/Syllabus/Lessons?
+  const canAccessStudentArea =
+    user?.role === "student" ||
+    (user?.role === "parent" && isImpersonating) ||
+    isActuallyAdmin;
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-50">
@@ -56,196 +101,160 @@ function App() {
     <Router>
       <div className="min-h-screen bg-gray-50 font-sans selection:bg-[#2D5A27] selection:text-white">
         <Routes>
-          {/* --- 🌍 PUBLIC ROUTES (No Login Required) --- */}
+          {/* --- 🌍 PUBLIC & SHARED ROUTES --- */}
           <Route
             path="/login"
             element={!user ? <Login /> : <Navigate to="/dashboard" />}
           />
-
-          {/* 👨‍👩‍👧‍👦 The Public Parent View */}
           <Route
-            path="/parent/view/:studentId"
-            element={<ParentProgressView />}
+            path="/register"
+            element={!user ? <Register /> : <Navigate to="/dashboard" />}
           />
-
-          {/* --- 🏠 ROOT REDIRECT --- */}
+          <Route path="/live-room/:id" element={<LiveRoom />} />
+          <Route path="/parent/view/:studentId" element={<ParentProgressView />} />
+          
           <Route
             path="/"
-            element={
-              user ? <Navigate to="/dashboard" /> : <Navigate to="/login" />
-            }
+            element={user ? <Navigate to="/dashboard" /> : <Navigate to="/login" />}
           />
 
-          {/* --- 🎓 STUDENT PROTECTED ROUTES --- */}
+          {/* --- 🏠 MAIN DASHBOARD ROUTER --- */}
           <Route
             path="/dashboard"
-            element={user ? <Dashboard /> : <Navigate to="/login" />}
+            element={!user ? <Navigate to="/login" /> : <Dashboard />}
           />
+
+          {/* --- 👨‍👩‍👧‍👦 PARENT PORTAL ROUTES --- */}
+          <Route
+            path="/parent/dashboard"
+            element={user?.role === "parent" ? <ParentDashboard /> : <Navigate to="/dashboard" />}
+          />
+          <Route
+            path="/parent/messages"
+            element={user?.role === "parent" ? <ParentMessages /> : <Navigate to="/dashboard" />}
+          />
+          <Route
+            path="/select-courses"
+            element={user?.role === "parent" ? <SelectCourses /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/payment"
+            element={user?.role === "parent" ? <PaymentPage /> : <Navigate to="/login" />}
+          />
+
+          {/* --- 🎓 STUDENT/CLASSROOM ROUTES --- */}
+          {/* 🚀 FIXED: Syllabus/Course Detail Route */}
+          <Route
+            path="/course-detail/:id"
+            element={canAccessStudentArea ? <CourseDetail /> : <Navigate to="/parent/dashboard" />}
+          />
+          
           <Route
             path="/courses"
-            element={user ? <Courses /> : <Navigate to="/login" />}
+            element={canAccessStudentArea ? <Courses /> : <Navigate to="/parent/dashboard" />}
           />
-          <Route
-            path="/courses/:id"
-            element={user ? <CourseDetail /> : <Navigate to="/login" />}
-          />
+          
           <Route
             path="/lessons/:id"
-            element={user ? <LessonPlayer /> : <Navigate to="/login" />}
+            element={canAccessStudentArea ? <LessonPlayer /> : <Navigate to="/parent/dashboard" />}
           />
-
-          {/* 📊 Personal Analytics (Optional userId for Admin View) */}
-          <Route
-            path="/analytics/:userId?"
-            element={user ? <StudentAnalytics /> : <Navigate to="/login" />}
-          />
-
+          
           <Route
             path="/leaderboard"
-            element={user ? <Leaderboard /> : <Navigate to="/login" />}
+            element={canAccessStudentArea ? <Leaderboard /> : <Navigate to="/parent/dashboard" />}
           />
+          
           <Route
             path="/store"
-            element={user ? <RewardsCatalog /> : <Navigate to="/login" />}
+            element={canAccessStudentArea ? <RewardsCatalog /> : <Navigate to="/parent/dashboard" />}
           />
+          
           <Route
-            path="/messages"
-            element={user ? <StudentChat /> : <Navigate to="/login" />}
+            path="/my-rewards"
+            element={canAccessStudentArea ? <MyRewards /> : <Navigate to="/parent/dashboard" />}
+          />
+          
+          <Route
+            path="/olu-chat"
+            element={canAccessStudentArea ? <OluChat /> : <Navigate to="/parent/dashboard" />}
+          />
+          
+          <Route
+            path="/analytics/:userId?"
+            element={canAccessStudentArea ? <StudentAnalytics /> : <Navigate to="/parent/dashboard" />}
           />
 
-          {/* --- 🔐 ADMIN PROTECTED ROUTES (is_admin == 1) --- */}
+          {/* --- 🔐 ADMIN ROUTES --- */}
           <Route
             path="/admin"
-            element={
-              user?.is_admin == 1 ? (
-                <AdminDashboard />
-              ) : (
-                <Navigate to="/dashboard" />
-              )
-            }
+            element={isActuallyAdmin ? <AdminDashboard /> : <Navigate to="/dashboard" />}
           />
-
-          {/* 🚀 FIXED: Lesson Manager (List View) */}
           <Route
             path="/admin/lessons"
-            element={
-              user?.is_admin == 1 ? (
-                <AdminLessonList />
-              ) : (
-                <Navigate to="/dashboard" />
-              )
-            }
+            element={isActuallyAdmin ? <AdminLessonList /> : <Navigate to="/dashboard" />}
           />
-
-          {/* 🚀 FIXED: Added the Edit Lesson Page */}
-          <Route
-            path="/admin/edit-lesson/:id"
-            element={
-              user?.is_admin == 1 ? (
-                <AdminEditLesson />
-              ) : (
-                <Navigate to="/dashboard" />
-              )
-            }
-          />
-
-          {/* 🚀 FIXED: Changed path to /admin/add-lesson to match Sidebar.tsx */}
           <Route
             path="/admin/add-lesson"
-            element={
-              user?.is_admin == 1 ? (
-                <AdminAddLesson />
-              ) : (
-                <Navigate to="/dashboard" />
-              )
-            }
+            element={isActuallyAdmin ? <AdminAddLesson /> : <Navigate to="/dashboard" />}
           />
-
+          <Route
+            path="/admin/edit-lesson/:id"
+            element={isActuallyAdmin ? <AdminEditLesson /> : <Navigate to="/dashboard" />}
+          />
           <Route
             path="/admin/courses"
-            element={
-              user?.is_admin == 1 ? (
-                <AdminCourses />
-              ) : (
-                <Navigate to="/dashboard" />
-              )
-            }
+            element={isActuallyAdmin ? <AdminCourses /> : <Navigate to="/dashboard" />}
           />
-
           <Route
             path="/admin/users"
-            element={
-              user?.is_admin == 1 ? (
-                <AdminUsers />
-              ) : (
-                <Navigate to="/dashboard" />
-              )
-            }
+            element={isActuallyAdmin ? <AdminUsers /> : <Navigate to="/dashboard" />}
           />
-
           <Route
             path="/admin/parents"
-            element={
-              user?.is_admin == 1 ? (
-                <AdminParentPortal />
-              ) : (
-                <Navigate to="/dashboard" />
-              )
-            }
+            element={isActuallyAdmin ? <AdminParentPortal /> : <Navigate to="/dashboard" />}
           />
-
           <Route
             path="/admin/questions"
-            element={
-              user?.is_admin == 1 ? <AdminQuiz /> : <Navigate to="/dashboard" />
-            }
+            element={isActuallyAdmin ? <AdminQuiz /> : <Navigate to="/dashboard" />}
           />
-
           <Route
             path="/admin/rewards"
-            element={
-              user?.is_admin == 1 ? (
-                <AdminRedemptions />
-              ) : (
-                <Navigate to="/dashboard" />
-              )
-            }
+            element={isActuallyAdmin ? <AdminRedemptions /> : <Navigate to="/dashboard" />}
           />
-
           <Route
             path="/admin/manage-rewards"
-            element={
-              user?.is_admin == 1 ? (
-                <ManageRewards />
-              ) : (
-                <Navigate to="/dashboard" />
-              )
-            }
+            element={isActuallyAdmin ? <ManageMarketplace /> : <Navigate to="/dashboard" />}
           />
-
+          <Route
+            path="/admin/schedule"
+            element={isActuallyAdmin ? <AdminMasterSchedule /> : <Navigate to="/dashboard" />}
+          />
           <Route
             path="/admin/analytics"
-            element={
-              user?.is_admin == 1 ? (
-                <AdminAnalytics />
-              ) : (
-                <Navigate to="/dashboard" />
-              )
-            }
+            element={isActuallyAdmin ? <AdminAnalytics /> : <Navigate to="/dashboard" />}
           />
-
+          <Route
+            path="/admin/live-classes"
+            element={isActuallyAdmin ? <ManageLiveClasses /> : <Navigate to="/dashboard" />}
+          />
           <Route
             path="/admin/chats"
-            element={
-              user?.is_admin == 1 ? (
-                <AdminChatList />
-              ) : (
-                <Navigate to="/dashboard" />
-              )
-            }
+            element={isActuallyAdmin ? <AdminChatList /> : <Navigate to="/dashboard" />}
+          />
+          <Route
+            path="/admin/courses/list"
+            element={isActuallyAdmin ? <AdminCourseList /> : <Navigate to="/dashboard" />}
+          />
+          <Route
+            path="/admin/payments"
+            element={isActuallyAdmin ? <AdminPayments /> : <Navigate to="/dashboard" />}
+          />
+          <Route
+            path="/admin/payments/verify"
+            element={isActuallyAdmin ? <AdminPaymentVerify /> : <Navigate to="/dashboard" />}
           />
 
-          {/* --- 404 FALLBACK --- */}
+          {/* 404 Fallback */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>
