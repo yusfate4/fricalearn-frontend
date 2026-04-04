@@ -125,11 +125,12 @@ export default function ParentDashboard() {
                   <div className="h-[1px] w-full bg-gray-100"></div>
                 </div>
 
-                {/* Grid: 1 col on mobile, 2 on tablet, 3 on desktop */}
+                {/* --- 🎓 FAMILY CLASSROOM CARDS --- */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
                   {data.children.map((child: any) => {
+                    // 🔍 THE CRITICAL FIX: Force both IDs to Numbers to prevent String vs Number mismatches
                     const enrollment = data.active_enrollments?.find(
-                      (e: any) => e.student_id === child.id,
+                      (e: any) => Number(e.student_id) === Number(child.id),
                     );
 
                     return (
@@ -137,28 +138,28 @@ export default function ParentDashboard() {
                         key={child.id}
                         className="bg-white rounded-[2.5rem] md:rounded-[4rem] border-4 border-white p-8 md:p-12 shadow-xl hover:shadow-2xl md:hover:-translate-y-3 transition-all duration-500 group relative overflow-hidden"
                       >
-                        <div className="bg-green-50 text-green-600 p-5 md:p-6 rounded-2xl md:rounded-[2.2rem] w-fit mb-8 group-hover:bg-[#2D5A27] group-hover:text-white transition-all shadow-inner">
-                          <User size={28} md:size={36} />
-                        </div>
+                        {/* ... (rest of card UI) ... */}
 
                         <h3 className="text-2xl md:text-4xl font-black text-gray-800 uppercase italic tracking-tighter truncate">
                           {child.name}
                         </h3>
 
+                        {/* 🎯 THE TRACK BADGE: Now uses 'current_track' provided by our new Controller logic */}
                         <p className="text-gray-400 font-black text-[9px] md:text-[10px] uppercase tracking-widest mt-4 flex items-center gap-2">
                           <span className="w-4 h-[3px] bg-[#2D5A27] rounded-full"></span>{" "}
                           {child.current_track || "General Track"}
                         </p>
 
                         <button
-                          disabled={!enrollment}
-                          onClick={() =>
-                            enterClassroom(child.id, enrollment.course_id)
-                          }
+                          onClick={() => {
+                            if (enrollment) {
+                              enterClassroom(child.id, enrollment.course_id);
+                            }
+                          }}
                           className={`mt-10 md:mt-14 w-full py-5 md:py-7 rounded-xl md:rounded-[2.2rem] font-black text-[9px] md:text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all shadow-xl ${
                             enrollment
                               ? "bg-gray-900 text-white hover:bg-[#2D5A27]"
-                              : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                              : "bg-red-50 text-red-400 border-2 border-red-100 cursor-not-allowed"
                           }`}
                         >
                           {enrollment ? (
@@ -166,7 +167,7 @@ export default function ParentDashboard() {
                               Enter Classroom <ArrowRight size={18} />
                             </>
                           ) : (
-                            "No Active Courses"
+                            "Activation Pending" // 🚀 Better feedback if the sync hasn't hit yet
                           )}
                         </button>
                       </div>
