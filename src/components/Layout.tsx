@@ -14,7 +14,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           doesn't cover your page titles.
           'md:pt-8' removes that extra space when the sidebar is visible on desktop.
         */}
-        <div className="p-4 pt-24 md:p-8 md:pt-8 max-w-7xl mx-auto">
+        <div className="p-4 pt-16 md:p-8 md:pt-8 max-w-7xl mx-auto">
           {children}
         </div>
       </main>
