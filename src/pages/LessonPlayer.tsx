@@ -2,7 +2,15 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import Layout from "../components/Layout";
-import { ArrowLeft, HelpCircle, FileText, Loader2 } from "lucide-react";
+import {
+  ArrowLeft,
+  HelpCircle,
+  FileText,
+  Loader2,
+  PlayCircle,
+  Image as ImageIcon,
+  Download,
+} from "lucide-react";
 import confetti from "canvas-confetti";
 import SuccessModal from "../components/SuccessModal";
 import StudentQuiz from "../components/StudentQuiz";
@@ -43,17 +51,13 @@ export default function LessonPlayer() {
       .catch(() => setLoading(false));
   }, [id]);
 
-  /**
-   * Enhanced Quiz Completion Handler
-   */
   const handleQuizCompletion = async (score: number, passed: boolean) => {
     setFinalScore(score);
     if (passed) {
       setQuizFailed(false);
-
       try {
         const percentageScore = Math.round(
-          (score / lesson.questions.length) * 100,
+          (score / (lesson.questions?.length || 1)) * 100,
         );
         const response = await api.post(`/lessons/${id}/complete`, {
           score: percentageScore,
@@ -61,24 +65,10 @@ export default function LessonPlayer() {
         });
 
         if (response.data.leveled_up) {
-          const levelUpAudio = new Audio("/sounds/level-up-epic.mp3");
-          levelUpAudio.volume = 0.6;
-          levelUpAudio.play().catch(() => {});
-
           setNewLevel(response.data.new_level);
           setIsLevelModalOpen(true);
-
-          confetti({
-            particleCount: 250,
-            spread: 100,
-            origin: { y: 0.5 },
-            colors: ["#F4B400", "#2D5A27", "#ffffff"],
-          });
+          confetti({ particleCount: 250, spread: 100, origin: { y: 0.5 } });
         } else {
-          const audio = new Audio("/sounds/success.mp3");
-          audio.volume = 0.4;
-          audio.play().catch(() => {});
-
           confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
           setIsModalOpen(true);
         }
@@ -116,19 +106,20 @@ export default function LessonPlayer() {
       <div className="max-w-4xl mx-auto px-4 py-6 md:p-6 pb-24">
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center text-gray-400 mb-6 sm:mb-8 hover:text-[#2D5A27] font-black uppercase tracking-[0.2em] text-[9px] sm:text-[10px]"
+          className="flex items-center text-gray-400 mb-6 hover:text-[#2D5A27] font-black uppercase tracking-widest text-[10px]"
         >
           <ArrowLeft size={14} className="mr-2" /> Back to Course
         </button>
 
         {!showQuiz ? (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h1 className="text-3xl sm:text-5xl md:text-6xl font-black mb-6 sm:mb-8 text-gray-800 tracking-tighter italic leading-tight">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-black mb-6 text-gray-800 tracking-tighter italic">
               {lesson.title}
             </h1>
 
+            {/* 📺 Main YouTube Video */}
             {lesson.video_url && (
-              <div className="aspect-video w-full bg-black rounded-[1.5rem] sm:rounded-[2.5rem] md:rounded-[3.5rem] overflow-hidden shadow-2xl mb-8 sm:mb-12 border-4 sm:border-8 border-white group">
+              <div className="aspect-video w-full bg-black rounded-[2rem] overflow-hidden shadow-2xl mb-8 border-4 border-white">
                 <iframe
                   className="w-full h-full"
                   src={getEmbedUrl(lesson.video_url)}
@@ -138,57 +129,73 @@ export default function LessonPlayer() {
               </div>
             )}
 
-            <div className="bg-white p-6 sm:p-10 md:p-14 rounded-[2rem] sm:rounded-[3rem] shadow-sm border-2 border-gray-50 mb-8 sm:mb-12 relative overflow-hidden">
+            {/* 📝 Tutor Notes */}
+            <div className="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-sm border-2 border-gray-50 mb-8 relative overflow-hidden">
               <div className="absolute top-0 left-0 w-2 h-full bg-[#2D5A27]"></div>
-              <h2 className="text-xl sm:text-2xl font-black text-gray-800 italic uppercase tracking-tighter mb-6 flex items-center gap-3">
+              <h2 className="text-xl font-black text-gray-800 italic uppercase mb-4">
                 Tutor's Notes
               </h2>
-              <div className="text-gray-600 text-base sm:text-lg md:text-xl leading-relaxed whitespace-pre-line font-medium italic">
+              <div className="text-gray-600 text-lg leading-relaxed whitespace-pre-line font-medium italic">
                 {lesson.content}
               </div>
             </div>
 
-            {/* Media Contents */}
+            {/* 📁 Uploaded Media Contents (Images, Cloudinary Videos, PDFs) */}
             {lesson.contents && lesson.contents.length > 0 && (
-              <div className="mb-8 sm:mb-12 space-y-6 sm:space-y-8">
+              <div className="mb-12 space-y-8">
+                <h3 className="text-sm font-black text-[#2D5A27] uppercase tracking-widest ml-4">
+                  Lesson Materials
+                </h3>
                 {lesson.contents.map((content: any) => (
                   <div
                     key={content.id}
-                    className="bg-white p-4 sm:p-8 rounded-[1.5rem] sm:rounded-[3rem] shadow-sm border-2 border-gray-50 overflow-hidden"
+                    className="group animate-in zoom-in-95 duration-300"
                   >
+                    {/* 🎥 Cloudinary Video */}
                     {content.content_type === "video" && (
-                      <video
-                        src={`http://127.0.0.1:8000${content.file_url}`}
-                        controls
-                        className="w-full h-auto rounded-[1rem] border-4 border-gray-900"
-                      ></video>
+                      <div className="rounded-[2rem] overflow-hidden border-4 border-gray-900 shadow-xl bg-black">
+                        <video
+                          src={content.file_url}
+                          controls
+                          className="w-full h-auto"
+                        ></video>
+                      </div>
                     )}
+
+                    {/* 🖼️ Lesson Image */}
                     {content.content_type === "image" && (
-                      <img
-                        src={`http://127.0.0.1:8000${content.file_url}`}
-                        alt="Lesson"
-                        className="w-full rounded-[1rem] border-2 sm:border-4 border-white shadow-lg"
-                      />
+                      <div className="relative">
+                        <img
+                          src={content.file_url}
+                          alt="Lesson Visual"
+                          className="w-full rounded-[2rem] border-4 border-white shadow-xl"
+                        />
+                      </div>
                     )}
+
+                    {/* 📄 PDF / Documents */}
                     {content.content_type === "document" && (
-                      <div className="flex flex-col sm:flex-row items-center justify-between bg-green-50 p-6 sm:p-8 rounded-[1.5rem] border-2 border-green-100 gap-4 text-center sm:text-left">
-                        <div className="flex flex-col sm:flex-row items-center gap-4 w-full">
-                          <div className="bg-white p-3 rounded-xl text-[#2D5A27] shadow-sm">
-                            <FileText size={28} />
+                      <div className="flex flex-col sm:flex-row items-center justify-between bg-white p-6 sm:p-8 rounded-[2.5rem] border-2 border-gray-100 gap-4 hover:border-[#2D5A27] transition-all shadow-sm">
+                        <div className="flex items-center gap-4">
+                          <div className="bg-red-50 p-4 rounded-2xl text-red-500">
+                            <FileText size={32} />
                           </div>
                           <div>
                             <h4 className="font-black text-gray-800 text-lg uppercase italic leading-tight">
-                              Worksheet
+                              Worksheet / PDF
                             </h4>
+                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+                              Download for practice
+                            </p>
                           </div>
                         </div>
                         <a
-                          href={`http://127.0.0.1:8000${content.file_url}`}
+                          href={content.file_url}
                           target="_blank"
                           rel="noreferrer"
-                          className="w-full sm:w-auto bg-[#2D5A27] text-white px-8 py-4 rounded-xl font-black shadow-xl text-sm uppercase"
+                          className="flex items-center gap-2 bg-[#2D5A27] text-white px-8 py-4 rounded-2xl font-black shadow-lg text-sm uppercase hover:scale-105 transition-transform"
                         >
-                          GET PDF
+                          <Download size={18} /> View PDF
                         </a>
                       </div>
                     )}
@@ -197,13 +204,14 @@ export default function LessonPlayer() {
               </div>
             )}
 
-            <div className="flex justify-center py-6 sm:py-10">
+            {/* 🏁 Start Quiz Button */}
+            <div className="flex justify-center py-10">
               <button
                 onClick={() => {
                   window.scrollTo({ top: 0, behavior: "smooth" });
                   setShowQuiz(true);
                 }}
-                className="flex items-center gap-3 sm:gap-4 bg-gray-900 text-white px-8 py-5 sm:px-14 sm:py-7 rounded-[1.5rem] font-black text-xl sm:text-2xl hover:bg-[#2D5A27] hover:scale-105 transition-all shadow-2xl w-full sm:w-auto justify-center"
+                className="flex items-center gap-4 bg-gray-900 text-white px-10 py-6 rounded-[2rem] font-black text-xl hover:bg-[#2D5A27] hover:scale-105 transition-all shadow-2xl w-full sm:w-auto justify-center"
               >
                 <HelpCircle size={24} className="text-yellow-400" /> Start Quiz
                 Challenge!
@@ -211,19 +219,19 @@ export default function LessonPlayer() {
             </div>
           </div>
         ) : quizFailed ? (
-          <div className="bg-white p-10 sm:p-20 rounded-[2.5rem] shadow-2xl border-4 border-gray-50 text-center py-16">
-            <div className="text-6xl sm:text-8xl mb-8 animate-bounce">🦒</div>
-            <h2 className="text-3xl sm:text-4xl font-black text-gray-800 mb-4 italic uppercase tracking-tighter">
+          <div className="bg-white p-12 md:p-20 rounded-[3rem] shadow-2xl border-4 border-gray-50 text-center">
+            <div className="text-8xl mb-8 animate-bounce">🦒</div>
+            <h2 className="text-4xl font-black text-gray-800 mb-4 italic uppercase">
               Ayo, Keep Going!
             </h2>
-            <p className="text-gray-400 font-bold mb-8 text-lg px-4 leading-relaxed">
+            <p className="text-gray-400 font-bold mb-8 text-lg">
               You got{" "}
               <span className="text-red-500 font-black">{finalScore}</span>{" "}
               correct. Let's try again!
             </p>
             <button
               onClick={() => setQuizFailed(false)}
-              className="bg-[#2D5A27] text-white px-10 py-5 rounded-[1.5rem] font-black text-lg shadow-2xl uppercase italic w-full max-w-sm"
+              className="bg-[#2D5A27] text-white px-12 py-6 rounded-2xl font-black text-lg shadow-xl uppercase italic"
             >
               Retry Quiz
             </button>
@@ -239,7 +247,6 @@ export default function LessonPlayer() {
           </div>
         )}
 
-        {/* 🏆 Success Modals */}
         <SuccessModal
           isOpen={isModalOpen}
           title="Ẹ kú iṣẹ́!"
