@@ -7,6 +7,9 @@ import {
 import { useAuth } from "./hooks/useAuth";
 import { useEffect, useState } from "react";
 
+// --- 🏗️ LAYOUT COMPONENT ---
+import Layout from "./components/Layout"; // 👈 Make sure this path is correct!
+
 // --- 🌍 SHARED & AUTH PAGES ---
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -51,10 +54,9 @@ import AdminPaymentVerify from "./pages/admin/AdminPaymentVerify";
 
 function App() {
   const { user, loading } = useAuth();
-  
-  // 🔄 Sync Impersonation state with LocalStorage
+
   const [isImpersonating, setIsImpersonating] = useState(
-    localStorage.getItem("is_impersonating") === "true"
+    localStorage.getItem("is_impersonating") === "true",
   );
 
   useEffect(() => {
@@ -63,10 +65,7 @@ function App() {
       setIsImpersonating(active);
     };
 
-    // Listen for storage changes from other tabs/windows
     window.addEventListener("storage", checkImpersonation);
-    
-    // Safety interval for updates in the same window (e.g. clicking 'Enter Classroom')
     const interval = setInterval(checkImpersonation, 500);
 
     return () => {
@@ -75,10 +74,9 @@ function App() {
     };
   }, []);
 
-  // 👑 Unified Admin Check
-  const isActuallyAdmin = user?.role === "admin" || Number(user?.is_admin) === 1;
+  const isActuallyAdmin =
+    user?.role === "admin" || Number(user?.is_admin) === 1;
 
-  // 🛡️ GATEKEEPER LOGIC: Who can enter the Classroom/Syllabus/Lessons?
   const canAccessStudentArea =
     user?.role === "student" ||
     (user?.role === "parent" && isImpersonating) ||
@@ -101,7 +99,7 @@ function App() {
     <Router>
       <div className="min-h-screen bg-gray-50 font-sans selection:bg-[#2D5A27] selection:text-white">
         <Routes>
-          {/* --- 🌍 PUBLIC & SHARED ROUTES --- */}
+          {/* --- 🔓 PUBLIC ROUTES (No Sidebar/Layout) --- */}
           <Route
             path="/login"
             element={!user ? <Login /> : <Navigate to="/dashboard" />}
@@ -111,151 +109,332 @@ function App() {
             element={!user ? <Register /> : <Navigate to="/dashboard" />}
           />
           <Route path="/live-room/:id" element={<LiveRoom />} />
-          <Route path="/parent/view/:studentId" element={<ParentProgressView />} />
-          
+          <Route
+            path="/parent/view/:studentId"
+            element={<ParentProgressView />}
+          />
           <Route
             path="/"
-            element={user ? <Navigate to="/dashboard" /> : <Navigate to="/login" />}
+            element={
+              user ? <Navigate to="/dashboard" /> : <Navigate to="/login" />
+            }
           />
 
-          {/* --- 🏠 MAIN DASHBOARD ROUTER --- */}
+          {/* --- 🔒 PROTECTED ROUTES (All Wrapped in Layout) --- */}
           <Route
-            path="/dashboard"
-            element={!user ? <Navigate to="/login" /> : <Dashboard />}
-          />
+            path="/*"
+            element={
+              !user ? (
+                <Navigate to="/login" />
+              ) : (
+                <Layout>
+                  <Routes>
+                    {/* Shared Dashboard */}
+                    <Route path="/dashboard" element={<Dashboard />} />
 
-          {/* --- 👨‍👩‍👧‍👦 PARENT PORTAL ROUTES --- */}
-          <Route
-            path="/parent/dashboard"
-            element={user?.role === "parent" ? <ParentDashboard /> : <Navigate to="/dashboard" />}
-          />
-          <Route
-            path="/parent/messages"
-            element={user?.role === "parent" ? <ParentMessages /> : <Navigate to="/dashboard" />}
-          />
-          <Route
-            path="/select-courses"
-            element={user?.role === "parent" ? <SelectCourses /> : <Navigate to="/login" />}
-          />
-          <Route
-            path="/payment"
-            element={user?.role === "parent" ? <PaymentPage /> : <Navigate to="/login" />}
-          />
+                    {/* 👨‍👩‍👧‍👦 Parent Portal */}
+                    <Route
+                      path="/parent/dashboard"
+                      element={
+                        user?.role === "parent" ? (
+                          <ParentDashboard />
+                        ) : (
+                          <Navigate to="/dashboard" />
+                        )
+                      }
+                    />
+                    <Route
+                      path="/parent/messages"
+                      element={
+                        user?.role === "parent" ? (
+                          <ParentMessages />
+                        ) : (
+                          <Navigate to="/dashboard" />
+                        )
+                      }
+                    />
+                    <Route
+                      path="/select-courses"
+                      element={
+                        user?.role === "parent" ? (
+                          <SelectCourses />
+                        ) : (
+                          <Navigate to="/login" />
+                        )
+                      }
+                    />
+                    <Route
+                      path="/payment"
+                      element={
+                        user?.role === "parent" ? (
+                          <PaymentPage />
+                        ) : (
+                          <Navigate to="/login" />
+                        )
+                      }
+                    />
 
-          {/* --- 🎓 STUDENT/CLASSROOM ROUTES --- */}
-          {/* 🚀 FIXED: Syllabus/Course Detail Route */}
-          <Route
-            path="/course-detail/:id"
-            element={canAccessStudentArea ? <CourseDetail /> : <Navigate to="/parent/dashboard" />}
-          />
-          
-          <Route
-            path="/courses"
-            element={canAccessStudentArea ? <Courses /> : <Navigate to="/parent/dashboard" />}
-          />
-          
-          <Route
-            path="/lessons/:id"
-            element={canAccessStudentArea ? <LessonPlayer /> : <Navigate to="/parent/dashboard" />}
-          />
-          
-          <Route
-            path="/leaderboard"
-            element={canAccessStudentArea ? <Leaderboard /> : <Navigate to="/parent/dashboard" />}
-          />
-          
-          <Route
-            path="/store"
-            element={canAccessStudentArea ? <RewardsCatalog /> : <Navigate to="/parent/dashboard" />}
-          />
-          
-          <Route
-            path="/my-rewards"
-            element={canAccessStudentArea ? <MyRewards /> : <Navigate to="/parent/dashboard" />}
-          />
-          
-          <Route
-            path="/olu-chat"
-            element={canAccessStudentArea ? <OluChat /> : <Navigate to="/parent/dashboard" />}
-          />
-          
-          <Route
-            path="/analytics/:userId?"
-            element={canAccessStudentArea ? <StudentAnalytics /> : <Navigate to="/parent/dashboard" />}
-          />
+                    {/* 🎓 Student Area */}
+                    <Route
+                      path="/course-detail/:id"
+                      element={
+                        canAccessStudentArea ? (
+                          <CourseDetail />
+                        ) : (
+                          <Navigate to="/parent/dashboard" />
+                        )
+                      }
+                    />
+                    <Route
+                      path="/courses"
+                      element={
+                        canAccessStudentArea ? (
+                          <Courses />
+                        ) : (
+                          <Navigate to="/parent/dashboard" />
+                        )
+                      }
+                    />
+                    <Route
+                      path="/lessons/:id"
+                      element={
+                        canAccessStudentArea ? (
+                          <LessonPlayer />
+                        ) : (
+                          <Navigate to="/parent/dashboard" />
+                        )
+                      }
+                    />
+                    <Route
+                      path="/leaderboard"
+                      element={
+                        canAccessStudentArea ? (
+                          <Leaderboard />
+                        ) : (
+                          <Navigate to="/parent/dashboard" />
+                        )
+                      }
+                    />
+                    <Route
+                      path="/store"
+                      element={
+                        canAccessStudentArea ? (
+                          <RewardsCatalog />
+                        ) : (
+                          <Navigate to="/parent/dashboard" />
+                        )
+                      }
+                    />
+                    <Route
+                      path="/my-rewards"
+                      element={
+                        canAccessStudentArea ? (
+                          <MyRewards />
+                        ) : (
+                          <Navigate to="/parent/dashboard" />
+                        )
+                      }
+                    />
+                    <Route
+                      path="/olu-chat"
+                      element={
+                        canAccessStudentArea ? (
+                          <OluChat />
+                        ) : (
+                          <Navigate to="/parent/dashboard" />
+                        )
+                      }
+                    />
+                    <Route
+                      path="/analytics/:userId?"
+                      element={
+                        canAccessStudentArea ? (
+                          <StudentAnalytics />
+                        ) : (
+                          <Navigate to="/parent/dashboard" />
+                        )
+                      }
+                    />
 
-          {/* --- 🔐 ADMIN ROUTES --- */}
-          <Route
-            path="/admin"
-            element={isActuallyAdmin ? <AdminDashboard /> : <Navigate to="/dashboard" />}
-          />
-          <Route
-            path="/admin/lessons"
-            element={isActuallyAdmin ? <AdminLessonList /> : <Navigate to="/dashboard" />}
-          />
-          <Route
-            path="/admin/add-lesson"
-            element={isActuallyAdmin ? <AdminAddLesson /> : <Navigate to="/dashboard" />}
-          />
-          <Route
-            path="/admin/edit-lesson/:id"
-            element={isActuallyAdmin ? <AdminEditLesson /> : <Navigate to="/dashboard" />}
-          />
-          <Route
-            path="/admin/courses"
-            element={isActuallyAdmin ? <AdminCourses /> : <Navigate to="/dashboard" />}
-          />
-          <Route
-            path="/admin/users"
-            element={isActuallyAdmin ? <AdminUsers /> : <Navigate to="/dashboard" />}
-          />
-          <Route
-            path="/admin/parents"
-            element={isActuallyAdmin ? <AdminParentPortal /> : <Navigate to="/dashboard" />}
-          />
-          <Route
-            path="/admin/questions"
-            element={isActuallyAdmin ? <AdminQuiz /> : <Navigate to="/dashboard" />}
-          />
-          <Route
-            path="/admin/rewards"
-            element={isActuallyAdmin ? <AdminRedemptions /> : <Navigate to="/dashboard" />}
-          />
-          <Route
-            path="/admin/manage-rewards"
-            element={isActuallyAdmin ? <ManageMarketplace /> : <Navigate to="/dashboard" />}
-          />
-          <Route
-            path="/admin/schedule"
-            element={isActuallyAdmin ? <AdminMasterSchedule /> : <Navigate to="/dashboard" />}
-          />
-          <Route
-            path="/admin/analytics"
-            element={isActuallyAdmin ? <AdminAnalytics /> : <Navigate to="/dashboard" />}
-          />
-          <Route
-            path="/admin/live-classes"
-            element={isActuallyAdmin ? <ManageLiveClasses /> : <Navigate to="/dashboard" />}
-          />
-          <Route
-            path="/admin/chats"
-            element={isActuallyAdmin ? <AdminChatList /> : <Navigate to="/dashboard" />}
-          />
-          <Route
-            path="/admin/courses/list"
-            element={isActuallyAdmin ? <AdminCourseList /> : <Navigate to="/dashboard" />}
-          />
-          <Route
-            path="/admin/payments"
-            element={isActuallyAdmin ? <AdminPayments /> : <Navigate to="/dashboard" />}
-          />
-          <Route
-            path="/admin/payments/verify"
-            element={isActuallyAdmin ? <AdminPaymentVerify /> : <Navigate to="/dashboard" />}
-          />
+                    {/* 👑 Admin Area */}
+                    <Route
+                      path="/admin"
+                      element={
+                        isActuallyAdmin ? (
+                          <AdminDashboard />
+                        ) : (
+                          <Navigate to="/dashboard" />
+                        )
+                      }
+                    />
+                    <Route
+                      path="/admin/lessons"
+                      element={
+                        isActuallyAdmin ? (
+                          <AdminLessonList />
+                        ) : (
+                          <Navigate to="/dashboard" />
+                        )
+                      }
+                    />
+                    <Route
+                      path="/admin/add-lesson"
+                      element={
+                        isActuallyAdmin ? (
+                          <AdminAddLesson />
+                        ) : (
+                          <Navigate to="/dashboard" />
+                        )
+                      }
+                    />
+                    <Route
+                      path="/admin/edit-lesson/:id"
+                      element={
+                        isActuallyAdmin ? (
+                          <AdminEditLesson />
+                        ) : (
+                          <Navigate to="/dashboard" />
+                        )
+                      }
+                    />
+                    <Route
+                      path="/admin/courses"
+                      element={
+                        isActuallyAdmin ? (
+                          <AdminCourses />
+                        ) : (
+                          <Navigate to="/dashboard" />
+                        )
+                      }
+                    />
+                    <Route
+                      path="/admin/users"
+                      element={
+                        isActuallyAdmin ? (
+                          <AdminUsers />
+                        ) : (
+                          <Navigate to="/dashboard" />
+                        )
+                      }
+                    />
+                    <Route
+                      path="/admin/parents"
+                      element={
+                        isActuallyAdmin ? (
+                          <AdminParentPortal />
+                        ) : (
+                          <Navigate to="/dashboard" />
+                        )
+                      }
+                    />
+                    <Route
+                      path="/admin/questions"
+                      element={
+                        isActuallyAdmin ? (
+                          <AdminQuiz />
+                        ) : (
+                          <Navigate to="/dashboard" />
+                        )
+                      }
+                    />
+                    <Route
+                      path="/admin/rewards"
+                      element={
+                        isActuallyAdmin ? (
+                          <AdminRedemptions />
+                        ) : (
+                          <Navigate to="/dashboard" />
+                        )
+                      }
+                    />
+                    <Route
+                      path="/admin/manage-rewards"
+                      element={
+                        isActuallyAdmin ? (
+                          <ManageMarketplace />
+                        ) : (
+                          <Navigate to="/dashboard" />
+                        )
+                      }
+                    />
+                    <Route
+                      path="/admin/schedule"
+                      element={
+                        isActuallyAdmin ? (
+                          <AdminMasterSchedule />
+                        ) : (
+                          <Navigate to="/dashboard" />
+                        )
+                      }
+                    />
+                    <Route
+                      path="/admin/analytics"
+                      element={
+                        isActuallyAdmin ? (
+                          <AdminAnalytics />
+                        ) : (
+                          <Navigate to="/dashboard" />
+                        )
+                      }
+                    />
+                    <Route
+                      path="/admin/live-classes"
+                      element={
+                        isActuallyAdmin ? (
+                          <ManageLiveClasses />
+                        ) : (
+                          <Navigate to="/dashboard" />
+                        )
+                      }
+                    />
+                    <Route
+                      path="/admin/chats"
+                      element={
+                        isActuallyAdmin ? (
+                          <AdminChatList />
+                        ) : (
+                          <Navigate to="/dashboard" />
+                        )
+                      }
+                    />
+                    <Route
+                      path="/admin/courses/list"
+                      element={
+                        isActuallyAdmin ? (
+                          <AdminCourseList />
+                        ) : (
+                          <Navigate to="/dashboard" />
+                        )
+                      }
+                    />
+                    <Route
+                      path="/admin/payments"
+                      element={
+                        isActuallyAdmin ? (
+                          <AdminPayments />
+                        ) : (
+                          <Navigate to="/dashboard" />
+                        )
+                      }
+                    />
+                    <Route
+                      path="/admin/payments/verify"
+                      element={
+                        isActuallyAdmin ? (
+                          <AdminPaymentVerify />
+                        ) : (
+                          <Navigate to="/dashboard" />
+                        )
+                      }
+                    />
 
-          {/* 404 Fallback */}
-          <Route path="*" element={<Navigate to="/" />} />
+                    {/* 404 within Layout */}
+                    <Route path="*" element={<Navigate to="/dashboard" />} />
+                  </Routes>
+                </Layout>
+              )
+            }
+          />
         </Routes>
       </div>
     </Router>
