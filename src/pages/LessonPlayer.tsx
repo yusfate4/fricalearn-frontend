@@ -190,7 +190,7 @@ export default function LessonPlayer() {
                           </div>
                         </div>
                         <a
-                          href={content.file_url}
+                          href={`${content.file_url}?fl_attachment`} // Forces the browser to download the PDF
                           target="_blank"
                           rel="noreferrer"
                           className="flex items-center gap-2 bg-[#2D5A27] text-white px-8 py-4 rounded-2xl font-black shadow-lg text-sm uppercase hover:scale-105 transition-transform"
