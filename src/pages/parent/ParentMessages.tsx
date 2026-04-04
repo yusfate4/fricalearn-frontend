@@ -35,13 +35,16 @@ export default function ParentMessages() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
-  // Base storage URL
-  const STORAGE_BASE = "http://127.0.0.1:8000/storage/";
+  // 🚀 THE FIX: Use Cloudinary/Dynamic URL logic instead of hardcoded 127.0.0.1
+  const getMediaUrl = (path: string) => {
+    if (!path) return "";
+    if (path.startsWith("http")) return path;
+    return `https://res.cloudinary.com/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/video/upload/${path}`;
+  };
 
   const fetchMessages = async () => {
     try {
       const res = await api.get("/chat/conversation");
-      // 🚀 The API returns a conversation object with a messages array
       if (res.data && res.data.messages) {
         setMessages(res.data.messages);
       }
@@ -54,7 +57,7 @@ export default function ParentMessages() {
 
   useEffect(() => {
     fetchMessages();
-    const interval = setInterval(fetchMessages, 15000); // 15s sync
+    const interval = setInterval(fetchMessages, 15000); 
     return () => clearInterval(interval);
   }, []);
 
@@ -104,10 +107,7 @@ export default function ParentMessages() {
     if ((!newMessage.trim() && !selectedImage && !selectedAudio) || isSending || isRecording) return;
 
     setIsSending(true);
-    setError(null);
-
     const formData = new FormData();
-    // 🚀 We send receiver_id: 1 (Yusuf/Tutor) and let the backend find the convo
     formData.append("receiver_id", "1"); 
     if (newMessage.trim()) formData.append("message", newMessage);
     if (selectedImage) formData.append("image", selectedImage);
@@ -124,7 +124,7 @@ export default function ParentMessages() {
       setSelectedAudio(null);
       setAudioPreview(null);
     } catch (err: any) {
-      setError(err.response?.data?.message || "Delivery failed. Try again.");
+      setError(err.response?.data?.message || "Delivery failed.");
       setTimeout(() => setError(null), 4000);
     } finally {
       setIsSending(false);
@@ -135,44 +135,47 @@ export default function ParentMessages() {
 
   return (
     <Layout>
-      <div className="max-w-5xl mx-auto p-4 md:p-10 h-[calc(100vh-120px)] flex flex-col">
-        <div className="flex justify-between items-center mb-6 px-2">
+      {/* Container: Full height minus Navbar on mobile, standard max-width on desktop */}
+      <div className="max-w-5xl mx-auto px-2 py-4 md:p-10 h-[calc(100vh-80px)] md:h-[calc(100vh-120px)] flex flex-col">
+        
+        {/* Header: Smaller font on mobile */}
+        <div className="flex justify-between items-center mb-4 md:mb-6 px-2">
             <div>
-                <h1 className="text-3xl md:text-5xl font-black italic uppercase tracking-tighter text-gray-800">Tutor Chat</h1>
-                <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mt-1">Direct line to your child's guide</p>
+                <h1 className="text-2xl md:text-5xl font-black italic uppercase tracking-tighter text-gray-800">Tutor Chat</h1>
+                <p className="text-[8px] md:text-[10px] font-black uppercase text-gray-400 tracking-widest">Secure help line</p>
             </div>
-            <div className="hidden md:flex bg-white px-5 py-3 rounded-2xl border-2 border-gray-100 items-center gap-3 shadow-sm">
-                <ShieldCheck size={20} className="text-[#2D5A27]" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-gray-800">End-to-End Secure</span>
+            <div className="bg-white px-3 py-2 md:px-5 md:py-3 rounded-xl md:rounded-2xl border-2 border-gray-100 flex items-center gap-2 shadow-sm">
+                <ShieldCheck size={14} className="text-[#2D5A27]" />
+                <span className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-gray-800">Secure</span>
             </div>
         </div>
 
-        <div className="bg-white rounded-[2.5rem] md:rounded-[3.5rem] shadow-2xl border-4 border-white overflow-hidden flex flex-col flex-1 relative">
+        {/* Chat Window: Removed massive borders for mobile to maximize space */}
+        <div className="bg-white rounded-[1.5rem] md:rounded-[3.5rem] shadow-xl border-2 md:border-4 border-white overflow-hidden flex flex-col flex-1 relative">
           
-          {/* Chat Window */}
-          <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 md:p-10 space-y-8 bg-gray-50/50 custom-scrollbar">
+          <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 md:p-10 space-y-6 md:space-y-8 bg-gray-50/50 custom-scrollbar">
             {messages.map((m) => {
               const isMe = Number(m.sender_id) === Number(user?.id);
               return (
-                <div key={m.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
-                  <div className={`max-w-[90%] md:max-w-[65%] flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
-                    <div className={`p-4 md:p-6 rounded-[1.8rem] md:rounded-[2.2rem] shadow-sm ${
-                        isMe ? 'bg-[#2D5A27] text-white rounded-tr-none' : 'bg-white text-gray-800 rounded-tl-none border-2 border-gray-100'
+                <div key={m.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-1`}>
+                  <div className={`max-w-[85%] md:max-w-[65%] flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
+                    <div className={`p-4 md:p-6 rounded-[1.2rem] md:rounded-[2.2rem] shadow-sm ${
+                        isMe ? 'bg-[#2D5A27] text-white rounded-tr-none' : 'bg-white text-gray-800 rounded-tl-none border border-gray-100'
                     }`}>
                       {m.image_path && (
                         <img 
-                            src={`${STORAGE_BASE}${m.image_path}`} 
-                            className="rounded-2xl mb-3 max-w-full shadow-sm hover:scale-[1.02] transition-transform cursor-pointer" 
+                            src={getMediaUrl(m.image_path)} 
+                            className="rounded-xl mb-3 max-w-full" 
                             alt="upload" 
                         />
                       )}
                       {m.audio_path && (
-                        <audio controls src={`${STORAGE_BASE}${m.audio_path}`} className="w-full mb-3 h-10" />
+                        <audio controls src={getMediaUrl(m.audio_path)} className="w-full mb-3 h-8 md:h-10" />
                       )}
-                      {m.message && <p className="text-sm md:text-base font-bold leading-relaxed whitespace-pre-wrap">{m.message}</p>}
+                      {m.message && <p className="text-xs md:text-base font-bold leading-relaxed">{m.message}</p>}
                     </div>
-                    <div className="mt-2 px-2 text-[8px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-2">
-                        <Clock size={10} /> {new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    <div className="mt-1 px-2 text-[8px] font-black uppercase tracking-widest text-gray-400">
+                        {new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </div>
                   </div>
                 </div>
@@ -180,53 +183,53 @@ export default function ParentMessages() {
             })}
           </div>
 
-          {/* Error Message */}
-          {error && (
-            <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-20 bg-red-600 text-white px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shadow-2xl animate-in slide-in-from-bottom-4">
-               <AlertCircle size={14} /> {error}
-            </div>
-          )}
-
-          {/* Input & Previews */}
-          <div className="p-4 md:p-8 bg-white border-t-2 border-gray-50">
-            <div className="flex gap-4 mb-4 empty:hidden">
+          {/* Previews: Float above input */}
+          {(imagePreview || audioPreview) && (
+            <div className="px-4 py-2 bg-white flex gap-2 animate-in slide-in-from-bottom-2">
                 {imagePreview && (
-                    <div className="relative group">
-                        <img src={imagePreview} className="h-20 w-20 rounded-2xl object-cover border-2 border-[#2D5A27]" />
-                        <button onClick={() => {setImagePreview(null); setSelectedImage(null);}} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-lg hover:scale-110 transition-transform"><X size={14}/></button>
+                    <div className="relative">
+                        <img src={imagePreview} className="h-14 w-14 rounded-xl object-cover border-2 border-[#2D5A27]" />
+                        <button onClick={() => {setImagePreview(null); setSelectedImage(null);}} className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-1"><X size={10}/></button>
                     </div>
                 )}
                 {audioPreview && (
-                    <div className="relative flex items-center bg-gray-50 p-2 rounded-2xl border-2 border-[#2D5A27] pr-10">
-                        <audio src={audioPreview} controls className="h-10 w-40 md:w-56" />
-                        <button onClick={() => {setAudioPreview(null); setSelectedAudio(null);}} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-lg hover:scale-110 transition-transform"><Trash2 size={14}/></button>
+                    <div className="relative flex items-center bg-gray-50 p-2 rounded-xl border border-[#2D5A27]">
+                        <span className="text-[8px] font-black uppercase mr-2 text-[#2D5A27]">Voice Note OK</span>
+                        <button onClick={() => {setAudioPreview(null); setSelectedAudio(null);}} className="text-red-500"><Trash2 size={14}/></button>
                     </div>
                 )}
             </div>
+          )}
 
+          {/* Input Area: Sticky and compact */}
+          <div className="p-3 md:p-8 bg-white border-t border-gray-50">
             <form onSubmit={handleSendMessage} className="flex gap-2 md:gap-4 items-center">
               <input type="file" ref={fileInputRef} onChange={handleImageSelect} className="hidden" accept="image/*" />
-              <button type="button" onClick={() => fileInputRef.current?.click()} className="p-4 bg-gray-50 rounded-2xl text-gray-400 hover:bg-[#2D5A27]/10 hover:text-[#2D5A27] transition-all"><ImageIcon size={24} /></button>
               
-              {isRecording ? (
-                <button type="button" onClick={stopRecording} className="p-4 bg-red-50 text-red-500 rounded-2xl animate-pulse ring-2 ring-red-100"><Square size={24} fill="currentColor" /></button>
-              ) : (
-                <button type="button" onClick={startRecording} className="p-4 bg-gray-50 rounded-2xl text-gray-400 hover:bg-red-50 hover:text-red-500 transition-all"><Mic size={24} /></button>
-              )}
+              <div className="flex gap-1 md:gap-2">
+                <button type="button" onClick={() => fileInputRef.current?.click()} className="p-3 md:p-4 bg-gray-50 rounded-xl md:rounded-2xl text-gray-400 hover:text-[#2D5A27] transition-all"><ImageIcon size={20} md:size={24} /></button>
+                
+                {isRecording ? (
+                    <button type="button" onClick={stopRecording} className="p-3 md:p-4 bg-red-50 text-red-500 rounded-xl animate-pulse"><Square size={20} fill="currentColor" /></button>
+                ) : (
+                    <button type="button" onClick={startRecording} className="p-3 md:p-4 bg-gray-50 rounded-xl md:rounded-2xl text-gray-400 hover:text-red-500"><Mic size={20} /></button>
+                )}
+              </div>
 
               <input
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
-                placeholder={isRecording ? "Listening..." : "Message Tutor..."}
-                className="flex-1 p-4 md:p-5 bg-gray-50 rounded-[1.5rem] md:rounded-[2rem] outline-none font-bold text-sm border-2 border-transparent focus:border-[#2D5A27] transition-all"
+                placeholder={isRecording ? "Recording..." : "Message..."}
+                className="flex-1 p-3 md:p-5 bg-gray-50 rounded-xl md:rounded-[2rem] outline-none font-bold text-[13px] md:text-sm border-2 border-transparent focus:border-[#2D5A27]"
                 disabled={isSending || isRecording}
               />
+              
               <button 
                 type="submit"
                 disabled={isSending || (!newMessage.trim() && !selectedImage && !selectedAudio)} 
-                className="bg-gray-900 text-white p-4 md:p-5 rounded-full hover:bg-[#2D5A27] transition-all shadow-xl disabled:opacity-30 active:scale-95 flex items-center justify-center min-w-[56px] md:min-w-[64px]"
+                className="bg-gray-900 text-white p-3 md:p-5 rounded-full hover:bg-[#2D5A27] transition-all shadow-lg min-w-[48px] md:min-w-[64px] flex items-center justify-center"
               >
-                {isSending ? <Loader2 className="animate-spin" size={24} /> : <Send size={24} />}
+                {isSending ? <Loader2 className="animate-spin" size={20} /> : <Send size={20} />}
               </button>
             </form>
           </div>
