@@ -40,12 +40,17 @@ export default function AdminPayments() {
 
   const getReceiptUrl = (path: string) => {
     if (!path) return "";
-    // 🚀 Standardized storage path to match your Laravel link
-    const backendBase = "http://127.0.0.1:8000";
+
+    // 🚀 THE CRITICAL FIX: If the path is already a Cloudinary/External URL, return it as is
+    if (path.startsWith("http")) return path;
+
+    // 📂 FALLBACK: For old local files during development
+    const backendBase = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
     const cleanPath = path.replace("public/", "").replace("storage/", "");
     return `${backendBase}/storage/${cleanPath}`;
   };
 
+  
   const handleAction = async (id: number, action: "approve" | "reject") => {
     setProcessingId(id);
     try {
