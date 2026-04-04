@@ -86,14 +86,19 @@ export default function Sidebar() {
       {/* 📱 MOBILE OVERLAY */}
       {isOpen && (
         <div
-          className="md:hidden fixed inset-0 bg-black/40 z-[70] backdrop-blur-sm"
+          /* We use z-[60] so it sits ABOVE the page content but BELOW the sidebar */
+          className="md:hidden fixed inset-0 bg-black/60 z-[60] backdrop-blur-[2px] transition-opacity duration-300"
           onClick={closeSidebar}
         />
       )}
 
       {/* 🏠 MAIN SIDEBAR */}
       <aside
-        className={`fixed inset-y-0 left-0 z-[80] w-72 bg-[#2D5A27] ... ${
+        /* 1. Changed z-index to [70] (Higher than the overlay)
+     2. Added 'fixed top-0 bottom-0' to prevent the white space/cut-off issue
+     3. Ensure 'flex flex-col' is present so items align correctly
+  */
+        className={`fixed top-0 bottom-0 left-0 z-[70] w-72 bg-[#2D5A27] flex flex-col p-6 text-white shadow-2xl transition-transform duration-300 ease-in-out md:translate-x-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
