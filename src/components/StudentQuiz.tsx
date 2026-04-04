@@ -11,7 +11,6 @@ import {
   XCircle,
   Sparkles,
   Loader2,
-  Volume2,
 } from "lucide-react";
 
 interface StudentQuizProps {
@@ -20,6 +19,17 @@ interface StudentQuizProps {
   onQuizComplete: (score: number, passed: boolean) => void;
   onReviewLesson: () => void;
 }
+
+/**
+ * 🔊 PRE-LOAD SOUNDS
+ * Moving these outside the component prevents the "re-loading lag"
+ * and ensures the sounds play exactly when the user clicks.
+ */
+const quizSounds = {
+  correct: new Audio("/sounds/correct-buzzle.mp3"),
+  wrong: new Audio("/sounds/wrong-buzz.mp3"),
+  complete: new Audio("/sounds/quiz-complete.mp3"),
+};
 
 export default function StudentQuiz({
   questions,
@@ -37,18 +47,20 @@ export default function StudentQuiz({
   const currentQuestion = questions[currentIndex];
   const hasAnswered = answers[currentIndex] !== undefined;
 
-  // 🔊 SOUND LOGIC: The "Buzzle" effect
+  /**
+   * 🔊 REFINED SOUND LOGIC
+   */
   const playSound = (type: "correct" | "wrong" | "complete") => {
-    const sounds = {
-      correct: "/sounds/correct-buzzle.mp3",
-      wrong: "/sounds/wrong-buzz.mp3",
-      complete: "/sounds/quiz-complete.mp3",
-    };
-    const audio = new Audio(sounds[type]);
-    audio.play().catch(() => console.log("Audio blocked by browser"));
+    const audio = quizSounds[type];
+    if (audio) {
+      audio.currentTime = 0; // Reset to start
+      audio
+        .play()
+        .catch((err) => console.warn("Audio blocked by browser:", err));
+    }
 
-    // 📱 Added: Gentle vibration for correct answers on mobile
-    if (type === "correct" && navigator.vibrate) {
+    // 📱 Haptic Feedback for Mobile
+    if (type === "correct" && typeof navigator.vibrate === "function") {
       navigator.vibrate(50);
     }
   };
@@ -62,7 +74,7 @@ export default function StudentQuiz({
       });
       setHint(res.data.hint);
     } catch (err) {
-      setHint("Try your best! Focus on the keywords in the question.");
+      setHint("Focus on the main keywords. You've got this!");
     } finally {
       setLoadingHint(false);
     }
@@ -78,7 +90,7 @@ export default function StudentQuiz({
 
     if (isCorrect) {
       setScore((prev) => prev + 1);
-      playSound("correct"); // 🔊 Play correct sound
+      playSound("correct");
 
       setTimeout(() => {
         setIsAnswering(false);
@@ -89,14 +101,14 @@ export default function StudentQuiz({
         }
       }, 1200);
     } else {
-      playSound("wrong"); // 🔊 Play wrong sound
+      playSound("wrong");
       setShowExplanation(true);
       setIsAnswering(false);
     }
   };
 
   const finishQuiz = (finalScore: number) => {
-    playSound("complete"); // 🔊 Play completion sound
+    playSound("complete");
     const passed = finalScore / questions.length >= 0.7;
     onQuizComplete(finalScore, passed);
   };
@@ -145,13 +157,17 @@ export default function StudentQuiz({
   }
 
   return (
-    <div className="space-y-4 md:space-y-8 animate-in fade-in duration-500 max-w-6xl mx-auto pb-10">
+    <div className="space-y-4 md:space-y-8 animate-in fade-in duration-500 max-w-6xl mx-auto pb-10 px-2">
       {/* 🧭 NAVIGATION HEADER */}
       <div className="flex justify-between items-center bg-white p-2 md:p-4 rounded-2xl md:rounded-3xl border-2 border-gray-100 shadow-sm sticky top-0 z-30 backdrop-blur-md bg-white/90">
         <button
           onClick={goPrevious}
           disabled={currentIndex === 0}
-          className={`p-3 md:px-5 md:py-3 rounded-xl font-black uppercase text-[9px] md:text-[10px] tracking-widest transition-all ${currentIndex === 0 ? "text-gray-200" : "text-gray-700 bg-gray-50 hover:bg-[#2D5A27] hover:text-white"}`}
+          className={`p-3 md:px-5 md:py-3 rounded-xl font-black uppercase text-[9px] md:text-[10px] tracking-widest transition-all ${
+            currentIndex === 0
+              ? "text-gray-200"
+              : "text-gray-700 bg-gray-50 hover:bg-[#2D5A27] hover:text-white"
+          }`}
         >
           <ChevronLeft size={18} />
         </button>
@@ -169,7 +185,11 @@ export default function StudentQuiz({
         <button
           onClick={goForward}
           disabled={!hasAnswered || currentIndex + 1 >= questions.length}
-          className={`p-3 md:px-5 md:py-3 rounded-xl font-black uppercase text-[9px] md:text-[10px] tracking-widest transition-all ${!hasAnswered || currentIndex + 1 >= questions.length ? "text-gray-200" : "text-white bg-[#2D5A27] shadow-lg"}`}
+          className={`p-3 md:px-5 md:py-3 rounded-xl font-black uppercase text-[9px] md:text-[10px] tracking-widest transition-all ${
+            !hasAnswered || currentIndex + 1 >= questions.length
+              ? "text-gray-200"
+              : "text-white bg-[#2D5A27] shadow-lg shadow-[#2D5A27]/30"
+          }`}
         >
           <ChevronRight size={18} />
         </button>
@@ -178,7 +198,11 @@ export default function StudentQuiz({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10 items-start relative">
         {/* LEFT: QUESTION CARD */}
         <div
-          className={`bg-white p-6 md:p-12 rounded-[2rem] md:rounded-[3.5rem] shadow-xl border-2 md:border-4 border-white transition-all duration-500 ${showExplanation ? "opacity-40 blur-md pointer-events-none lg:opacity-100 lg:blur-0 lg:pointer-events-auto" : "opacity-100"}`}
+          className={`bg-white p-6 md:p-12 rounded-[2rem] md:rounded-[3.5rem] shadow-xl border-2 md:border-4 border-white transition-all duration-500 ${
+            showExplanation
+              ? "opacity-40 blur-md pointer-events-none lg:opacity-100 lg:blur-0 lg:pointer-events-auto"
+              : "opacity-100"
+          }`}
         >
           {!hasAnswered && (
             <div className="mb-8">
@@ -186,14 +210,17 @@ export default function StudentQuiz({
                 <button
                   onClick={handleGetAIHint}
                   disabled={loadingHint}
-                  className="flex items-center gap-2 text-purple-600 font-black text-[9px] md:text-[10px] uppercase tracking-widest hover:scale-105 transition-all"
+                  className="flex items-center gap-2 text-purple-600 font-black text-[9px] md:text-[10px] uppercase tracking-widest hover:scale-105 transition-all group"
                 >
                   {loadingHint ? (
                     <Loader2 size={14} className="animate-spin" />
                   ) : (
-                    <Sparkles size={14} />
+                    <Sparkles
+                      size={14}
+                      className="group-hover:rotate-12 transition-transform"
+                    />
                   )}
-                  {loadingHint ? "Asking AI Tutor..." : "Need a Hint?"}
+                  {loadingHint ? "Consulting Tutor..." : "Get AI Hint"}
                 </button>
               ) : (
                 <div className="bg-purple-50 border-2 border-purple-100 p-4 md:p-6 rounded-2xl animate-in slide-in-from-top-4">
@@ -221,11 +248,21 @@ export default function StudentQuiz({
                 <button
                   key={letter}
                   onClick={() => handleAnswer(letter)}
-                  className={`w-full p-5 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border-2 font-bold text-left flex justify-between items-center transition-all ${isSelected ? (isCorrect ? "border-green-500 bg-green-50 text-green-700" : "border-red-500 bg-red-50 text-red-700") : "border-gray-50 bg-gray-50 text-gray-600 hover:border-[#2D5A27] hover:bg-white"}`}
+                  className={`w-full p-5 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border-2 font-bold text-left flex justify-between items-center transition-all ${
+                    isSelected
+                      ? isCorrect
+                        ? "border-green-500 bg-green-50 text-green-700"
+                        : "border-red-500 bg-red-50 text-red-700"
+                      : "border-gray-50 bg-gray-50 text-gray-600 hover:border-[#2D5A27] hover:bg-white"
+                  }`}
                 >
                   <span className="flex items-center gap-4 md:gap-6">
                     <span
-                      className={`w-8 h-8 md:w-10 md:h-10 rounded-xl flex items-center justify-center uppercase text-[10px] md:text-xs font-black ${isSelected ? "bg-current text-white" : "bg-white border-2 border-gray-100 text-gray-300"}`}
+                      className={`w-8 h-8 md:w-10 md:h-10 rounded-xl flex items-center justify-center uppercase text-[10px] md:text-xs font-black ${
+                        isSelected
+                          ? "bg-current text-white"
+                          : "bg-white border-2 border-gray-100 text-gray-300"
+                      }`}
                     >
                       {letter}
                     </span>
@@ -245,7 +282,7 @@ export default function StudentQuiz({
           </div>
         </div>
 
-        {/* RIGHT: EXPLANATION MODAL/BOX */}
+        {/* RIGHT: EXPLANATION BOX */}
         {showExplanation && (
           <div className="bg-white p-6 md:p-10 rounded-[2.5rem] md:rounded-[3.5rem] shadow-2xl border-4 border-[#2D5A27]/10 animate-in slide-in-from-bottom-10 lg:sticky lg:top-24 z-20">
             <div className="flex items-center justify-between mb-8">
@@ -276,7 +313,7 @@ export default function StudentQuiz({
             <div className="bg-gray-50 p-6 rounded-3xl mb-8 border-2 border-gray-100 italic text-sm md:text-base text-gray-700 font-bold leading-relaxed">
               "
               {currentQuestion.explanation_text ||
-                "Opps! Let's try that again. Review the explanation above to master this concept."}
+                "Don't worry! Review the explanation and try to master the logic behind this question."}
               "
             </div>
 
@@ -289,7 +326,7 @@ export default function StudentQuiz({
                   finishQuiz(score);
                 }
               }}
-              className="w-full bg-[#2D5A27] text-white py-5 md:py-6 rounded-[1.5rem] md:rounded-[2rem] font-black text-lg md:text-xl flex justify-center items-center gap-4 shadow-xl hover:bg-black transition-all"
+              className="w-full bg-[#2D5A27] text-white py-5 md:py-6 rounded-[1.5rem] md:rounded-[2rem] font-black text-lg md:text-xl flex justify-center items-center gap-4 shadow-xl hover:bg-black active:scale-95 transition-all"
             >
               Next Question <ArrowRight size={24} />
             </button>
