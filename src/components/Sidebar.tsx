@@ -86,15 +86,14 @@ export default function Sidebar() {
       {/* 📱 MOBILE OVERLAY */}
       {isOpen && (
         <div
-          /* Change z-40 to z-[70] */
-          className="md:hidden fixed inset-0 bg-black/60 z-[70] backdrop-blur-sm transition-opacity"
+          className="md:hidden fixed inset-0 bg-black/40 z-[70] backdrop-blur-sm"
           onClick={closeSidebar}
         />
       )}
 
       {/* 🏠 MAIN SIDEBAR */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-72 bg-[#2D5A27] h-full flex flex-col p-6 text-white shadow-2xl transition-transform duration-300 ease-in-out md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-[80] w-72 bg-[#2D5A27] ... ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
