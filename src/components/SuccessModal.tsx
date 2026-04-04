@@ -1,11 +1,11 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trophy, ArrowRight, CheckCircle } from "lucide-react";
+import { Trophy, ArrowRight, CheckCircle, Star } from "lucide-react";
 
 interface SuccessModalProps {
   isOpen: boolean;
-  onConfirm?: () => void; // Standard name
-  onClose?: () => void; // Added as a backup for Admin pages
+  onConfirm?: () => void;
+  onClose?: () => void;
   title?: string;
   message?: string;
   points?: number;
@@ -19,40 +19,69 @@ export default function SuccessModal({
   message,
   points,
 }: SuccessModalProps) {
-  // 👈 THE FIX: Use whichever function was passed (onConfirm or onClose)
   const handleContinue = onConfirm || onClose || (() => {});
 
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.8, opacity: 0 }}
-            className="bg-white rounded-[2.5rem] p-10 max-w-sm w-full text-center shadow-2xl border-4 border-frica-green"
-          >
-            <div
-              className={`w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 ${points ? "bg-yellow-100 text-frica-gold" : "bg-green-100 text-frica-green"}`}
-            >
-              {points ? <Trophy size={40} /> : <CheckCircle size={40} />}
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6 bg-black/70 backdrop-blur-md">
+          
+          {/* ✨ BACKGROUND CELEBRATION (Only if points are earned) */}
+          {points && (
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+               {[...Array(6)].map((_, i) => (
+                 <motion.div
+                   key={i}
+                   initial={{ y: -20, opacity: 0 }}
+                   animate={{ y: [0, 500], opacity: [0, 1, 0] }}
+                   transition={{ duration: 3, repeat: Infinity, delay: i * 0.5 }}
+                   className="absolute text-yellow-400/30"
+                   style={{ left: `${i * 20}%` }}
+                 >
+                   <Star size={Math.random() * 20 + 10} fill="currentColor" />
+                 </motion.div>
+               ))}
             </div>
+          )}
 
-            <h2 className="text-3xl font-black text-gray-800 mb-2">{title}</h2>
+          <motion.div
+            initial={{ scale: 0.9, y: 20, opacity: 0 }}
+            animate={{ scale: 1, y: 0, opacity: 1 }}
+            exit={{ scale: 0.9, y: 20, opacity: 0 }}
+            transition={{ type: "spring", damping: 20, stiffness: 300 }}
+            className="bg-white rounded-[2.5rem] md:rounded-[3.5rem] p-8 md:p-12 max-w-sm w-full text-center shadow-[0_20px_50px_rgba(45,90,39,0.3)] border-4 border-white relative"
+          >
+            {/* 🏆 ICON SECTION */}
+            <motion.div
+              initial={{ rotate: -15, scale: 0 }}
+              animate={{ rotate: 0, scale: 1 }}
+              transition={{ delay: 0.2, type: "spring" }}
+              className={`w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner ${
+                points ? "bg-yellow-50 text-yellow-500" : "bg-green-50 text-[#2D5A27]"
+              }`}
+            >
+              {points ? <Trophy size={48} className="md:size-14" /> : <CheckCircle size={48} className="md:size-14" />}
+            </motion.div>
 
-            <p className="text-gray-600 mb-8 text-lg font-medium">
+            {/* 📝 TEXT SECTION */}
+            <h2 className="text-3xl md:text-4xl font-black text-gray-800 mb-3 italic uppercase tracking-tighter">
+              {title}
+            </h2>
+
+            <p className="text-gray-500 mb-10 text-sm md:text-base font-bold leading-relaxed px-2">
               {message ||
                 (points
-                  ? `Perfect score! You just earned ${points} points.`
-                  : "Action completed!")}
+                  ? `Incredible! You've mastered this lesson and earned ${points} XP.`
+                  : "Great job! Your update has been saved successfully.")}
             </p>
 
+            {/* 🏁 ACTION BUTTON */}
             <button
-              onClick={handleContinue} // 👈 This now works for both cases!
-              className="w-full bg-[#2D5A27] text-white py-5 rounded-2xl font-black text-xl flex items-center justify-center space-x-2 hover:bg-green-800 transition-all shadow-xl active:scale-95"
+              onClick={handleContinue}
+              className="group w-full bg-[#2D5A27] text-white py-5 md:py-6 rounded-2xl md:rounded-[2rem] font-black text-lg md:text-xl flex items-center justify-center gap-3 hover:bg-black transition-all shadow-xl active:scale-95"
             >
-              <span>Continue</span>
-              <ArrowRight size={24} />
+              <span className="uppercase tracking-widest text-[10px] md:text-xs">Continue Journey</span>
+              <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
             </button>
           </motion.div>
         </div>
