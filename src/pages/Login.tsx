@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import {
   Loader2,
@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -25,18 +26,18 @@ const Login = () => {
     setError("");
 
     try {
-      // 🚀 Updated endpoint to /auth/login to match our new AuthController
+      // 🚀 Endpoint updated to /auth/login
       const response = await api.post("/auth/login", { email, password });
 
+      // Store the token for the useAuth hook and sidebar
       localStorage.setItem("token", response.data.token);
 
-      // Go to dashboard
+      // Using window.location.href to force a full refresh and re-run App.tsx logic
       window.location.href = "/dashboard";
     } catch (error: any) {
-      setError(
-        error.response?.data?.message ||
-          "Login failed. Please check your credentials.",
-      );
+      // Catch specific errors like "Email not verified" or "Invalid credentials"
+      const message = error.response?.data?.message || "Login failed. Please check your credentials.";
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -117,7 +118,6 @@ const Login = () => {
                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-400">
                   Password
                 </label>
-                {/* 🚀 ADDED: Forgot Password Link */}
                 <Link 
                   to="/forgot-password" 
                   className="text-[10px] font-black text-[#2D5A27] uppercase tracking-widest hover:underline decoration-2 underline-offset-4"
@@ -171,7 +171,7 @@ const Login = () => {
                 New to the family?{" "}
                 <Link
                   to="/register"
-                  className="text-[#2D5A27] hover:underline decoration-2 underline-offset-4 ml-1"
+                  className="text-[#2D5A27] hover:underline decoration-2 font-black italic underline-offset-4 ml-1"
                 >
                   Enroll Here
                 </Link>
