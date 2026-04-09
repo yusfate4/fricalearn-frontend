@@ -20,12 +20,13 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false); // 🚀 Modal State
   const [error, setError] = useState("");
-  
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    role: "parent", 
+    password_confirmation: "",
+    role: "parent",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -37,7 +38,9 @@ export default function Register() {
       await api.post("/auth/register", formData);
       setShowModal(true); // Show success modal instead of alert
     } catch (error: any) {
-      setError(error.response?.data?.message || "Registration failed. Try again.");
+      setError(
+        error.response?.data?.message || "Registration failed. Try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -50,7 +53,6 @@ export default function Register() {
 
   return (
     <div className="min-h-screen bg-[#FDFCF6] flex flex-col md:flex-row relative">
-      
       {/* --- SUCCESS MODAL --- */}
       {showModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
@@ -62,7 +64,9 @@ export default function Register() {
               Ẹ kú iṣẹ́!
             </h3>
             <p className="text-gray-500 font-bold text-sm leading-relaxed mb-8">
-              Registration successful! Olukọ has sent a <span className="text-[#2D5A27]">verification email</span> to your inbox. Please verify to unlock all features.
+              Registration successful! Olukọ has sent a{" "}
+              <span className="text-[#2D5A27]">verification email</span> to your
+              inbox. Please verify to unlock all features.
             </p>
             <button
               onClick={closeModalAndRedirect}
@@ -91,7 +95,8 @@ export default function Register() {
             Today.
           </h1>
           <p className="text-xl font-medium text-white/80 max-w-md italic leading-relaxed">
-            Join a global community of parents preserving African heritage through language and culture.
+            Join a global community of parents preserving African heritage
+            through language and culture.
           </p>
         </div>
         <div className="flex items-center gap-4 text-white/40 font-black uppercase tracking-widest text-[10px]">
@@ -163,7 +168,7 @@ export default function Register() {
             </div>
 
             {/* Password with Eye Toggle */}
-            <div className="space-y-2">
+            <div className="space-y-2 mb-2">
               <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">
                 Password
               </label>
@@ -179,6 +184,38 @@ export default function Register() {
                   className="w-full pl-14 pr-14 py-5 rounded-[2rem] border-2 border-gray-100 outline-none focus:border-[#2D5A27] transition-all font-bold text-gray-700 bg-white"
                   onChange={(e) =>
                     setFormData({ ...formData, password: e.target.value })
+                  }
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-300 hover:text-[#2D5A27] transition-colors"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+            </div>
+
+            {/* Confirm Password */}
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">
+                Confirm Password
+              </label>
+              <div className="relative group">
+                <Lock
+                  className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#2D5A27] transition-colors"
+                  size={20}
+                />
+                <input
+                  required
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  className="w-full pl-14 pr-14 py-5 rounded-[2rem] border-2 border-gray-100 outline-none focus:border-[#2D5A27] transition-all font-bold text-gray-700 bg-white"
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      password_confirmation: e.target.value,
+                    })
                   }
                 />
                 <button
@@ -208,7 +245,10 @@ export default function Register() {
 
             <p className="text-center text-gray-400 font-bold text-sm">
               Already have an account?{" "}
-              <Link to="/login" className="text-[#2D5A27] underline decoration-2 underline-offset-4 font-black italic">
+              <Link
+                to="/login"
+                className="text-[#2D5A27] underline decoration-2 underline-offset-4 font-black italic"
+              >
                 Login here
               </Link>
             </p>
