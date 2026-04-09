@@ -8,7 +8,7 @@ import { useAuth } from "./hooks/useAuth";
 import { useEffect, useState } from "react";
 
 // --- 🏗️ LAYOUT COMPONENT ---
-import Layout from "./components/Layout"; 
+import Layout from "./components/Layout";
 
 // --- 🌍 SHARED & AUTH PAGES ---
 import Login from "./pages/Login";
@@ -54,7 +54,6 @@ import AdminPaymentVerify from "./pages/admin/AdminPaymentVerify";
 
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
-
 
 function App() {
   const { user, loading } = useAuth();
@@ -112,7 +111,19 @@ function App() {
             path="/register"
             element={!user ? <Register /> : <Navigate to="/dashboard" />}
           />
+
+          {/* 🚀 ADDED: Ensure Forgot/Reset don't redirect to login if user is already there */}
+          <Route
+            path="/forgot-password"
+            element={!user ? <ForgotPassword /> : <Navigate to="/dashboard" />}
+          />
+          <Route
+            path="/reset-password"
+            element={!user ? <ResetPassword /> : <Navigate to="/dashboard" />}
+          />
+
           <Route path="/live-room/:id" element={<LiveRoom />} />
+
           <Route
             path="/parent/view/:studentId"
             element={<ParentProgressView />}
@@ -123,8 +134,6 @@ function App() {
               user ? <Navigate to="/dashboard" /> : <Navigate to="/login" />
             }
           />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
 
           {/* --- 🏠 PROTECTED ROUTES (REMOVE THE WRAPPER HERE) --- */}
           <Route
