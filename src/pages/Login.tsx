@@ -15,7 +15,7 @@ import {
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // 🚀 Password Toggle State
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -25,12 +25,12 @@ const Login = () => {
     setError("");
 
     try {
-      const response = await api.post("/login", { email, password });
+      // 🚀 Updated endpoint to /auth/login to match our new AuthController
+      const response = await api.post("/auth/login", { email, password });
 
-      // 🚀 CRITICAL: Using 'token' to match your Sidebar/App.tsx logic
       localStorage.setItem("token", response.data.token);
 
-      // Go to dashboard (App.tsx will handle role-based redirection)
+      // Go to dashboard
       window.location.href = "/dashboard";
     } catch (error: any) {
       setError(
@@ -44,7 +44,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-[#FDFCF6] flex flex-col md:flex-row">
-      {/* --- LEFT SIDE: BRANDING (Matches Register) --- */}
+      {/* --- LEFT SIDE: BRANDING --- */}
       <div className="hidden md:flex md:w-1/2 bg-[#2D5A27] p-20 flex-col justify-between text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-[#F4B400] rounded-full -mr-32 -mt-32 opacity-20"></div>
 
@@ -113,9 +113,18 @@ const Login = () => {
 
             {/* Password Input with Toggle */}
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">
-                Password
-              </label>
+              <div className="flex justify-between items-center ml-4 mr-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400">
+                  Password
+                </label>
+                {/* 🚀 ADDED: Forgot Password Link */}
+                <Link 
+                  to="/forgot-password" 
+                  className="text-[10px] font-black text-[#2D5A27] uppercase tracking-widest hover:underline decoration-2 underline-offset-4"
+                >
+                  Forgot Password?
+                </Link>
+              </div>
               <div className="relative group">
                 <Lock
                   className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#2D5A27] transition-colors"
