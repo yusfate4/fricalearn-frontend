@@ -5,13 +5,14 @@ import {
   Send, 
   ShieldCheck, 
   Loader2, 
-  Clock,
   Image as ImageIcon,
   Mic,
   Square,
   Trash2,
   X,
-  AlertCircle
+  Headphones,
+  LifeBuoy,
+  User    
 } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 
@@ -35,11 +36,12 @@ export default function ParentMessages() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
-  // 🚀 THE FIX: Use Cloudinary/Dynamic URL logic instead of hardcoded 127.0.0.1
+  // 🚀 CLOUDINARY LOGIC: Ensures media plays in production
   const getMediaUrl = (path: string) => {
     if (!path) return "";
     if (path.startsWith("http")) return path;
-    return `https://res.cloudinary.com/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/video/upload/${path}`;
+    // Fallback for relative paths if needed
+    return `https://res.cloudinary.com/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/all/upload/${path}`;
   };
 
   const fetchMessages = async () => {
@@ -49,7 +51,7 @@ export default function ParentMessages() {
         setMessages(res.data.messages);
       }
     } catch (err) {
-      console.error("Failed to load messages", err);
+      console.error("Failed to load conversation", err);
     } finally {
       setLoading(false);
     }
@@ -108,7 +110,7 @@ export default function ParentMessages() {
 
     setIsSending(true);
     const formData = new FormData();
-    formData.append("receiver_id", "1"); 
+    formData.append("receiver_id", "1"); // Static Admin ID for Support
     if (newMessage.trim()) formData.append("message", newMessage);
     if (selectedImage) formData.append("image", selectedImage);
     if (selectedAudio) formData.append("audio", selectedAudio);
@@ -131,50 +133,54 @@ export default function ParentMessages() {
     }
   };
 
-  if (loading) return <Layout><div className="h-[70vh] flex flex-col items-center justify-center font-black italic uppercase text-gray-400 tracking-widest"><Loader2 className="animate-spin mb-4" size={40} /> Syncing Channel...</div></Layout>;
+  if (loading) return <Layout><div className="h-[70vh] flex flex-col items-center justify-center font-black italic uppercase text-gray-400 tracking-widest"><Loader2 className="animate-spin mb-4" size={40} /> Connecting to Support...</div></Layout>;
 
   return (
     <Layout>
-      {/* Container: Full height minus Navbar on mobile, standard max-width on desktop */}
-      <div className="max-w-5xl mx-auto px-2 py-4 md:p-10 h-[calc(100vh-80px)] md:h-[calc(100vh-120px)] flex flex-col">
+      <div className="max-w-5xl mx-auto px-4 py-6 md:p-10 h-[calc(100vh-100px)] flex flex-col">
         
-        {/* Header: Smaller font on mobile */}
-        <div className="flex justify-between items-center mb-4 md:mb-6 px-2">
-            <div>
-                <h1 className="text-2xl md:text-5xl font-black italic uppercase tracking-tighter text-gray-800">Tutor Chat</h1>
-                <p className="text-[8px] md:text-[10px] font-black uppercase text-gray-400 tracking-widest">Secure help line</p>
+        {/* --- REBRANDED SUPPORT HEADER --- */}
+        <div className="flex justify-between items-center mb-6 px-2">
+            <div className="flex items-center gap-4">
+                <div className="bg-gray-900 p-3 rounded-2xl text-white shadow-lg">
+                    <Headphones size={24} />
+                </div>
+                <div>
+                    <h1 className="text-2xl md:text-4xl font-black italic uppercase tracking-tighter text-gray-800">Support <span className="text-[#2D5A27]">Desk</span></h1>
+                    <p className="text-[8px] md:text-[10px] font-black uppercase text-gray-400 tracking-widest">FricaLearn Official Admin Channel</p>
+                </div>
             </div>
-            <div className="bg-white px-3 py-2 md:px-5 md:py-3 rounded-xl md:rounded-2xl border-2 border-gray-100 flex items-center gap-2 shadow-sm">
-                <ShieldCheck size={14} className="text-[#2D5A27]" />
-                <span className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-gray-800">Secure</span>
+            <div className="bg-white px-4 py-2 rounded-2xl border-2 border-gray-100 flex items-center gap-2 shadow-sm">
+                <ShieldCheck size={14} className="text-blue-500" />
+                <span className="text-[9px] font-black uppercase tracking-widest text-gray-800">Verified</span>
             </div>
         </div>
 
-        {/* Chat Window: Removed massive borders for mobile to maximize space */}
-        <div className="bg-white rounded-[1.5rem] md:rounded-[3.5rem] shadow-xl border-2 md:border-4 border-white overflow-hidden flex flex-col flex-1 relative">
+        <div className="bg-white rounded-[2rem] md:rounded-[3.5rem] shadow-xl border-4 border-white overflow-hidden flex flex-col flex-1 relative">
           
-          <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 md:p-10 space-y-6 md:space-y-8 bg-gray-50/50 custom-scrollbar">
+          <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 md:p-10 space-y-6 bg-gray-50/50 custom-scrollbar">
             {messages.map((m) => {
               const isMe = Number(m.sender_id) === Number(user?.id);
               return (
                 <div key={m.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-1`}>
                   <div className={`max-w-[85%] md:max-w-[65%] flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
-                    <div className={`p-4 md:p-6 rounded-[1.2rem] md:rounded-[2.2rem] shadow-sm ${
+                    <div className={`p-5 rounded-[1.8rem] shadow-sm relative ${
                         isMe ? 'bg-[#2D5A27] text-white rounded-tr-none' : 'bg-white text-gray-800 rounded-tl-none border border-gray-100'
                     }`}>
+                       <div className="flex items-center gap-2 mb-2 opacity-40">
+                         {isMe ? <User size={10}/> : <LifeBuoy size={10}/>}
+                         <span className="text-[8px] font-black uppercase tracking-widest">{isMe ? "Parent" : "FricaLearn Admin"}</span>
+                       </div>
+
                       {m.image_path && (
-                        <img 
-                            src={getMediaUrl(m.image_path)} 
-                            className="rounded-xl mb-3 max-w-full" 
-                            alt="upload" 
-                        />
+                        <img src={getMediaUrl(m.image_path)} className="rounded-xl mb-3 max-w-full border-2 border-white/20" alt="upload" />
                       )}
                       {m.audio_path && (
-                        <audio controls src={getMediaUrl(m.audio_path)} className="w-full mb-3 h-8 md:h-10" />
+                        <audio controls src={getMediaUrl(m.audio_path)} className="w-full mb-3 h-10" />
                       )}
-                      {m.message && <p className="text-xs md:text-base font-bold leading-relaxed">{m.message}</p>}
+                      {m.message && <p className="text-sm md:text-base font-bold leading-relaxed">{m.message}</p>}
                     </div>
-                    <div className="mt-1 px-2 text-[8px] font-black uppercase tracking-widest text-gray-400">
+                    <div className="mt-1 px-4 text-[8px] font-black uppercase tracking-widest text-gray-400">
                         {new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </div>
                   </div>
@@ -183,53 +189,55 @@ export default function ParentMessages() {
             })}
           </div>
 
-          {/* Previews: Float above input */}
+          {/* Previews */}
           {(imagePreview || audioPreview) && (
-            <div className="px-4 py-2 bg-white flex gap-2 animate-in slide-in-from-bottom-2">
+            <div className="px-6 py-4 bg-white border-t flex gap-4 animate-in slide-in-from-bottom-2">
                 {imagePreview && (
                     <div className="relative">
-                        <img src={imagePreview} className="h-14 w-14 rounded-xl object-cover border-2 border-[#2D5A27]" />
-                        <button onClick={() => {setImagePreview(null); setSelectedImage(null);}} className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-1"><X size={10}/></button>
+                        <img src={imagePreview} className="h-16 w-16 rounded-2xl object-cover border-2 border-[#2D5A27]" />
+                        <button onClick={() => {setImagePreview(null); setSelectedImage(null);}} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-md"><X size={12}/></button>
                     </div>
                 )}
                 {audioPreview && (
-                    <div className="relative flex items-center bg-gray-50 p-2 rounded-xl border border-[#2D5A27]">
-                        <span className="text-[8px] font-black uppercase mr-2 text-[#2D5A27]">Voice Note OK</span>
-                        <button onClick={() => {setAudioPreview(null); setSelectedAudio(null);}} className="text-red-500"><Trash2 size={14}/></button>
+                    <div className="relative flex items-center bg-gray-50 px-4 py-2 rounded-2xl border-2 border-blue-100">
+                        <Mic size={16} className="text-blue-500 mr-2" />
+                        <span className="text-[9px] font-black uppercase text-blue-900 tracking-wider">Voice Note Ready</span>
+                        <button onClick={() => {setAudioPreview(null); setSelectedAudio(null);}} className="ml-4 text-red-500 hover:scale-110 transition-transform"><Trash2 size={16}/></button>
                     </div>
                 )}
             </div>
           )}
 
-          {/* Input Area: Sticky and compact */}
-          <div className="p-3 md:p-8 bg-white border-t border-gray-50">
-            <form onSubmit={handleSendMessage} className="flex gap-2 md:gap-4 items-center">
+          <div className="p-4 md:p-8 bg-white border-t border-gray-100">
+            <form onSubmit={handleSendMessage} className="flex gap-3 md:gap-4 items-center">
               <input type="file" ref={fileInputRef} onChange={handleImageSelect} className="hidden" accept="image/*" />
               
-              <div className="flex gap-1 md:gap-2">
-                <button type="button" onClick={() => fileInputRef.current?.click()} className="p-3 md:p-4 bg-gray-50 rounded-xl md:rounded-2xl text-gray-400 hover:text-[#2D5A27] transition-all"><ImageIcon size={20} md:size={24} /></button>
+              <div className="flex gap-2">
+                <button type="button" onClick={() => fileInputRef.current?.click()} className="p-4 bg-gray-50 rounded-2xl text-gray-400 hover:text-gray-900 transition-all">
+                  <ImageIcon size={22} />
+                </button>
                 
                 {isRecording ? (
-                    <button type="button" onClick={stopRecording} className="p-3 md:p-4 bg-red-50 text-red-500 rounded-xl animate-pulse"><Square size={20} fill="currentColor" /></button>
+                    <button type="button" onClick={stopRecording} className="p-4 bg-red-50 text-red-500 rounded-2xl animate-pulse shadow-inner"><Square size={22} fill="currentColor" /></button>
                 ) : (
-                    <button type="button" onClick={startRecording} className="p-3 md:p-4 bg-gray-50 rounded-xl md:rounded-2xl text-gray-400 hover:text-red-500"><Mic size={20} /></button>
+                    <button type="button" onClick={startRecording} className="p-4 bg-gray-50 rounded-2xl text-gray-400 hover:text-blue-500 transition-all"><Mic size={22} /></button>
                 )}
               </div>
 
               <input
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
-                placeholder={isRecording ? "Recording..." : "Message..."}
-                className="flex-1 p-3 md:p-5 bg-gray-50 rounded-xl md:rounded-[2rem] outline-none font-bold text-[13px] md:text-sm border-2 border-transparent focus:border-[#2D5A27]"
+                placeholder={isRecording ? "Recording your message..." : "How can we help?"}
+                className="flex-1 p-4 md:p-6 bg-gray-50 rounded-2xl md:rounded-[2.5rem] outline-none font-bold text-sm border-2 border-transparent focus:border-gray-900 transition-all"
                 disabled={isSending || isRecording}
               />
               
               <button 
                 type="submit"
                 disabled={isSending || (!newMessage.trim() && !selectedImage && !selectedAudio)} 
-                className="bg-gray-900 text-white p-3 md:p-5 rounded-full hover:bg-[#2D5A27] transition-all shadow-lg min-w-[48px] md:min-w-[64px] flex items-center justify-center"
+                className="bg-gray-900 text-white p-5 md:p-6 rounded-full hover:bg-[#2D5A27] transition-all shadow-xl disabled:opacity-30 flex items-center justify-center"
               >
-                {isSending ? <Loader2 className="animate-spin" size={20} /> : <Send size={20} />}
+                {isSending ? <Loader2 className="animate-spin" size={24} /> : <Send size={24} />}
               </button>
             </form>
           </div>

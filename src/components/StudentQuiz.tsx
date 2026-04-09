@@ -22,8 +22,6 @@ interface StudentQuizProps {
 
 /**
  * 🔊 PRE-LOAD SOUNDS
- * Moving these outside the component prevents the "re-loading lag"
- * and ensures the sounds play exactly when the user clicks.
  */
 const quizSounds = {
   correct: new Audio("/sounds/correct-buzzle.mp3"),
@@ -37,7 +35,7 @@ export default function StudentQuiz({
   onReviewLesson,
 }: StudentQuizProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [score, setScore] = useState(0);
+  const [score, setScore] = useState(0); // This tracks number of correct answers
   const [showExplanation, setShowExplanation] = useState(false);
   const [isAnswering, setIsAnswering] = useState(false);
   const [hint, setHint] = useState<string | null>(null);
@@ -53,13 +51,12 @@ export default function StudentQuiz({
   const playSound = (type: "correct" | "wrong" | "complete") => {
     const audio = quizSounds[type];
     if (audio) {
-      audio.currentTime = 0; // Reset to start
+      audio.currentTime = 0;
       audio
         .play()
         .catch((err) => console.warn("Audio blocked by browser:", err));
     }
 
-    // 📱 Haptic Feedback for Mobile
     if (type === "correct" && typeof navigator.vibrate === "function") {
       navigator.vibrate(50);
     }
@@ -89,7 +86,8 @@ export default function StudentQuiz({
     setAnswers((prev) => ({ ...prev, [currentIndex]: selectedOption }));
 
     if (isCorrect) {
-      setScore((prev) => prev + 1);
+      const newScore = score + 1;
+      setScore(newScore);
       playSound("correct");
 
       setTimeout(() => {
@@ -97,7 +95,7 @@ export default function StudentQuiz({
         if (currentIndex + 1 < questions.length) {
           setCurrentIndex((prev) => prev + 1);
         } else {
-          finishQuiz(score + 1);
+          finishQuiz(newScore); // Use updated score
         }
       }, 1200);
     } else {
@@ -107,10 +105,21 @@ export default function StudentQuiz({
     }
   };
 
-  const finishQuiz = (finalScore: number) => {
+  /**
+   * 🏆 FINISH QUIZ LOGIC (Item 5 & 6)
+   * Calculates points based on 5 points per correct answer.
+   */
+  const finishQuiz = (finalCorrectCount: number) => {
     playSound("complete");
-    const passed = finalScore / questions.length >= 0.7;
-    onQuizComplete(finalScore, passed);
+
+    // Calculate total points (5 points per correct question)
+    const totalPoints = finalCorrectCount * 5;
+
+    // Calculate passing grade (70%)
+    const passed = finalCorrectCount / questions.length >= 0.7;
+
+    // Send the points value back to the parent component
+    onQuizComplete(totalPoints, passed);
   };
 
   const goPrevious = () => {
@@ -220,7 +229,7 @@ export default function StudentQuiz({
                       className="group-hover:rotate-12 transition-transform"
                     />
                   )}
-                  {loadingHint ? "Consulting Tutor..." : "Get AI Hint"}
+                  {loadingHint ? "Consulting Oluko..." : "Get Hint from Oluko"}
                 </button>
               ) : (
                 <div className="bg-purple-50 border-2 border-purple-100 p-4 md:p-6 rounded-2xl animate-in slide-in-from-top-4">
@@ -289,7 +298,7 @@ export default function StudentQuiz({
               <div className="flex items-center gap-3 text-red-500">
                 <AlertCircle size={24} />
                 <span className="font-black uppercase italic text-lg tracking-tighter">
-                  Tutor Correction
+                  Oluko's Tip
                 </span>
               </div>
               <button
@@ -313,7 +322,7 @@ export default function StudentQuiz({
             <div className="bg-gray-50 p-6 rounded-3xl mb-8 border-2 border-gray-100 italic text-sm md:text-base text-gray-700 font-bold leading-relaxed">
               "
               {currentQuestion.explanation_text ||
-                "Don't worry! Review the explanation and try to master the logic behind this question."}
+                "Take a moment to learn from this mistake. You're doing great!"}
               "
             </div>
 
@@ -328,7 +337,7 @@ export default function StudentQuiz({
               }}
               className="w-full bg-[#2D5A27] text-white py-5 md:py-6 rounded-[1.5rem] md:rounded-[2rem] font-black text-lg md:text-xl flex justify-center items-center gap-4 shadow-xl hover:bg-black active:scale-95 transition-all"
             >
-              Next Question <ArrowRight size={24} />
+              Continue Quiz <ArrowRight size={24} />
             </button>
           </div>
         )}

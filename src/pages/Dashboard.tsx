@@ -11,6 +11,8 @@ import {
   ChevronRight,
   ArrowLeftCircle,
   Loader2,
+  Clock,
+  MessageCircle,
 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { LiveClassCard } from "../components/LiveClass/LiveClassCard";
@@ -79,14 +81,26 @@ export default function Dashboard() {
 
   const profile = data?.student_profile;
   const totalPoints = profile?.total_points || 0;
+  
+  // 🕒 AI Time Management Logic (Item 10)
+  const aiMinutesUsed = profile?.daily_ai_minutes || 0;
+  const aiMinutesLeft = Math.max(120 - aiMinutesUsed, 0);
+
+  // 🌍 Dynamic Greeting Map (Item 5)
+  const greetingMap: Record<string, string> = {
+    Yoruba: "Ẹ káàbọ̀",
+    Igbo: "Nnoo",
+    Hausa: "Barka da zuwa",
+    English: "Welcome",
+  };
+
   const currentLevelPoints = totalPoints % 500;
   const progressPercent = Math.min((currentLevelPoints / 500) * 100, 100);
-  const displayTrack =
-    data?.current_track || profile?.learning_language || "Discovering...";
+  const languageTrack = profile?.learning_language || "Yoruba";
+  const welcomeText = greetingMap[languageTrack] || greetingMap.Yoruba;
 
   return (
     <Layout>
-      {/* 🚀 IMPERSONATION BANNER: Mobile Responsive padding and text size */}
       {isImpersonating && (
         <div className="bg-yellow-400 p-3 mb-6 rounded-2xl flex flex-col sm:flex-row items-center justify-between px-4 md:px-6 shadow-lg mx-4 md:mx-10 mt-6 animate-in slide-in-from-top duration-500 gap-3">
           <div className="flex items-center gap-3">
@@ -105,9 +119,10 @@ export default function Dashboard() {
       )}
 
       <div className="max-w-6xl mx-auto px-4 py-6 md:p-10">
+        {/* 👋 Personalized Greeting Section */}
         <div className="mb-8 md:mb-10 animate-in fade-in slide-in-from-left duration-500">
           <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-gray-800 mb-2 italic uppercase tracking-tighter leading-none">
-            Ẹ káàbọ̀, <br className="md:hidden" /> {data?.name}! 👋
+            {welcomeText}, <br className="md:hidden" /> {data?.name || "Explorer"}! 👋
           </h1>
           <p className="text-gray-500 font-bold text-base md:text-lg mt-2">
             You are officially a{" "}
@@ -129,8 +144,7 @@ export default function Dashboard() {
                   Current Status
                 </p>
                 <h2 className="text-2xl md:text-4xl font-black text-gray-800 italic uppercase tracking-tight leading-none">
-                  Level{" "}
-                  {profile?.current_level || Math.floor(totalPoints / 500) + 1}
+                  Level {Math.floor(totalPoints / 500) + 1}
                 </h2>
               </div>
             </div>
@@ -138,10 +152,7 @@ export default function Dashboard() {
             <div className="space-y-4 relative z-10">
               <div className="flex justify-between items-end px-1">
                 <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">
-                  Rank:{" "}
-                  <span className="text-[#2D5A27] italic">
-                    {profile?.rank || "Akeko"}
-                  </span>
+                  Rank: <span className="text-[#2D5A27] italic">{profile?.rank || "Akeko"}</span>
                 </p>
                 <p className="text-[8px] md:text-[10px] font-black text-gray-400 uppercase">
                   {Math.max(500 - currentLevelPoints, 0)} XP to Next
@@ -156,54 +167,51 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Points Sidebar */}
+          {/* Points & Oluko Time Sidebar */}
           <div className="space-y-4 md:space-y-6">
             <div className="bg-[#2D5A27] p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden">
-              <div className="absolute -bottom-4 -right-4 opacity-10">
-                <Zap size={80} md:size={100} />
-              </div>
-              <p className="text-[9px] md:text-[10px] font-black opacity-60 uppercase tracking-widest mb-1">
-                Total XP Earned
-              </p>
-              <h3 className="text-5xl md:text-6xl font-black mb-4 md:mb-6 tracking-tighter italic">
-                {totalPoints}
-              </h3>
+              <p className="text-[9px] md:text-[10px] font-black opacity-60 uppercase tracking-widest mb-1">Total Points</p>
+              <h3 className="text-5xl md:text-6xl font-black mb-4 md:mb-6 tracking-tighter italic">{totalPoints}</h3>
               <button
                 onClick={() => navigate("/leaderboard")}
                 className="w-full py-4 bg-white/10 rounded-2xl text-[9px] md:text-[10px] font-black uppercase tracking-widest hover:bg-white/20 transition-all border border-white/5"
               >
-                View Global Ranks{" "}
-                <ChevronRight size={14} className="inline ml-1" />
+                View Global Ranks <ChevronRight size={14} className="inline ml-1" />
               </button>
             </div>
 
-            <div className="bg-white p-5 md:p-6 rounded-2xl md:rounded-[2rem] border-2 border-gray-50 flex items-center gap-4 shadow-sm">
-              <div className="bg-blue-50 p-3 md:p-4 rounded-xl md:rounded-2xl text-blue-500 shadow-inner flex-shrink-0">
-                <BookOpen size={20} md:size={24} />
+            {/* 🕒 Oluko AI Timer Card (Item 10) */}
+            <div className="bg-white p-5 md:p-6 rounded-2xl md:rounded-[2rem] border-2 border-gray-50 shadow-sm">
+              <div className="flex items-center gap-4 mb-3">
+                <div className="bg-purple-50 p-3 rounded-xl text-purple-600">
+                  <MessageCircle size={20} />
+                </div>
+                <div>
+                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Oluko (AI) Time</p>
+                  <p className="text-sm font-black text-gray-800">{aiMinutesLeft} mins left today</p>
+                </div>
               </div>
-              <div className="truncate">
-                <p className="text-[9px] md:text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                  Active Track
-                </p>
-                <p className="text-lg md:text-xl font-black text-gray-800 italic uppercase truncate">
-                  {displayTrack}
-                </p>
+              <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+                <div 
+                  className={`h-full transition-all duration-500 ${aiMinutesLeft < 20 ? 'bg-red-500' : 'bg-purple-500'}`}
+                  style={{ width: `${(aiMinutesLeft / 120) * 100}%` }}
+                ></div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Action CTA: Stack on mobile, row on desktop */}
+        {/* Action CTA */}
         <div className="bg-gradient-to-br from-[#2D5A27] to-black rounded-[2.5rem] md:rounded-[3.5rem] p-8 md:p-14 text-white flex flex-col md:flex-row items-center justify-between shadow-2xl relative overflow-hidden group">
           <div className="relative z-10 text-center md:text-left mb-8 md:mb-0">
             <h2 className="text-3xl md:text-5xl font-black mb-4 md:mb-8 leading-tight italic tracking-tighter">
-              Your next adventure <br className="hidden md:block" /> is waiting!
+              Ready to learn <br className="hidden md:block" /> with Oluko?
             </h2>
             <button
               onClick={() => navigate("/courses")}
               className="w-full md:w-auto bg-yellow-400 text-black px-8 py-5 md:px-12 md:py-6 rounded-2xl md:rounded-[2.5rem] font-black text-xl md:text-2xl flex items-center justify-center gap-4 hover:scale-105 transition-all shadow-xl uppercase italic"
             >
-              <PlayCircle size={24} md:size={32} /> Start Lesson
+              <PlayCircle size={24} md:size={32} /> Go to Lessons
             </button>
           </div>
           <div className="hidden lg:block opacity-20 group-hover:opacity-40 transition-opacity">
@@ -213,9 +221,9 @@ export default function Dashboard() {
 
         {/* Live Classes Section */}
         {liveClasses.length > 0 && (
-          <section className="mt-12 md:mt-16 animate-in fade-in slide-in-from-bottom duration-700">
+          <section className="mt-12 md:mt-16">
             <h2 className="text-2xl md:text-3xl font-black text-gray-800 uppercase italic tracking-tighter mb-6 md:mb-8 px-2">
-              Active Tribe Meetings
+              Upcoming Tribe Meetings
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {liveClasses.map((lc) => (
@@ -231,17 +239,7 @@ export default function Dashboard() {
 
 function ShieldCheck({ size, className }: any) {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="3"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
       <path d="m9 12 2 2 4-4" />
     </svg>

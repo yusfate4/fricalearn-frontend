@@ -139,7 +139,7 @@ export default function Sidebar() {
                       className="text-[#F4B400] animate-pulse"
                     />
                   }
-                  label="Talk to Olu (AI)"
+                  label="Talk to Olukọ (AI Tutor)"
                   active={isActive("/olu-chat")}
                   onClick={closeSidebar}
                 />
@@ -197,14 +197,14 @@ export default function Sidebar() {
                 <SidebarLink
                   to="/parent/messages"
                   icon={<MessageCircle size={20} className="text-blue-300" />}
-                  label="Tutor Chat"
+                  label="Admin Chat"
                   active={isActive("/parent/messages")}
                   onClick={closeSidebar}
                 />
               </div>
             )}
 
-            {/* --- 👑 ADMIN MENU (RESTORED) --- */}
+            {/* --- 👑 ADMIN MENU --- */}
             {isAdmin && (
               <div className="mt-6 pt-6 border-t border-white/10 space-y-1">
                 <SectionHeader
