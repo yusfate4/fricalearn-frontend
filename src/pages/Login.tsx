@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import api from "../api/axios";
 import {
   Loader2,
@@ -11,15 +11,20 @@ import {
   Eye,
   EyeOff,
   ArrowLeft,
+  Info,
 } from "lucide-react";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  
+  // Check if we arrived here from registration (to show a friendly reminder)
+  const successMsg = location.state?.message;
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,12 +33,24 @@ const Login: React.FC = () => {
 
     try {
       const response = await api.post("/auth/login", { email, password });
+      
       localStorage.setItem("token", response.data.token);
       // Force refresh to initialize dashboard with new token
       window.location.href = "/dashboard";
+      
     } catch (error: any) {
-      const message = error.response?.data?.message || "Login failed. Please check your credentials.";
-      setError(message);
+      if (error.response?.status === 403 && error.response?.data?.status === 'unverified') {
+        // 🚀 THE FIX: Redirect to the verification notice page
+        navigate("/verify-notice", { 
+          state: { 
+            email: error.response.data.email,
+            message: error.response.data.message 
+          } 
+        });
+      } else {
+        const message = error.response?.data?.message || "Login failed. Please check your credentials.";
+        setError(message);
+      }
     } finally {
       setLoading(false);
     }
@@ -53,7 +70,6 @@ const Login: React.FC = () => {
 
       {/* --- LEFT SIDE: BRANDING --- */}
       <div className="hidden md:flex md:w-1/2 bg-[#1A1A40] p-20 flex-col justify-between text-white relative overflow-hidden">
-        {/* Decorative Elements */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-green-600 rounded-full -mr-32 -mt-32 opacity-20"></div>
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-green-600 rounded-full -ml-24 -mb-24 opacity-10"></div>
 
@@ -65,7 +81,7 @@ const Login: React.FC = () => {
         </div>
 
         <div className="relative z-10">
-          <h1 className="text-6xl font-black leading-none mb-6 italic uppercase tracking-tighter">
+          <h1 className="text-6xl font-black leading-none mb-6 italic uppercase tracking-tighter text-white">
             Welcome <br /> <span className="text-green-500">Back</span> Parent.
           </h1>
           <p className="text-xl font-medium text-white/80 max-w-md italic leading-relaxed">
@@ -91,6 +107,14 @@ const Login: React.FC = () => {
             </p>
           </div>
 
+          {/* Registration Success Message */}
+          {successMsg && !error && (
+            <div className="mb-6 p-4 bg-green-50 border-2 border-green-100 text-[#2D5A27] rounded-2xl flex items-center gap-3 font-black text-[11px] uppercase tracking-tight">
+              <Info size={18} /> {successMsg}
+            </div>
+          )}
+
+          {/* Error Message */}
           {error && (
             <div className="mb-6 p-4 bg-red-50 border-2 border-red-100 text-red-600 rounded-2xl flex items-center gap-2 font-black text-[11px] uppercase tracking-tight">
               <AlertCircle size={18} /> {error}
@@ -98,7 +122,6 @@ const Login: React.FC = () => {
           )}
 
           <form onSubmit={handleLogin} className="space-y-5">
-            {/* Email Input */}
             <div className="space-y-1">
               <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-5">
                 Email Address
@@ -112,13 +135,13 @@ const Login: React.FC = () => {
                   required
                   type="email"
                   placeholder="parent@example.com"
+                  autoComplete="email"
                   className="w-full pl-14 pr-6 py-4 rounded-[2rem] border-2 border-gray-100 outline-none focus:border-[#2D5A27] transition-all font-bold text-gray-700 bg-white placeholder:text-gray-200"
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
             </div>
 
-            {/* Password Input */}
             <div className="space-y-1">
               <div className="flex justify-between items-center ml-5 mr-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-400">
@@ -140,6 +163,7 @@ const Login: React.FC = () => {
                   required
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
+                  autoComplete="current-password"
                   className="w-full pl-14 pr-14 py-4 rounded-[2rem] border-2 border-gray-100 outline-none focus:border-[#2D5A27] transition-all font-bold text-gray-700 bg-white placeholder:text-gray-200"
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -153,7 +177,6 @@ const Login: React.FC = () => {
               </div>
             </div>
 
-            {/* Submit Button */}
             <button
               disabled={loading}
               type="submit"
