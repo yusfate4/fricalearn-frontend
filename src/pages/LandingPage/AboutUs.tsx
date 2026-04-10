@@ -9,7 +9,7 @@ const AboutUs: React.FC = () => {
           <div className="w-full lg:w-1/2 relative">
             <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl">
               <img
-                src="../src/assets/about-culture.png"
+                src="/about-culture.png"
                 alt="African heritage and learning"
                 className="w-full h-[400px] md:h-[500px] object-cover"
               />

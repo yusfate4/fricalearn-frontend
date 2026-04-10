@@ -36,7 +36,7 @@ const Hero: React.FC = () => {
         <div className="mt-12 lg:mt-0 lg:w-1/2 relative">
           <div className="rounded-3xl shadow-2xl overflow-hidden border-8 border-white">
             <img
-              src="../src/assets/hero-learning.png"
+              src="/hero-learning.png"
               alt="Child learning with a FricaLearn Tutor"
               className="w-full object-cover h-[500px]"
             />

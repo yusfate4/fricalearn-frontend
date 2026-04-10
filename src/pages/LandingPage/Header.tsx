@@ -31,7 +31,7 @@ const Header: React.FC = () => {
         {/* 🖼️ Logo Integration */}
         <Link to="/" className="flex items-center gap-2 group">
           <img
-            src="../src/assets/logo.png"
+            src="/logo.png"
             alt="FricaLearn Logo"
             className="h-10 md:h-12 w-auto object-contain transition-transform group-hover:scale-105"
           />
