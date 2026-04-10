@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FaCheckCircle, FaTimes } from "react-icons/fa";
-import api from "../api/axios"; // 🚀 Use your existing axios instance
+import api from "../../api/axios"; 
 
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
