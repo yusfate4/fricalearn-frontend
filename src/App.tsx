@@ -10,6 +10,9 @@ import { useEffect, useState } from "react";
 // --- 🏗️ LAYOUT COMPONENT ---
 import Layout from "./components/Layout";
 
+// --- 🚀 NEW LANDING PAGE ---
+import LandingPage from "./pages/LandingPage"; // Ensure this matches your folder name
+
 // --- 🌍 SHARED & AUTH PAGES ---
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -102,7 +105,13 @@ function App() {
     <Router>
       <div className="min-h-screen bg-gray-50 font-sans selection:bg-[#2D5A27] selection:text-white">
         <Routes>
-          {/* --- 🌍 PUBLIC & SHARED ROUTES --- */}
+          {/* --- 🚀 PUBLIC LANDING PAGE (ROOT) --- */}
+          <Route
+            path="/"
+            element={user ? <Navigate to="/dashboard" /> : <LandingPage />}
+          />
+
+          {/* --- 🌍 AUTH ROUTES --- */}
           <Route
             path="/login"
             element={!user ? <Login /> : <Navigate to="/dashboard" />}
@@ -112,7 +121,6 @@ function App() {
             element={!user ? <Register /> : <Navigate to="/dashboard" />}
           />
 
-          {/* 🚀 ADDED: Ensure Forgot/Reset don't redirect to login if user is already there */}
           <Route
             path="/forgot-password"
             element={!user ? <ForgotPassword /> : <Navigate to="/dashboard" />}
@@ -128,14 +136,8 @@ function App() {
             path="/parent/view/:studentId"
             element={<ParentProgressView />}
           />
-          <Route
-            path="/"
-            element={
-              user ? <Navigate to="/dashboard" /> : <Navigate to="/login" />
-            }
-          />
 
-          {/* --- 🏠 PROTECTED ROUTES (REMOVE THE WRAPPER HERE) --- */}
+          {/* --- 🏠 PROTECTED ROUTES --- */}
           <Route
             path="/*"
             element={

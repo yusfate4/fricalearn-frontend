@@ -1,0 +1,26 @@
+name: Deploy FricaLearn Frontend
+on:
+  push:
+    branches: [ main ] # This triggers whenever you push to the main branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚚 Checkout Code
+        uses: actions/checkout@v3
+
+      - name: ⚙️ Install & Build
+        run: |
+          npm install
+          npm run build
+
+      - name: 🚀 Sync to Namecheap
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist/ 
+          # 🎯 This points exactly to the folder you created in cPanel
+          server-dir: ./fricalearn.com/

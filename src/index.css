@@ -9,3 +9,6 @@
 .form-input-custom {
   @apply w-full pl-12 pr-5 py-4 bg-gray-50 border-2 border-transparent focus:border-[#2D5A27] focus:bg-white rounded-2xl font-bold outline-none transition-all text-gray-700 text-sm;
 }
+html {
+  scroll-behavior: smooth;
+}

@@ -10,9 +10,10 @@ import {
   Mail,
   Eye,
   EyeOff,
+  ArrowLeft,
 } from "lucide-react";
 
-const Login = () => {
+const Login: React.FC = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,16 +27,11 @@ const Login = () => {
     setError("");
 
     try {
-      // 🚀 Endpoint updated to /auth/login
       const response = await api.post("/auth/login", { email, password });
-
-      // Store the token for the useAuth hook and sidebar
       localStorage.setItem("token", response.data.token);
-
-      // Using window.location.href to force a full refresh and re-run App.tsx logic
+      // Force refresh to initialize dashboard with new token
       window.location.href = "/dashboard";
     } catch (error: any) {
-      // Catch specific errors like "Email not verified" or "Invalid credentials"
       const message = error.response?.data?.message || "Login failed. Please check your credentials.";
       setError(message);
     } finally {
@@ -44,97 +40,107 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFCF6] flex flex-col md:flex-row">
+    <div className="min-h-screen bg-[#FDFCF6] flex flex-col md:flex-row relative font-sans">
+      
+      {/* 🏠 BACK TO HOME BUTTON */}
+      <Link 
+        to="/" 
+        className="absolute top-6 left-6 z-50 flex items-center gap-2 text-[#2D5A27] font-black uppercase tracking-widest text-[10px] bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-gray-100 shadow-sm hover:bg-[#2D5A27] hover:text-white transition-all group"
+      >
+        <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+        Back to Home
+      </Link>
+
       {/* --- LEFT SIDE: BRANDING --- */}
-      <div className="hidden md:flex md:w-1/2 bg-[#2D5A27] p-20 flex-col justify-between text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-[#F4B400] rounded-full -mr-32 -mt-32 opacity-20"></div>
+      <div className="hidden md:flex md:w-1/2 bg-[#1A1A40] p-20 flex-col justify-between text-white relative overflow-hidden">
+        {/* Decorative Elements */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-green-600 rounded-full -mr-32 -mt-32 opacity-20"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-green-600 rounded-full -ml-24 -mb-24 opacity-10"></div>
 
         <div className="relative z-10">
-          <h2 className="text-4xl font-black italic uppercase tracking-tighter text-[#F4B400] mb-2">
-            FricaLearn
-          </h2>
-          <p className="font-bold text-white/60 uppercase tracking-widest text-xs">
-            Diaspora Academy
+          <img src="../src/assets/logo.png" alt="FricaLearn Logo" className="h-16 mb-4" />
+          <p className="font-bold text-green-500 uppercase tracking-widest text-[10px]">
+            The Diaspora Academy
           </p>
         </div>
 
         <div className="relative z-10">
           <h1 className="text-6xl font-black leading-none mb-6 italic uppercase tracking-tighter">
-            Welcome <br /> <span className="text-[#F4B400]">Back</span> Parent.
+            Welcome <br /> <span className="text-green-500">Back</span> Parent.
           </h1>
           <p className="text-xl font-medium text-white/80 max-w-md italic leading-relaxed">
             Log in to manage your child's lessons, track their progress, and
-            explore the marketplace.
+            explore the cultural marketplace.
           </p>
         </div>
 
         <div className="flex items-center gap-4 text-white/40 font-black uppercase tracking-widest text-[10px]">
-          <ShieldCheck size={20} /> Secure Academy Access
+          <ShieldCheck size={20} className="text-green-500" /> Secure Academy Access
         </div>
       </div>
 
       {/* --- RIGHT SIDE: LOGIN FORM --- */}
-      <div className="flex-1 flex items-center justify-center p-6 md:p-20">
+      <div className="flex-1 flex items-center justify-center p-6 md:p-20 mt-12 md:mt-0">
         <div className="w-full max-w-md animate-in fade-in zoom-in duration-500">
           <div className="mb-10 text-center md:text-left">
-            <h2 className="text-4xl font-black text-gray-800 italic uppercase tracking-tighter mb-2">
+            <h2 className="text-4xl font-black text-[#1A1A40] italic uppercase tracking-tighter mb-2">
               Academy Login
             </h2>
-            <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">
+            <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">
               Access your family portal
             </p>
           </div>
 
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border-2 border-red-100 text-red-600 rounded-[1.5rem] flex items-center gap-2 font-black text-[11px] uppercase tracking-tight">
+            <div className="mb-6 p-4 bg-red-50 border-2 border-red-100 text-red-600 rounded-2xl flex items-center gap-2 font-black text-[11px] uppercase tracking-tight">
               <AlertCircle size={18} /> {error}
             </div>
           )}
 
-          <form onSubmit={handleLogin} className="space-y-6">
+          <form onSubmit={handleLogin} className="space-y-5">
             {/* Email Input */}
-            <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">
+            <div className="space-y-1">
+              <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-5">
                 Email Address
               </label>
               <div className="relative group">
                 <Mail
-                  className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#2D5A27] transition-colors"
-                  size={20}
+                  className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#2D5A27] transition-colors"
+                  size={18}
                 />
                 <input
                   required
                   type="email"
                   placeholder="parent@example.com"
-                  className="w-full pl-14 pr-6 py-5 rounded-[2rem] border-2 border-gray-100 outline-none focus:border-[#2D5A27] transition-all font-bold text-gray-700 bg-white shadow-sm"
+                  className="w-full pl-14 pr-6 py-4 rounded-[2rem] border-2 border-gray-100 outline-none focus:border-[#2D5A27] transition-all font-bold text-gray-700 bg-white placeholder:text-gray-200"
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
             </div>
 
-            {/* Password Input with Toggle */}
-            <div className="space-y-2">
-              <div className="flex justify-between items-center ml-4 mr-2">
+            {/* Password Input */}
+            <div className="space-y-1">
+              <div className="flex justify-between items-center ml-5 mr-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-400">
                   Password
                 </label>
                 <Link 
                   to="/forgot-password" 
-                  className="text-[10px] font-black text-[#2D5A27] uppercase tracking-widest hover:underline decoration-2 underline-offset-4"
+                  className="text-[9px] font-black text-[#2D5A27] uppercase tracking-widest hover:text-[#1A1A40] transition-colors"
                 >
                   Forgot Password?
                 </Link>
               </div>
               <div className="relative group">
                 <Lock
-                  className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#2D5A27] transition-colors"
-                  size={20}
+                  className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#2D5A27] transition-colors"
+                  size={18}
                 />
                 <input
                   required
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  className="w-full pl-14 pr-14 py-5 rounded-[2rem] border-2 border-gray-100 outline-none focus:border-[#2D5A27] transition-all font-bold text-gray-700 bg-white shadow-sm"
+                  className="w-full pl-14 pr-14 py-4 rounded-[2rem] border-2 border-gray-100 outline-none focus:border-[#2D5A27] transition-all font-bold text-gray-700 bg-white placeholder:text-gray-200"
                   onChange={(e) => setPassword(e.target.value)}
                 />
                 <button
@@ -142,7 +148,7 @@ const Login = () => {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-300 hover:text-[#2D5A27] transition-colors"
                 >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
@@ -151,7 +157,7 @@ const Login = () => {
             <button
               disabled={loading}
               type="submit"
-              className="group w-full bg-[#2D5A27] text-white py-6 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs shadow-2xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+              className="group w-full bg-[#2D5A27] text-white py-5 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs shadow-xl hover:bg-[#1A1A40] transition-all flex items-center justify-center gap-3 disabled:opacity-50 mt-4"
             >
               {loading ? (
                 <Loader2 className="animate-spin" size={20} />
@@ -166,12 +172,12 @@ const Login = () => {
               )}
             </button>
 
-            <div className="text-center">
-              <p className="text-gray-400 font-bold text-sm uppercase tracking-widest">
+            <div className="text-center mt-6">
+              <p className="text-gray-400 font-bold text-[11px] uppercase tracking-widest">
                 New to the family?{" "}
                 <Link
                   to="/register"
-                  className="text-[#2D5A27] hover:underline decoration-2 font-black italic underline-offset-4 ml-1"
+                  className="text-[#2D5A27] hover:text-[#1A1A40] transition-colors font-black italic underline decoration-2 underline-offset-4 ml-1"
                 >
                   Enroll Here
                 </Link>
