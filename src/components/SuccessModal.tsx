@@ -30,26 +30,46 @@ export default function SuccessModal({
 }: SuccessModalProps) {
   const handleContinue = onConfirm || onClose || (() => {});
   
-  // --- 🔊 Sound Logic ---
+  // --- 🔊 Advanced Audio Logic ---
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     if (isOpen) {
-      // Initialize sound (you can use your notification sound or a specific success chime)
-      const soundPath = points && points > 0 ? "/sounds/success.mp3" : "/sounds/notification.mp3";
-      audioRef.current = new Audio(soundPath);
-      
-      // Play the sound
-      audioRef.current.play().catch((err) => {
-        console.warn("Autoplay blocked: Sound will play after first interaction.", err);
-      });
+      const playSound = async () => {
+        try {
+          // 1. Force absolute path to avoid React routing confusion
+          const soundPath = points && points > 0 ? "/sounds/success.mp3" : "/sounds/notification.mp3";
+          const absoluteUrl = window.location.origin + soundPath;
+
+          // 2. Fetch as blob to ensure the source is "Supported"
+          const response = await fetch(absoluteUrl);
+          const blob = await response.blob();
+          const blobUrl = URL.createObjectURL(blob);
+
+          if (!audioRef.current) {
+            audioRef.current = new Audio();
+          }
+          
+          audioRef.current.src = blobUrl;
+          audioRef.current.load();
+          
+          // 3. Play with explicit catch
+          const playPromise = audioRef.current.play();
+          if (playPromise !== undefined) {
+            playPromise.catch(err => console.warn("Autoplay blocked by browser policy.", err));
+          }
+        } catch (error) {
+          console.error("Audio initialization failed:", error);
+        }
+      };
+
+      playSound();
     }
 
-    // Cleanup when modal closes
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
-        audioRef.current = null;
+        audioRef.current.src = ""; // Clear source to free memory
       }
     };
   }, [isOpen, points]);
@@ -61,7 +81,7 @@ export default function SuccessModal({
       {isOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6 bg-black/80 backdrop-blur-xl">
           
-          {/* ✨ BACKGROUND CELEBRATION (Bubbles/Stars) */}
+          {/* ✨ BACKGROUND CELEBRATION */}
           {points && points > 0 && (
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
               {[...Array(12)].map((_, i) => (
@@ -100,15 +120,12 @@ export default function SuccessModal({
               <X size={24} />
             </button>
 
-            {/* 🏆 ICON SECTION */}
             <motion.div
               initial={{ rotate: -20, scale: 0 }}
               animate={{ rotate: 0, scale: 1 }}
               transition={{ delay: 0.1, type: "spring", bounce: 0.6 }}
               className={`w-24 h-24 md:w-32 md:h-32 rounded-full flex items-center justify-center mx-auto mb-10 shadow-inner relative ${
-                points
-                  ? "bg-yellow-50 text-yellow-500"
-                  : "bg-green-50 text-[#2D5A27]"
+                points ? "bg-yellow-50 text-yellow-500" : "bg-green-50 text-[#2D5A27]"
               }`}
             >
               {points ? (
