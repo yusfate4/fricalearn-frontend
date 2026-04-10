@@ -23,7 +23,7 @@ const Courses: React.FC = () => {
         "From basic greetings (Oṣe!) to advanced proverbs and Omoluabi etiquette.",
       highlight: "Cultural Etiquette Focus",
       color: "border-green-600",
-      imageUrl: "../src/assets/yoruba-card.png",
+      imageUrl: "/yoruba-card.png",
       fallbackIcon: "🇳🇬",
     },
     {
@@ -34,7 +34,7 @@ const Courses: React.FC = () => {
         "Master the tonal nuances of Igbo and learn the rich history of the Nri Kingdom.",
       highlight: "History & Tones Focus",
       color: "border-red-600",
-      imageUrl: "../src/assets/igbo-card.png",
+      imageUrl: "/igbo-card.png",
       fallbackIcon: "🦁",
     },
     {
@@ -45,7 +45,7 @@ const Courses: React.FC = () => {
         "Navigate the language of trade and hospitality used across the Sahel.",
       highlight: "Trade & Travel Focus",
       color: "border-blue-600",
-      imageUrl: "../src/assets/hausa-card.png",
+      imageUrl: "/hausa-card.png",
       fallbackIcon: "🕌",
     },
   ];
