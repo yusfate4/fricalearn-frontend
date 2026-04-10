@@ -102,7 +102,7 @@ export default function ParentMessages() {
 
     setIsSending(true);
     const formData = new FormData();
-    formData.append("receiver_id", "1"); // Admin ID
+    formData.append("receiver_id", "2"); // Admin ID
 
     if (newMessage.trim()) formData.append("message", newMessage);
     if (selectedImage) formData.append("image", selectedImage);
