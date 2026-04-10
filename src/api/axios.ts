@@ -2,12 +2,13 @@
 import axios from 'axios';
 
 const api = axios.create({
-    // 🌍 Points to your Railway Production Backend
-    baseURL: "https://fricalearn-backend-production.up.railway.app/api",
+    /** * 🌍 Dynamic API URL 
+     * Uses the environment variable from .env 
+     * Defaults to your new Namecheap API if the variable is missing
+     */
+    baseURL: import.meta.env.VITE_API_BASE_URL || "https://api.fricalearn.com/api",
     headers: {
         'Accept': 'application/json',
-        // Removed global 'Content-Type' to allow Axios/Browser to handle it dynamically 
-        // especially for File Uploads (multipart/form-data)
     },
 });
 
