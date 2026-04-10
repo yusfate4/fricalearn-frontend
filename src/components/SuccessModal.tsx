@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Trophy, ArrowRight, CheckCircle, Star, X } from "lucide-react";
 
@@ -12,10 +12,6 @@ interface SuccessModalProps {
   points?: number;
 }
 
-/**
- * 🌍 GREETINGS MAP
- * Dynamic greetings based on the language being learned.
- */
 const greetingMap: Record<string, string> = {
   Yoruba: "Ẹ kú iṣẹ́",
   Igbo: "Dalu olu",
@@ -33,8 +29,31 @@ export default function SuccessModal({
   points,
 }: SuccessModalProps) {
   const handleContinue = onConfirm || onClose || (() => {});
+  
+  // --- 🔊 Sound Logic ---
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Determine the cultural title based on the student's learning language
+  useEffect(() => {
+    if (isOpen) {
+      // Initialize sound (you can use your notification sound or a specific success chime)
+      const soundPath = points && points > 0 ? "/sounds/success.mp3" : "/sounds/notification.mp3";
+      audioRef.current = new Audio(soundPath);
+      
+      // Play the sound
+      audioRef.current.play().catch((err) => {
+        console.warn("Autoplay blocked: Sound will play after first interaction.", err);
+      });
+    }
+
+    // Cleanup when modal closes
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, [isOpen, points]);
+
   const culturalTitle = greetingMap[language] || greetingMap["Yoruba"];
 
   return (
@@ -42,7 +61,7 @@ export default function SuccessModal({
       {isOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6 bg-black/80 backdrop-blur-xl">
           
-          {/* ✨ BACKGROUND CELEBRATION (Only shows if points > 0) */}
+          {/* ✨ BACKGROUND CELEBRATION (Bubbles/Stars) */}
           {points && points > 0 && (
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
               {[...Array(12)].map((_, i) => (
@@ -74,7 +93,6 @@ export default function SuccessModal({
             transition={{ type: "spring", damping: 25, stiffness: 400 }}
             className="bg-white rounded-[2.5rem] md:rounded-[4rem] p-8 md:p-14 max-w-md w-full text-center shadow-[0_30px_100px_rgba(45,90,39,0.4)] border-8 border-white relative overflow-hidden"
           >
-            {/* Optional Close Button */}
             <button 
               onClick={handleContinue}
               className="absolute top-6 right-6 text-gray-300 hover:text-gray-600 transition-colors"
@@ -99,13 +117,11 @@ export default function SuccessModal({
                 <CheckCircle size={56} className="md:size-16" />
               )}
               
-              {/* Decorative Ring */}
               <div className={`absolute inset-0 rounded-full border-2 border-dashed animate-spin-slow ${
                 points ? "border-yellow-200" : "border-green-200"
               }`} style={{ animationDuration: '8s' }}></div>
             </motion.div>
 
-            {/* 📝 PERSONALIZED GREETING */}
             <div className="space-y-2 mb-8">
                 <p className="text-[#2D5A27] font-black uppercase tracking-[0.3em] text-[10px] md:text-xs">
                     {culturalTitle}
@@ -122,7 +138,6 @@ export default function SuccessModal({
                   : "Excellent progress! Your updates have been successfully synced with the academy.")}
             </p>
 
-            {/* 🏁 ACTION BUTTON */}
             <button
               onClick={handleContinue}
               className="group w-full bg-[#1A1A40] text-white py-6 md:py-8 rounded-[2rem] font-black text-lg md:text-xl flex items-center justify-center gap-4 hover:bg-[#2D5A27] transition-all shadow-2xl active:scale-95 relative z-10"
@@ -136,7 +151,6 @@ export default function SuccessModal({
               />
             </button>
 
-            {/* Subtle Brand Footer */}
             <p className="mt-8 text-[8px] font-black uppercase tracking-[0.5em] text-gray-200">
                 FricaLearn Diaspora Academy
             </p>
