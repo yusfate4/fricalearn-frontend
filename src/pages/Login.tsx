@@ -58,7 +58,7 @@ const Login: React.FC = () => {
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-green-600 rounded-full -ml-24 -mb-24 opacity-10"></div>
 
         <div className="relative z-10">
-          <img src="../src/assets/logo.png" alt="FricaLearn Logo" className="h-16 mb-4" />
+          <img src="/logo.png" alt="FricaLearn Logo" className="h-16 mb-4" />
           <p className="font-bold text-green-500 uppercase tracking-widest text-[10px]">
             The Diaspora Academy
           </p>
