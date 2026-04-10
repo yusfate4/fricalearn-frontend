@@ -18,16 +18,16 @@ const VerifyEmailHandler: React.FC = () => {
   const [message, setMessage] = useState("Verifying your academy access...");
 
   useEffect(() => {
-    const verify = async () => {
-      try {
-        // Construct the signed URL parameters that Laravel sent
-        const expires = searchParams.get('expires');
-        const signature = searchParams.get('signature');
+   const verify = async () => {
+  try {
+    const expires = searchParams.get('expires');
+    const signature = searchParams.get('signature');
 
-        // Call the backend verification endpoint
-        await api.get(`/email/verify/${id}/${hash}?expires=${expires}&signature=${signature}`);
-        
-        setStatus('success');
+    // Make sure we hit the API subdomain directly
+    // If your axios 'api' instance already has the base URL, just use:
+    await api.get(`/email/verify/${id}/${hash}?expires=${expires}&signature=${signature}`);
+    
+    setStatus('success');
         setMessage("Ọpẹ́! Your email has been successfully verified.");
         
         // Auto-redirect to login after 3 seconds of "Success" glory
