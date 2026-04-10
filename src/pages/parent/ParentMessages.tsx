@@ -26,8 +26,24 @@ export default function ParentMessages() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // --- Notification Assets ---
-  const notificationSound = useRef(new Audio("/sounds/notification.mp3"));
+  // --- 🔔 Notification Sound Logic (Refined) ---
+  const notificationSound = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    // Initialize and pre-load sound on mount
+    notificationSound.current = new Audio("/sounds/notification.mp3");
+    notificationSound.current.load();
+  }, []);
+
+  const playNotification = () => {
+    if (notificationSound.current) {
+      notificationSound.current.currentTime = 0;
+      notificationSound.current.play().catch((e) => {
+        // Silently catch browser autoplay restrictions
+        console.warn("Audio playback prevented until user interaction.");
+      });
+    }
+  };
 
   // --- Media State ---
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -44,7 +60,6 @@ export default function ParentMessages() {
     return `https://res.cloudinary.com/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/all/upload/${path}`;
   };
 
-  // Browser Notification Helper
   const showBrowserNotification = (body: string) => {
     if (!("Notification" in window)) return;
     if (Notification.permission === "granted") {
@@ -64,14 +79,12 @@ export default function ParentMessages() {
       if (res.data && res.data.messages) {
         const incomingMessages = res.data.messages;
 
-        // 🔔 Notification Logic: If message count increased
         if (incomingMessages.length > messages.length) {
           const lastMsg = incomingMessages[incomingMessages.length - 1];
 
-          // Only alert if the message is from someone else AND it's not the initial load
           if (messages.length > 0 && Number(lastMsg.sender_id) !== Number(user.id)) {
-            notificationSound.current.play().catch((e) => console.log("Audio blocked", e));
-            showBrowserNotification(lastMsg.message || "New media received from Admin");
+            playNotification();
+            showBrowserNotification(lastMsg.message || "New message from FricaLearn Admin");
           }
           setMessages(incomingMessages);
         }
@@ -102,7 +115,7 @@ export default function ParentMessages() {
 
     setIsSending(true);
     const formData = new FormData();
-    formData.append("receiver_id", "2"); // Admin ID
+    formData.append("receiver_id", "2"); // 🚀 Verified Production Admin ID
 
     if (newMessage.trim()) formData.append("message", newMessage);
     if (selectedImage) formData.append("image", selectedImage);
@@ -131,7 +144,9 @@ export default function ParentMessages() {
     const file = e.target.files?.[0];
     if (file) {
       setSelectedImage(file);
-      setImagePreview(URL.createObjectURL(file));
+      const reader = new FileReader();
+      reader.onloadend = () => setImagePreview(reader.result as string);
+      reader.readAsDataURL(file);
     }
   };
 
@@ -189,7 +204,6 @@ export default function ParentMessages() {
         </div>
 
         <div className="bg-white rounded-[2rem] shadow-xl border-4 border-white overflow-hidden flex flex-col flex-1 relative">
-          {/* Chat Messages */}
           <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 md:p-10 space-y-6 bg-gray-50/50 custom-scrollbar">
             {messages.map((m) => {
               const isMe = Number(m.sender_id) === Number(user?.id);
@@ -214,7 +228,6 @@ export default function ParentMessages() {
             })}
           </div>
 
-          {/* Previews */}
           {(imagePreview || audioPreview) && (
             <div className="px-6 py-4 bg-white border-t flex gap-4">
               {imagePreview && (
@@ -233,7 +246,6 @@ export default function ParentMessages() {
             </div>
           )}
 
-          {/* Input Area */}
           <div className="p-4 md:p-8 bg-white border-t border-gray-100">
             <form onSubmit={handleSendMessage} className="flex gap-3 items-center">
               <input type="file" ref={fileInputRef} onChange={handleImageSelect} className="hidden" accept="image/*" />

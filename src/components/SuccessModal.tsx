@@ -1,19 +1,19 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trophy, ArrowRight, CheckCircle, Star } from "lucide-react";
+import { Trophy, ArrowRight, CheckCircle, Star, X } from "lucide-react";
 
 interface SuccessModalProps {
   isOpen: boolean;
   onConfirm?: () => void;
   onClose?: () => void;
-  studentName?: string; // 👈 Added: To fix the "Ayo" issue
-  language?: string; // 👈 Added: For cultural greetings
+  studentName?: string;
+  language?: string;
   message?: string;
   points?: number;
 }
 
 /**
- * 🌍 GREETINGS MAP (Item 5)
+ * 🌍 GREETINGS MAP
  * Dynamic greetings based on the language being learned.
  */
 const greetingMap: Record<string, string> = {
@@ -27,89 +27,119 @@ export default function SuccessModal({
   isOpen,
   onConfirm,
   onClose,
-  studentName = "Student", // Fallback if name is missing
-  language = "Yoruba", // Default language
+  studentName = "Student",
+  language = "Yoruba",
   message,
   points,
 }: SuccessModalProps) {
   const handleContinue = onConfirm || onClose || (() => {});
 
-  // Determine the cultural title
+  // Determine the cultural title based on the student's learning language
   const culturalTitle = greetingMap[language] || greetingMap["Yoruba"];
 
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6 bg-black/70 backdrop-blur-md">
-          {/* ✨ BACKGROUND CELEBRATION */}
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6 bg-black/80 backdrop-blur-xl">
+          
+          {/* ✨ BACKGROUND CELEBRATION (Only shows if points > 0) */}
           {points && points > 0 && (
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
-              {[...Array(6)].map((_, i) => (
+              {[...Array(12)].map((_, i) => (
                 <motion.div
                   key={i}
-                  initial={{ y: -20, opacity: 0 }}
-                  animate={{ y: [0, 800], opacity: [0, 1, 0] }}
-                  transition={{ duration: 3, repeat: Infinity, delay: i * 0.5 }}
-                  className="absolute text-yellow-400/30"
-                  style={{ left: `${i * 20}%` }}
+                  initial={{ y: -50, x: Math.random() * 100 + "%", opacity: 0 }}
+                  animate={{ 
+                    y: [0, 1000], 
+                    opacity: [0, 1, 0],
+                    rotate: [0, 360] 
+                  }}
+                  transition={{ 
+                    duration: Math.random() * 2 + 2, 
+                    repeat: Infinity, 
+                    delay: i * 0.2 
+                  }}
+                  className="absolute text-yellow-400/40"
                 >
-                  <Star size={Math.random() * 20 + 10} fill="currentColor" />
+                  <Star size={Math.random() * 24 + 12} fill="currentColor" />
                 </motion.div>
               ))}
             </div>
           )}
 
           <motion.div
-            initial={{ scale: 0.9, y: 20, opacity: 0 }}
+            initial={{ scale: 0.8, y: 40, opacity: 0 }}
             animate={{ scale: 1, y: 0, opacity: 1 }}
-            exit={{ scale: 0.9, y: 20, opacity: 0 }}
-            transition={{ type: "spring", damping: 20, stiffness: 300 }}
-            className="bg-white rounded-[2.5rem] md:rounded-[3.5rem] p-8 md:p-12 max-w-sm w-full text-center shadow-[0_20px_50px_rgba(45,90,39,0.3)] border-4 border-white relative"
+            exit={{ scale: 0.8, y: 40, opacity: 0 }}
+            transition={{ type: "spring", damping: 25, stiffness: 400 }}
+            className="bg-white rounded-[2.5rem] md:rounded-[4rem] p-8 md:p-14 max-w-md w-full text-center shadow-[0_30px_100px_rgba(45,90,39,0.4)] border-8 border-white relative overflow-hidden"
           >
+            {/* Optional Close Button */}
+            <button 
+              onClick={handleContinue}
+              className="absolute top-6 right-6 text-gray-300 hover:text-gray-600 transition-colors"
+            >
+              <X size={24} />
+            </button>
+
             {/* 🏆 ICON SECTION */}
             <motion.div
-              initial={{ rotate: -15, scale: 0 }}
+              initial={{ rotate: -20, scale: 0 }}
               animate={{ rotate: 0, scale: 1 }}
-              transition={{ delay: 0.2, type: "spring" }}
-              className={`w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner ${
+              transition={{ delay: 0.1, type: "spring", bounce: 0.6 }}
+              className={`w-24 h-24 md:w-32 md:h-32 rounded-full flex items-center justify-center mx-auto mb-10 shadow-inner relative ${
                 points
                   ? "bg-yellow-50 text-yellow-500"
                   : "bg-green-50 text-[#2D5A27]"
               }`}
             >
               {points ? (
-                <Trophy size={48} className="md:size-14" />
+                <Trophy size={56} className="md:size-16 animate-bounce" />
               ) : (
-                <CheckCircle size={48} className="md:size-14" />
+                <CheckCircle size={56} className="md:size-16" />
               )}
+              
+              {/* Decorative Ring */}
+              <div className={`absolute inset-0 rounded-full border-2 border-dashed animate-spin-slow ${
+                points ? "border-yellow-200" : "border-green-200"
+              }`} style={{ animationDuration: '8s' }}></div>
             </motion.div>
 
-            {/* 📝 TEXT SECTION (Personalized) */}
-            <h2 className="text-3xl md:text-4xl font-black text-gray-800 mb-3 italic uppercase tracking-tighter leading-tight">
-              {culturalTitle}, <br />
-              <span className="text-[#2D5A27]">{studentName}!</span>
-            </h2>
+            {/* 📝 PERSONALIZED GREETING */}
+            <div className="space-y-2 mb-8">
+                <p className="text-[#2D5A27] font-black uppercase tracking-[0.3em] text-[10px] md:text-xs">
+                    {culturalTitle}
+                </p>
+                <h2 className="text-4xl md:text-5xl font-black text-gray-900 italic uppercase tracking-tighter leading-none">
+                    {studentName}!
+                </h2>
+            </div>
 
-            <p className="text-gray-500 mb-10 text-sm md:text-base font-bold leading-relaxed px-2">
+            <p className="text-gray-500 mb-12 text-sm md:text-base font-bold leading-relaxed px-4">
               {message ||
                 (points
-                  ? `Incredible! You've mastered this lesson and earned ${points} points.`
-                  : "Great job! Your update has been saved successfully.")}
+                  ? `Incredible! You've successfully mastered this lesson and added ${points} points to your legacy.`
+                  : "Excellent progress! Your updates have been successfully synced with the academy.")}
             </p>
 
             {/* 🏁 ACTION BUTTON */}
             <button
               onClick={handleContinue}
-              className="group w-full bg-[#2D5A27] text-white py-5 md:py-6 rounded-2xl md:rounded-[2rem] font-black text-lg md:text-xl flex items-center justify-center gap-3 hover:bg-black transition-all shadow-xl active:scale-95"
+              className="group w-full bg-[#1A1A40] text-white py-6 md:py-8 rounded-[2rem] font-black text-lg md:text-xl flex items-center justify-center gap-4 hover:bg-[#2D5A27] transition-all shadow-2xl active:scale-95 relative z-10"
             >
-              <span className="uppercase tracking-widest text-[10px] md:text-xs">
+              <span className="uppercase tracking-widest text-xs">
                 Continue Journey
               </span>
               <ArrowRight
-                size={20}
+                size={24}
                 className="group-hover:translate-x-2 transition-transform"
               />
             </button>
+
+            {/* Subtle Brand Footer */}
+            <p className="mt-8 text-[8px] font-black uppercase tracking-[0.5em] text-gray-200">
+                FricaLearn Diaspora Academy
+            </p>
           </motion.div>
         </div>
       )}
