@@ -14,12 +14,18 @@ import {
   UploadCloud,
   CheckCircle2,
   ShieldAlert,
+  AlertTriangle,
 } from "lucide-react";
 
 export default function ManageMarketplace() {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  
+  // 🗑️ Delete Confirmation States
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<{id: number, title: string} | null>(null);
+
   const [errorMessage, setErrorMessage] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [currentId, setCurrentId] = useState<number | null>(null);
@@ -80,13 +86,25 @@ export default function ManageMarketplace() {
     setShowModal(true);
   };
 
-  const handleDelete = async (id: number, title: string) => {
-    if (!window.confirm(`Are you sure you want to remove "${title}"?`)) return;
+  // 🗑️ Trigger Custom Delete Modal
+  const confirmDelete = (id: number, title: string) => {
+    setItemToDelete({ id, title });
+    setShowDeleteModal(true);
+  };
+
+  const handleDelete = async () => {
+    if (!itemToDelete) return;
+    
+    setSubmitting(true);
     try {
-      await api.delete(`/admin/rewards/${id}`);
-      setItems(items.filter((item) => item.id !== id));
+      await api.delete(`/admin/rewards/${itemToDelete.id}`);
+      setItems(items.filter((item) => item.id !== itemToDelete.id));
+      setShowDeleteModal(false);
+      setItemToDelete(null);
     } catch (err) {
       setErrorMessage("Failed to delete item.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -114,31 +132,22 @@ export default function ManageMarketplace() {
       data.append("product_file", selectedFile);
     }
 
-    // 🚀 THE FIX: We no longer need data.append("_method", "PUT")
-    // because we updated the backend to accept POST for updates.
-
     try {
       const url = isEditing ? `/admin/rewards/${currentId}` : `/admin/rewards`;
-
-      // 🌍 Standard POST request
       await api.post(url, data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
       setShowModal(false);
       fetchItems();
     } catch (err: any) {
       console.error("Submission Error:", err);
-      // ... error handling logic
+      setErrorMessage(err.response?.data?.message || "Storage/Network error.");
     } finally {
       setSubmitting(false);
     }
   };
 
-
-  
   return (
     <Layout>
       <div className="max-w-7xl mx-auto p-4 md:p-10">
@@ -158,7 +167,7 @@ export default function ManageMarketplace() {
           </div>
           <button
             onClick={() => openModal()}
-            className="w-full md:w-auto flex items-center justify-center gap-3 bg-gray-900 text-white px-10 py-5 rounded-[2.5rem] font-black uppercase text-xs tracking-widest"
+            className="w-full md:w-auto flex items-center justify-center gap-3 bg-gray-900 text-white px-10 py-5 rounded-[2.5rem] font-black uppercase text-xs tracking-widest hover:bg-[#F4B400] transition-colors"
           >
             <Plus size={20} /> Add New Item
           </button>
@@ -187,23 +196,20 @@ export default function ManageMarketplace() {
               >
                 <div className="h-48 bg-gray-50 relative overflow-hidden">
                   <img
-                    src={
-                      item.image_url ||
-                      "https://placehold.co/400x300?text=No+Image"
-                    }
+                    src={item.image_url || "https://placehold.co/400x300?text=No+Image"}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     alt=""
                   />
                   <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
                       onClick={() => openModal(item)}
-                      className="p-3 bg-white/90 text-blue-600 rounded-2xl shadow-lg"
+                      className="p-3 bg-white/90 text-blue-600 rounded-2xl shadow-lg hover:bg-white"
                     >
                       <Edit3 size={18} />
                     </button>
                     <button
-                      onClick={() => handleDelete(item.id, item.title)}
-                      className="p-3 bg-white/90 text-red-500 rounded-2xl shadow-lg"
+                      onClick={() => confirmDelete(item.id, item.title)}
+                      className="p-3 bg-white/90 text-red-500 rounded-2xl shadow-lg hover:bg-white"
                     >
                       <Trash2 size={18} />
                     </button>
@@ -231,6 +237,7 @@ export default function ManageMarketplace() {
           </div>
         )}
 
+        {/* --- 🏆 MAIN ADD/EDIT MODAL --- */}
         {showModal && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/90 backdrop-blur-sm animate-in fade-in duration-300">
             <div className="bg-white w-full max-w-2xl rounded-[3.5rem] p-8 md:p-12 shadow-2xl relative max-h-[90vh] overflow-y-auto">
@@ -245,7 +252,7 @@ export default function ManageMarketplace() {
               </h2>
               <form onSubmit={handleSubmit} className="space-y-6">
                 {errorMessage && (
-                  <div className="p-4 bg-red-50 text-red-600 rounded-2xl text-[10px] font-black uppercase flex items-center gap-3 border border-red-100 animate-shake">
+                  <div className="p-4 bg-red-50 text-red-600 rounded-2xl text-[10px] font-black uppercase flex items-center gap-3 border border-red-100">
                     <AlertCircle size={18} /> {errorMessage}
                   </div>
                 )}
@@ -260,9 +267,7 @@ export default function ManageMarketplace() {
                         type="text"
                         className="w-full p-5 rounded-2xl bg-gray-50 border-none outline-none font-bold text-sm"
                         value={formData.name}
-                        onChange={(e) =>
-                          setFormData({ ...formData, name: e.target.value })
-                        }
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -277,12 +282,7 @@ export default function ManageMarketplace() {
                           max="500"
                           className={`w-full p-5 rounded-2xl bg-gray-50 outline-none font-black text-sm border-2 ${formData.price < 300 || formData.price > 500 ? "border-red-200" : "border-transparent"}`}
                           value={formData.price}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              price: parseInt(e.target.value),
-                            })
-                          }
+                          onChange={(e) => setFormData({ ...formData, price: parseInt(e.target.value) })}
                         />
                       </div>
                       <div>
@@ -290,11 +290,9 @@ export default function ManageMarketplace() {
                           Category
                         </label>
                         <select
-                          className="w-full p-5 rounded-2xl bg-gray-50 border-none outline-none font-bold text-sm appearance-none"
+                          className="w-full p-5 rounded-2xl bg-gray-50 border-none outline-none font-bold text-sm"
                           value={formData.type}
-                          onChange={(e) =>
-                            setFormData({ ...formData, type: e.target.value })
-                          }
+                          onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                         >
                           <option value="digital_asset">Digital Asset</option>
                           <option value="physical">Physical Item</option>
@@ -313,23 +311,15 @@ export default function ManageMarketplace() {
                         onClick={() => imageInputRef.current?.click()}
                         className={`p-6 border-2 border-dashed rounded-2xl flex flex-col items-center justify-center transition-all ${selectedImage ? "border-[#2D5A27] bg-green-50 text-[#2D5A27]" : "border-gray-100 text-gray-300"}`}
                       >
-                        {selectedImage ? (
-                          <CheckCircle2 size={24} />
-                        ) : (
-                          <UploadCloud size={24} />
-                        )}
-                        <span className="text-[8px] font-black uppercase mt-2">
-                          Thumbnail
-                        </span>
+                        {selectedImage ? <CheckCircle2 size={24} /> : <UploadCloud size={24} />}
+                        <span className="text-[8px] font-black uppercase mt-2">Thumbnail</span>
                       </button>
                       <input
                         type="file"
                         ref={imageInputRef}
                         className="hidden"
                         accept="image/*"
-                        onChange={(e) =>
-                          setSelectedImage(e.target.files?.[0] || null)
-                        }
+                        onChange={(e) => setSelectedImage(e.target.files?.[0] || null)}
                       />
                       {formData.type === "digital_asset" && (
                         <button
@@ -338,9 +328,7 @@ export default function ManageMarketplace() {
                           className={`p-6 border-2 border-dashed rounded-2xl flex flex-col items-center justify-center transition-all ${selectedFile ? "border-blue-500 bg-blue-50 text-blue-500" : "border-gray-100 text-gray-300"}`}
                         >
                           <FileText size={24} />
-                          <span className="text-[8px] font-black uppercase mt-2">
-                            Attach PDF
-                          </span>
+                          <span className="text-[8px] font-black uppercase mt-2">Attach PDF</span>
                         </button>
                       )}
                       <input
@@ -348,9 +336,7 @@ export default function ManageMarketplace() {
                         ref={fileInputRef}
                         className="hidden"
                         accept=".pdf"
-                        onChange={(e) =>
-                          setSelectedFile(e.target.files?.[0] || null)
-                        }
+                        onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
                       />
                     </div>
                   </div>
@@ -365,25 +351,49 @@ export default function ManageMarketplace() {
                     className="w-full p-5 rounded-2xl bg-gray-50 border-none outline-none font-medium text-sm"
                     placeholder="Tell students why they need this..."
                     value={formData.description}
-                    onChange={(e) =>
-                      setFormData({ ...formData, description: e.target.value })
-                    }
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   />
                 </div>
                 <button
                   disabled={submitting}
                   type="submit"
-                  className="w-full py-6 bg-gray-900 text-white rounded-[2rem] font-black text-sm uppercase tracking-widest hover:bg-[#2D5A27] shadow-xl transition-all flex items-center justify-center gap-3"
+                  className="w-full py-6 bg-gray-900 text-white rounded-[2rem] font-black text-sm uppercase tracking-widest hover:bg-[#2D5A27] shadow-xl transition-all flex items-center justify-center gap-3 disabled:opacity-50"
                 >
-                  {submitting ? (
-                    <Loader2 className="animate-spin" size={20} />
-                  ) : isEditing ? (
-                    "Update Listing"
-                  ) : (
-                    "Deploy Item"
-                  )}
+                  {submitting ? <Loader2 className="animate-spin" size={20} /> : isEditing ? "Update Listing" : "Deploy Item"}
                 </button>
               </form>
+            </div>
+          </div>
+        )}
+
+        {/* --- 🗑️ CUSTOM DELETE CONFIRMATION MODAL --- */}
+        {showDeleteModal && (
+          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
+            <div className="bg-white w-full max-w-sm rounded-[3rem] p-10 text-center shadow-2xl border-4 border-red-50">
+              <div className="bg-red-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-red-500">
+                <AlertTriangle size={40} />
+              </div>
+              <h3 className="text-2xl font-black text-gray-800 uppercase italic tracking-tighter mb-2">
+                Remove Item?
+              </h3>
+              <p className="text-gray-400 font-bold text-xs mb-8">
+                Are you sure you want to delete <span className="text-gray-900">"{itemToDelete?.title}"</span>? This action cannot be undone.
+              </p>
+              <div className="flex flex-col gap-3">
+                <button
+                  onClick={handleDelete}
+                  disabled={submitting}
+                  className="w-full py-5 bg-red-500 text-white rounded-2xl font-black uppercase tracking-widest hover:bg-red-600 transition-all flex items-center justify-center gap-2"
+                >
+                  {submitting ? <Loader2 className="animate-spin" size={20} /> : "Yes, Delete It"}
+                </button>
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  className="w-full py-5 bg-gray-100 text-gray-600 rounded-2xl font-black uppercase tracking-widest hover:bg-gray-200 transition-all"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
         )}
