@@ -8,9 +8,14 @@ export default function ResetPassword() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   
+  // 🚀 THE FIX: Use decodeURIComponent to clean the email and token
+  const rawEmail = searchParams.get("email") || "";
+  const decodedEmail = decodeURIComponent(rawEmail);
+  const token = searchParams.get("token") || "";
+
   const [formData, setFormData] = useState({
-    token: searchParams.get("token") || "",
-    email: searchParams.get("email") || "",
+    token: token,
+    email: decodedEmail,
     password: "",
     password_confirmation: "",
   });
@@ -19,23 +24,33 @@ export default function ResetPassword() {
   const [error, setError] = useState("");
   const [showPass, setShowPass] = useState(false);
 
+  // Sync state if URL params change
   useEffect(() => {
-    if (!formData.token || !formData.email) {
+    if (!token || !decodedEmail) {
       setError("Invalid or expired reset link. Please request a new one.");
     }
-  }, [formData.token, formData.email]);
+  }, [token, decodedEmail]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Quick frontend check before hitting the API
+    if (formData.password !== formData.password_confirmation) {
+      setError("Passwords do not match.");
+      return;
+    }
+
     setLoading(true);
     setError("");
 
     try {
+      // Send the cleaned formData to your api.fricalearn.com
       const res = await api.post("/auth/reset-password", formData);
       alert(res.data.message);
       navigate("/login");
     } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to reset password.");
+      // Capture the clear error message from our Laravel try-catch block
+      setError(err.response?.data?.message || err.response?.data?.error || "Failed to reset password.");
     } finally {
       setLoading(false);
     }
@@ -86,14 +101,14 @@ export default function ResetPassword() {
             />
 
             {error && (
-              <p className="text-red-500 text-[10px] font-black uppercase tracking-widest italic text-center">
+              <p className="text-red-500 text-[10px] font-black uppercase tracking-widest italic text-center leading-tight">
                 {error}
               </p>
             )}
 
             <button
               type="submit"
-              disabled={loading || !formData.token}
+              disabled={loading || !formData.token || !formData.email}
               className="w-full bg-gray-900 text-white p-5 rounded-2xl font-black uppercase italic tracking-widest hover:bg-blue-600 transition-all flex items-center justify-center gap-3 shadow-lg disabled:opacity-50"
             >
               {loading ? <Loader2 className="animate-spin" size={20} /> : "Update Password"}
