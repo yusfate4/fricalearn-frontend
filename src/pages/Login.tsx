@@ -31,8 +31,17 @@ const Login: React.FC = () => {
     setLoading(true);
     setError("");
 
+    const payload = { 
+      email: email.trim().toLowerCase(), // 🚀 Force lowercase and no spaces
+      password: password.trim()           // 🚀 No accidental spaces
+    };
+
+    console.log("Sending Payload:", payload); // 💡 Check your browser console!
+
     try {
-      const response = await api.post("/auth/login", { email, password });
+      const response = await api.post("/auth/login", payload);
+
+    
       
       const { token, user } = response.data;
       localStorage.setItem("token", token);
