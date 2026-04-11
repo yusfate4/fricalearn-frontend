@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import Layout from "../../components/Layout";
-import api from "../../api/axios";
+// import Layout from "../../components/Layout";
+import Layout from "./Layout";
+import api from "../api/axios";
 import { 
   UserCircle, 
   BookOpen, 
