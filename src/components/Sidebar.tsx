@@ -48,6 +48,7 @@ export default function Sidebar() {
   const isTutor = user?.role === "tutor";
   const isStaff = isAdmin || isTutor;
 
+  // Student view is for actual students, or parents/admins viewing student content
   const isStudentView =
     user?.role === "student" ||
     (user?.role === "parent" && isImpersonating && !isParentRoute) ||
@@ -114,6 +115,7 @@ export default function Sidebar() {
         {/* NAVIGATION */}
         <div className="flex-1 overflow-y-auto no-scrollbar pb-6 pr-1">
           <nav className="space-y-1">
+            
             {/* --- 🎓 STUDENT MENU --- */}
             {isStudentView && !isTutor && (
               <div className="space-y-1">
@@ -154,6 +156,22 @@ export default function Sidebar() {
                   icon={<BarChart3 size={20} />}
                   label="My Progress"
                   active={isActive("/analytics")}
+                  onClick={closeSidebar}
+                />
+                
+                <SectionHeader label="Rewards & Shop" />
+                <SidebarLink
+                  to="/store"
+                  icon={<Store size={20} className="text-yellow-400" />}
+                  label="Marketplace"
+                  active={isActive("/store")}
+                  onClick={closeSidebar}
+                />
+                <SidebarLink
+                  to="/my-rewards"
+                  icon={<Package size={20} className="text-blue-400" />}
+                  label="My Treasures"
+                  active={isActive("/my-rewards")}
                   onClick={closeSidebar}
                 />
               </div>
@@ -201,7 +219,7 @@ export default function Sidebar() {
                 <SidebarLink
                   to="/admin/parents"
                   icon={<UserPlus size={20} className="text-blue-400" />}
-                  label="Parent Portal"
+                  label="Parent Database"
                   active={isActive("/admin/parents")}
                   onClick={closeSidebar}
                 />
@@ -243,7 +261,7 @@ export default function Sidebar() {
                   onClick={closeSidebar}
                 />
 
-                {/* --- ⛔ FOUNDER ONLY SECTION --- */}
+                {/* --- ⛔ FOUNDER/SUPERADMIN ONLY SECTION --- */}
                 {isAdmin && (
                   <>
                     <SectionHeader label="Economics & Fulfillment" color="text-red-300" />
@@ -255,8 +273,15 @@ export default function Sidebar() {
                       onClick={closeSidebar}
                     />
                     <SidebarLink
+                      to="/admin/payments/history"
+                      icon={<History size={20} className="text-purple-400" />}
+                      label="Enrollment History"
+                      active={isActive("/admin/payments/history")}
+                      onClick={closeSidebar}
+                    />
+                    <SidebarLink
                       to="/admin/rewards"
-                      icon={<ShieldCheck size={20} className="text-red-400" />}
+                      icon={<ShieldCheck size={20} className="text-orange-400" />}
                       label="Order Fulfillment"
                       active={isActive("/admin/rewards")}
                       onClick={closeSidebar}
@@ -268,10 +293,19 @@ export default function Sidebar() {
                       active={isActive("/admin/manage-rewards")}
                       onClick={closeSidebar}
                     />
+
+                    <SectionHeader label="Communication" />
+                    <SidebarLink
+                      to="/admin/chats"
+                      icon={<MessageSquare size={20} />}
+                      label="Parent Inbox"
+                      active={isActive("/admin/chats")}
+                      onClick={closeSidebar}
+                    />
                   </>
                 )}
 
-                <SectionHeader label="My Profile" />
+                <SectionHeader label="Settings" />
                 <SidebarLink
                   to="/admin/profile"
                   icon={<UserCircle size={20} className="text-gray-300" />}
