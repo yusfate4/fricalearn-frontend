@@ -34,13 +34,20 @@ const Login: React.FC = () => {
     try {
       const response = await api.post("/auth/login", { email, password });
       
-      localStorage.setItem("token", response.data.token);
-      // Force refresh to initialize dashboard with new token
-      window.location.href = "/dashboard";
+      const { token, user } = response.data;
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user)); // Store user for the sidebar
+
+      // 🚀 THE ROLE-BASED REDIRECT
+      // Check if user is Staff (Admin or Tutor)
+      if (user.role === 'admin' || user.role === 'tutor' || Number(user.is_admin) === 1) {
+        window.location.href = "/admin";
+      } else {
+        window.location.href = "/dashboard";
+      }
       
     } catch (error: any) {
       if (error.response?.status === 403 && error.response?.data?.status === 'unverified') {
-        // 🚀 THE FIX: Redirect to the verification notice page
         navigate("/verify-notice", { 
           state: { 
             email: error.response.data.email,
@@ -82,7 +89,7 @@ const Login: React.FC = () => {
 
         <div className="relative z-10">
           <h1 className="text-6xl font-black leading-none mb-6 italic uppercase tracking-tighter text-white">
-            Welcome <br /> <span className="text-green-500">Back</span> Parent.
+            Welcome Back to the <span className="text-green-500">Academy</span>.
           </h1>
           <p className="text-xl font-medium text-white/80 max-w-md italic leading-relaxed">
             Log in to manage your child's lessons, track their progress, and
