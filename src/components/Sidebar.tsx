@@ -26,6 +26,8 @@ import {
   History,
   Trophy,
   UserCircle,
+  LayoutDashboard,
+  Gift,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
@@ -132,6 +134,7 @@ export default function Sidebar() {
                 <SidebarLink to="/dashboard" icon={<Home size={20} />} label="Home" active={isActive("/dashboard")} onClick={closeSidebar} />
                 <SidebarLink to="/olu-chat" icon={<Sparkles size={20} className="text-[#F4B400] animate-pulse" />} label="Talk to Olukọ" active={isActive("/olu-chat")} onClick={closeSidebar} />
                 <SidebarLink to="/courses" icon={<BookOpen size={20} />} label="My Lessons" active={isActive("/courses")} onClick={closeSidebar} />
+                <SidebarLink to="/leaderboard" icon={<Trophy size={20} />} label="Leaderboard" active={isActive("/leaderboard")} onClick={closeSidebar} />
                 
                 <SectionHeader label="Rewards & Shop" />
                 <SidebarLink to="/store" icon={<Store size={20} className="text-yellow-400" />} label="Marketplace" active={isActive("/store")} onClick={closeSidebar} />
@@ -139,7 +142,7 @@ export default function Sidebar() {
               </div>
             )}
 
-            {/* --- 👨‍👩‍👧‍👦 PARENT PORTAL --- */}
+            {/* --- 👨‍👩‍👧‍👦 PARENT PORTAL (Visible to Parents only) --- */}
             {isParentView && !isStaff && (
               <div className="space-y-1">
                 <SectionHeader label="Parent Portal" />
@@ -148,13 +151,14 @@ export default function Sidebar() {
               </div>
             )}
 
-            {/* --- 👑 ADMIN ONLY: CONTROL ROOM --- */}
+            {/* --- 👑 ADMIN ONLY: DATABASES & CHATS --- */}
             {isAdmin && (
               <div className="mt-2 space-y-1">
                 <SectionHeader label="Staff Control Room" color="text-[#F4B400]" />
-                <SidebarLink to="/admin" icon={<Settings size={20} />} label="Dashboard Overview" active={isActive("/admin")} onClick={closeSidebar} />
+                <SidebarLink to="/admin" icon={<LayoutDashboard size={20} />} label="Admin Dashboard" active={isActive("/admin")} onClick={closeSidebar} />
                 <SidebarLink to="/admin/users" icon={<Users size={20} className="text-green-400" />} label="Student Database" active={isActive("/admin/users")} onClick={closeSidebar} />
                 <SidebarLink to="/admin/parents" icon={<UserPlus size={20} className="text-blue-400" />} label="Parent Database" active={isActive("/admin/parents")} onClick={closeSidebar} />
+                <SidebarLink to="/admin/chats" icon={<MessageSquare size={20} className="text-purple-400" />} label="Support Inbox" active={isActive("/admin/chats")} onClick={closeSidebar} />
               </div>
             )}
 
@@ -164,18 +168,24 @@ export default function Sidebar() {
                 <SectionHeader label="Academic Content" />
                 <SidebarLink to="/admin/schedule" icon={<Clock size={20} className="text-yellow-200" />} label="Master Schedule" active={isActive("/admin/schedule")} onClick={closeSidebar} />
                 <SidebarLink to="/admin/live-classes" icon={<Video size={20} className="text-red-400" />} label="Live Classes" active={isActive("/admin/live-classes")} onClick={closeSidebar} />
-                <SidebarLink to="/admin/courses/list" icon={<GraduationCap size={20} />} label="Courses & Subjects" active={isActive("/admin/courses/list")} onClick={closeSidebar} />
-                <SidebarLink to="/admin/lessons" icon={<BookText size={20} className="text-orange-300" />} label="Lessons" active={isActive("/admin/lessons")} onClick={closeSidebar} />
+                <SidebarLink to="/admin/courses/list" icon={<GraduationCap size={20} />} label="Course List" active={isActive("/admin/courses/list")} onClick={closeSidebar} />
+                <SidebarLink to="/admin/lessons" icon={<BookText size={20} className="text-orange-300" />} label="Lesson Manager" active={isActive("/admin/lessons")} onClick={closeSidebar} />
                 <SidebarLink to="/admin/questions" icon={<HelpCircle size={20} />} label="Quiz Builder" active={isActive("/admin/questions")} onClick={closeSidebar} />
+                <SidebarLink to="/admin/analytics" icon={<BarChart3 size={20} className="text-teal-400" />} label="Learning Analytics" active={isActive("/admin/analytics")} onClick={closeSidebar} />
 
                 {/* --- 💰 FOUNDER ONLY: ECONOMICS --- */}
                 {isAdmin && (
                   <>
                     <SectionHeader label="Economics" color="text-red-300" />
                     <SidebarLink to="/admin/payments" icon={<CreditCard size={20} className="text-blue-400" />} label="Verify Payments" active={isActive("/admin/payments")} onClick={closeSidebar} />
+                    <SidebarLink to="/admin/rewards" icon={<Gift size={20} className="text-pink-400" />} label="Redemptions" active={isActive("/admin/rewards")} onClick={closeSidebar} />
                     <SidebarLink to="/admin/manage-rewards" icon={<PlusCircle size={20} className="text-yellow-400" />} label="Shop Inventory" active={isActive("/admin/manage-rewards")} onClick={closeSidebar} />
                   </>
                 )}
+
+                {/* --- ⚙️ SETTINGS --- */}
+                <SectionHeader label="Account" />
+                <SidebarLink to="/admin/profile" icon={<UserCircle size={20} className="text-gray-300" />} label={isTutor ? "Tutor Credentials" : "Admin Profile"} active={isActive("/admin/profile")} onClick={closeSidebar} />
               </div>
             )}
           </nav>
