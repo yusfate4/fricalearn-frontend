@@ -57,7 +57,7 @@ import AdminMasterSchedule from "./pages/admin/AdminMasterSchedule";
 import AdminCourseList from "./pages/admin/AdminCourseList";
 import AdminPaymentVerify from "./pages/admin/AdminPaymentVerify";
 import AdminTutorProfile from "./components/AdminTutorProfile"; 
-
+import TutorDashboard from "./pages/admin/TutorDashboard";
 
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
@@ -136,6 +136,14 @@ function App() {
           <Route path="/forgot-password" element={!user ? <ForgotPassword /> : <Navigate to="/dashboard" />} />
           <Route path="/reset-password" element={!user ? <ResetPassword /> : <Navigate to="/dashboard" />} />
 
+<Route 
+  path="/admin" 
+  element={
+    isActuallyAdmin ? <AdminDashboard /> : 
+    isTutor ? <TutorDashboard /> : 
+    <Navigate to="/dashboard" />
+  } 
+/>
           {/* --- 🏠 PROTECTED ROUTE TREE --- */}
           <Route
             path="/*"
