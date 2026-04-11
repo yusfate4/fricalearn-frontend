@@ -10,26 +10,26 @@ const Hero: React.FC = () => {
             <span className="text-green-600">Live Your Culture.</span>
           </h1>
           <p className="mt-6 text-xl text-gray-600 max-w-lg">
-            Connect your child with elite native tutors for 1-on-1 lessons in
+            Connect your child with elite native tutors in
             Yoruba, Igbo, and Hausa. Powered by human expertise and reinforced
             by Olukọ AI.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4">
-            {/* Primary CTA: Anchor to Contact Section */}
+            {/* Primary CTA: Anchor to Courses Section */}
             <a
-              href="#contact"
+              href="#courses"
               className="px-8 py-4 bg-indigo-900 text-white font-bold rounded-xl hover:bg-indigo-800 transition shadow-lg text-center"
             >
-              Find a Tutor
+              Explore Courses
             </a>
 
             {/* Secondary CTA: Anchor to Courses Section */}
-            <a
+            {/* <a
               href="#courses"
               className="px-8 py-4 border-2 border-indigo-900 text-indigo-900 font-bold rounded-xl hover:bg-indigo-50 transition text-center"
             >
               Explore Courses
-            </a>
+            </a> */}
           </div>
         </div>
 
