@@ -115,17 +115,40 @@ export default function Sidebar() {
         <div className="flex-1 overflow-y-auto no-scrollbar pb-6 pr-1">
           <nav className="space-y-1">
             
-            {/* --- 🎓 STUDENT MENU (Hidden from Tutors) --- */}
+            {/* --- 🎓 STUDENT MENU --- */}
             {isStudentView && !isTutor && (
               <div className="space-y-1">
+                {user?.role === "parent" && isImpersonating && (
+                  <button
+                    onClick={handleReturnToParent}
+                    className="w-full flex items-center gap-3 px-4 py-3 mb-6 bg-white/10 border border-white/10 rounded-[1.2rem] text-yellow-400 font-black text-[10px] uppercase tracking-widest hover:bg-white/20 transition-all"
+                  >
+                    <ArrowLeftCircle size={16} />{" "}
+                    <span>Back to Parent Portal</span>
+                  </button>
+                )}
+
                 <SectionHeader label="Student Menu" />
                 <SidebarLink to="/dashboard" icon={<Home size={20} />} label="Home" active={isActive("/dashboard")} onClick={closeSidebar} />
                 <SidebarLink to="/olu-chat" icon={<Sparkles size={20} className="text-[#F4B400] animate-pulse" />} label="Talk to Olukọ" active={isActive("/olu-chat")} onClick={closeSidebar} />
                 <SidebarLink to="/courses" icon={<BookOpen size={20} />} label="My Lessons" active={isActive("/courses")} onClick={closeSidebar} />
+                
+                <SectionHeader label="Rewards & Shop" />
+                <SidebarLink to="/store" icon={<Store size={20} className="text-yellow-400" />} label="Marketplace" active={isActive("/store")} onClick={closeSidebar} />
+                <SidebarLink to="/my-rewards" icon={<Package size={20} className="text-blue-400" />} label="My Treasures" active={isActive("/my-rewards")} onClick={closeSidebar} />
               </div>
             )}
 
-            {/* --- 👑 ADMIN ONLY: CONTROL ROOM & DATABASES --- */}
+            {/* --- 👨‍👩‍👧‍👦 PARENT PORTAL --- */}
+            {isParentView && !isStaff && (
+              <div className="space-y-1">
+                <SectionHeader label="Parent Portal" />
+                <SidebarLink to="/parent/dashboard" icon={<ShieldCheck size={20} className="text-green-300" />} label="Family Overview" active={isActive("/parent/dashboard")} onClick={closeSidebar} />
+                <SidebarLink to="/parent/messages" icon={<MessageCircle size={20} className="text-blue-300" />} label="Admin Chat" active={isActive("/parent/messages")} onClick={closeSidebar} />
+              </div>
+            )}
+
+            {/* --- 👑 ADMIN ONLY: CONTROL ROOM --- */}
             {isAdmin && (
               <div className="mt-2 space-y-1">
                 <SectionHeader label="Staff Control Room" color="text-[#F4B400]" />
@@ -145,7 +168,7 @@ export default function Sidebar() {
                 <SidebarLink to="/admin/lessons" icon={<BookText size={20} className="text-orange-300" />} label="Lessons" active={isActive("/admin/lessons")} onClick={closeSidebar} />
                 <SidebarLink to="/admin/questions" icon={<HelpCircle size={20} />} label="Quiz Builder" active={isActive("/admin/questions")} onClick={closeSidebar} />
 
-                {/* --- 💰 FOUNDER ONLY: PAYMENTS/REWARDS --- */}
+                {/* --- 💰 FOUNDER ONLY: ECONOMICS --- */}
                 {isAdmin && (
                   <>
                     <SectionHeader label="Economics" color="text-red-300" />
@@ -153,9 +176,6 @@ export default function Sidebar() {
                     <SidebarLink to="/admin/manage-rewards" icon={<PlusCircle size={20} className="text-yellow-400" />} label="Shop Inventory" active={isActive("/admin/manage-rewards")} onClick={closeSidebar} />
                   </>
                 )}
-
-                <SectionHeader label="Settings" />
-                <SidebarLink to="/admin/profile" icon={<UserCircle size={20} className="text-gray-300" />} label={isTutor ? "Tutor Credentials" : "Admin Profile"} active={isActive("/admin/profile")} onClick={closeSidebar} />
               </div>
             )}
           </nav>
