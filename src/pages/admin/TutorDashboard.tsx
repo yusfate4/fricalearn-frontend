@@ -3,26 +3,55 @@ import {
   Video, 
   BookOpen, 
   Users, 
-  Clock, 
   ChevronRight, 
   PlusCircle, 
   Calendar,
-  Sparkles
+  Sparkles,
+  Loader2
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import api from "../../api/axios";
 
 export default function TutorDashboard() {
   const [stats, setStats] = useState({ lessons: 0, liveClasses: 0, students: 0 });
+  const [schedule, setSchedule] = useState({ day: "Saturday", time: "12:00" });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch tutor-specific stats (Lessons they created, etc.)
-    api.get("/admin/stats") 
-      .then(res => setStats(res.data))
-      .catch(err => console.error("Error loading tutor stats", err))
-      .finally(() => setLoading(false));
+    // 📊 Fetch Stats & Schedule in parallel
+    const fetchData = async () => {
+      try {
+        const [statsRes, scheduleRes] = await Promise.all([
+          api.get("/admin/stats"),
+          api.get("/admin/schedule")
+        ]);
+
+        // 🚀 THE FIX: Mapping the backend keys to your state
+        setStats({
+          lessons: statsRes.data.total_lessons || 0,
+          liveClasses: statsRes.data.total_live_classes || 0,
+          students: statsRes.data.total_students || 0
+        });
+
+        setSchedule({
+          day: scheduleRes.data.day,
+          time: scheduleRes.data.start_time
+        });
+      } catch (err) {
+        console.error("Dashboard Data Sync Error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
+
+  if (loading) return (
+    <div className="flex h-[60vh] items-center justify-center">
+      <Loader2 className="animate-spin text-[#2D5A27]" size={40} />
+    </div>
+  );
 
   return (
     <div className="p-6 md:p-10 animate-in fade-in duration-700">
@@ -33,15 +62,13 @@ export default function TutorDashboard() {
         </p>
       </div>
 
-      {/* --- 📊 QUICK STATS --- */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        <StatCard icon={<BookOpen className="text-orange-500" />} label="My Lessons" value={stats.lessons} />
-        <StatCard icon={<Video className="text-red-500" />} label="Live Classes" value={stats.liveClasses} />
-        <StatCard icon={<Users className="text-blue-500" />} label="Total Students" value={stats.students} />
+        <StatCard icon={<BookOpen className="text-orange-500" />} label="Curriculum Lessons" value={stats.lessons} />
+        <StatCard icon={<Video className="text-red-500" />} label="Active Sessions" value={stats.liveClasses} />
+        <StatCard icon={<Users className="text-blue-500" />} label="Academy Students" value={stats.students} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* --- 🚀 QUICK ACTIONS --- */}
         <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border-2 border-gray-50">
           <h3 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-6 flex items-center gap-2">
             <PlusCircle size={16} className="text-[#2D5A27]" /> Rapid Launch
@@ -53,7 +80,6 @@ export default function TutorDashboard() {
           </div>
         </div>
 
-        {/* --- 📅 CLASS SCHEDULE --- */}
         <div className="bg-[#1A1A40] p-8 rounded-[2.5rem] shadow-xl text-white relative overflow-hidden">
           <Sparkles className="absolute top-4 right-4 text-yellow-400 opacity-20" size={40} />
           <h3 className="text-xs font-black uppercase tracking-widest text-white/40 mb-6 flex items-center gap-2">
@@ -62,7 +88,9 @@ export default function TutorDashboard() {
           <div className="space-y-6">
             <div>
               <p className="text-[10px] font-black uppercase text-yellow-400 tracking-widest">Next Academy Sync</p>
-              <h4 className="text-3xl font-black italic uppercase tracking-tighter">Saturday @ 12:00 WAT</h4>
+              <h4 className="text-3xl font-black italic uppercase tracking-tighter">
+                {schedule.day}s @ {schedule.time} WAT
+              </h4>
             </div>
             <Link to="/admin/schedule" className="inline-flex items-center gap-2 text-xs font-bold text-white/60 hover:text-white transition-colors">
               Adjust Master Time <ChevronRight size={14} />
