@@ -45,18 +45,26 @@ export default function Sidebar() {
     setIsImpersonating(impersonating);
   }, [user, location]);
 
-  // --- 👑 ROLE HELPERS ---
-  const isAdmin = user?.role === "admin" || Number(user?.is_admin) === 1;
-  const isTutor = user?.role === "tutor";
+  // --- 👑 ROLE HELPERS (Case-Insensitive Fix) ---
+  const rawRole = user?.role?.toLowerCase() || "";
+  const isAdmin = rawRole === "admin" || Number(user?.is_admin) === 1;
+  const isTutor = rawRole === "tutor";
   const isStaff = isAdmin || isTutor;
 
+  // Debugging log for the Lead Consultant
+  useEffect(() => {
+    if (user) {
+      console.log("Surgical Debug [Sidebar]:", { rawRole, isAdmin, isTutor, isStaff });
+    }
+  }, [user, rawRole, isAdmin, isTutor, isStaff]);
+
   const isStudentView =
-    user?.role === "student" ||
-    (user?.role === "parent" && isImpersonating && !isParentRoute) ||
+    rawRole === "student" ||
+    (rawRole === "parent" && isImpersonating && !isParentRoute) ||
     isAdmin;
 
   const isParentView =
-    user?.role === "parent" && (isParentRoute || !isImpersonating);
+    rawRole === "parent" && (isParentRoute || !isImpersonating);
 
   const isActive = (path: string) =>
     location.pathname === path || location.pathname.startsWith(`${path}/`);
@@ -120,7 +128,7 @@ export default function Sidebar() {
             {/* --- 🎓 STUDENT MENU --- */}
             {isStudentView && !isTutor && (
               <div className="space-y-1">
-                {user?.role === "parent" && isImpersonating && (
+                {rawRole === "parent" && isImpersonating && (
                   <button
                     onClick={handleReturnToParent}
                     className="w-full flex items-center gap-3 px-4 py-3 mb-6 bg-white/10 border border-white/10 rounded-[1.2rem] text-yellow-400 font-black text-[10px] uppercase tracking-widest hover:bg-white/20 transition-all"
@@ -162,7 +170,7 @@ export default function Sidebar() {
               </div>
             )}
 
-            {/* --- 👨‍🏫 TUTOR ONLY: DASHBOARD LINK --- */}
+            {/* --- 👨‍🏫 TUTOR DASHBOARD LINK (Now visible to Tutors) --- */}
             {isTutor && (
               <div className="mt-2 space-y-1">
                 <SectionHeader label="Staff Menu" color="text-[#F4B400]" />
@@ -170,7 +178,7 @@ export default function Sidebar() {
               </div>
             )}
 
-            {/* --- 👨‍🏫 ACADEMIC CONTENT (Visible to Admin & Tutor) --- */}
+            {/* --- 👨‍🏫 ACADEMIC CONTENT (Admin & Tutor Shared) --- */}
             {isStaff && (
               <div className="mt-2 space-y-1">
                 <SectionHeader label="Academic Content" />
@@ -190,10 +198,6 @@ export default function Sidebar() {
                     <SidebarLink to="/admin/manage-rewards" icon={<PlusCircle size={20} className="text-yellow-400" />} label="Shop Inventory" active={isActive("/admin/manage-rewards")} onClick={closeSidebar} />
                   </>
                 )}
-
-                {/* --- ⚙️ SETTINGS --- */}
-                <SectionHeader label="Account" />
-                {/* <SidebarLink to="/admin/profile" icon={<UserCircle size={20} className="text-gray-300" />} label={isTutor ? "Tutor Credentials" : "Admin Profile"} active={isActive("/admin/profile")} onClick={closeSidebar} /> */}
               </div>
             )}
           </nav>
