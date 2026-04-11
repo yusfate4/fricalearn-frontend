@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom"; // 🚀 Added for the dynamic room link
+import { Link } from "react-router-dom"; 
 import api from "../../api/axios";
 import Layout from "../../components/Layout";
 import {
@@ -11,7 +11,6 @@ import {
   Loader2,
   Trash2,
   MonitorPlay,
-  Users,
 } from "lucide-react";
 
 export default function ManageLiveClasses() {
@@ -34,13 +33,15 @@ export default function ManageLiveClasses() {
   }, []);
 
   const fetchData = async () => {
+    setLoading(true);
     try {
+      // 🚀 THE FIX: Added /admin prefix to live-classes to match backend
       const [classRes, lessonRes] = await Promise.all([
-        api.get("/live-classes"),
+        api.get("/admin/live-classes"),
         api.get("/admin/lessons"),
       ]);
-      setClasses(classRes.data);
-      setLessons(lessonRes.data);
+      setClasses(Array.isArray(classRes.data) ? classRes.data : []);
+      setLessons(Array.isArray(lessonRes.data) ? lessonRes.data : []);
     } catch (err) {
       console.error("Failed to load admin data", err);
     } finally {
@@ -52,6 +53,7 @@ export default function ManageLiveClasses() {
     e.preventDefault();
     try {
       const res = await api.post("/admin/live-classes", formData);
+      // Backend returns the new class object
       setClasses([res.data, ...classes]);
       setShowModal(false);
       setFormData({
@@ -63,17 +65,18 @@ export default function ManageLiveClasses() {
         max_attendees: 20,
       });
     } catch (err) {
-      alert("Error scheduling class.");
+      console.error("Schedule Error:", err);
+      alert("Error scheduling class. Check if all fields are filled.");
     }
   };
 
   const handleDelete = async (id: number) => {
-    if (!window.confirm("Delete this session?")) return;
+    if (!window.confirm("Are you sure you want to delete this session?")) return;
     try {
       await api.delete(`/admin/live-classes/${id}`);
       setClasses(classes.filter((c) => c.id !== id));
     } catch (err) {
-      alert("Failed to delete.");
+      alert("Failed to delete class.");
     }
   };
 
@@ -91,7 +94,7 @@ export default function ManageLiveClasses() {
                 Live Sessions
               </h1>
               <p className="text-gray-500 font-bold uppercase text-xs tracking-widest">
-                Schedule your next Yoruba Tribe meeting
+                Schedule and manage your tribe meetings
               </p>
             </div>
           </div>
@@ -107,7 +110,7 @@ export default function ManageLiveClasses() {
         {/* --- LIST --- */}
         {loading ? (
           <div className="flex justify-center py-20">
-            <Loader2 className="animate-spin text-gray-300" size={40} />
+            <Loader2 className="animate-spin text-[#2D5A27]" size={40} />
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4">
@@ -118,9 +121,7 @@ export default function ManageLiveClasses() {
                   className="bg-white p-8 rounded-[2.5rem] border-2 border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-6 group hover:border-[#2D5A27] transition-all"
                 >
                   <div className="flex items-center gap-6">
-                    <div
-                      className={`p-4 rounded-2xl ${lc.status === "ongoing" ? "bg-red-50 text-red-500 animate-pulse" : "bg-gray-50 text-gray-400"}`}
-                    >
+                    <div className="p-4 rounded-2xl bg-gray-50 text-gray-400 group-hover:text-[#2D5A27] transition-colors">
                       <Video size={28} />
                     </div>
                     <div>
@@ -144,7 +145,6 @@ export default function ManageLiveClasses() {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    {/* 🚀 DYNAMIC ROOM LINK FOR ADMIN */}
                     <Link
                       to={`/live-room/${lc.id}`}
                       className="flex items-center gap-2 px-8 py-4 bg-gray-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-[#2D5A27] transition-all"
@@ -232,7 +232,7 @@ export default function ManageLiveClasses() {
                       }
                     >
                       <option value="">Select Topic...</option>
-                      {lessons.map((l) => (
+                      {lessons.length > 0 && lessons.map((l) => (
                         <option key={l.id} value={l.id}>
                           {l.title}
                         </option>
@@ -243,7 +243,7 @@ export default function ManageLiveClasses() {
 
                 <div>
                   <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 px-1">
-                    Meeting Identifier
+                    Meeting URL
                   </label>
                   <input
                     required
