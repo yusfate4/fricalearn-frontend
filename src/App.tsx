@@ -56,7 +56,8 @@ import AdminPayments from "./pages/admin/AdminPayments";
 import AdminMasterSchedule from "./pages/admin/AdminMasterSchedule";
 import AdminCourseList from "./pages/admin/AdminCourseList";
 import AdminPaymentVerify from "./pages/admin/AdminPaymentVerify";
-import AdminTutorProfile from "./pages/admin/AdminTutorProfile"; // 🚀 Added this
+import AdminTutorProfile from "./components/AdminTutorProfile"; 
+
 
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
