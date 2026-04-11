@@ -48,7 +48,6 @@ export default function Sidebar() {
   const isTutor = user?.role === "tutor";
   const isStaff = isAdmin || isTutor;
 
-  // Student view is for actual students, or parents/admins viewing student content
   const isStudentView =
     user?.role === "student" ||
     (user?.role === "parent" && isImpersonating && !isParentRoute) ||
@@ -101,7 +100,7 @@ export default function Sidebar() {
               FricaLearn
             </h2>
             <p className="text-[9px] font-bold text-white/40 uppercase tracking-[0.3em] mt-1">
-              {isTutor ? "Tutor Command Center" : "Diaspora Academy"}
+              {isTutor ? "Tutor Portal" : "Diaspora Academy"}
             </p>
           </div>
           <button
@@ -116,203 +115,47 @@ export default function Sidebar() {
         <div className="flex-1 overflow-y-auto no-scrollbar pb-6 pr-1">
           <nav className="space-y-1">
             
-            {/* --- 🎓 STUDENT MENU --- */}
+            {/* --- 🎓 STUDENT MENU (Hidden from Tutors) --- */}
             {isStudentView && !isTutor && (
               <div className="space-y-1">
-                {user?.role === "parent" && isImpersonating && (
-                  <button
-                    onClick={handleReturnToParent}
-                    className="w-full flex items-center gap-3 px-4 py-3 mb-6 bg-white/10 border border-white/10 rounded-[1.2rem] text-yellow-400 font-black text-[10px] uppercase tracking-widest hover:bg-white/20 transition-all"
-                  >
-                    <ArrowLeftCircle size={16} />{" "}
-                    <span>Back to Parent Portal</span>
-                  </button>
-                )}
-
                 <SectionHeader label="Student Menu" />
-                <SidebarLink
-                  to="/dashboard"
-                  icon={<Home size={20} />}
-                  label="Home"
-                  active={isActive("/dashboard")}
-                  onClick={closeSidebar}
-                />
-                <SidebarLink
-                  to="/olu-chat"
-                  icon={<Sparkles size={20} className="text-[#F4B400] animate-pulse" />}
-                  label="Talk to Olukọ (AI)"
-                  active={isActive("/olu-chat")}
-                  onClick={closeSidebar}
-                />
-                <SidebarLink
-                  to="/courses"
-                  icon={<BookOpen size={20} />}
-                  label="My Lessons"
-                  active={isActive("/courses")}
-                  onClick={closeSidebar}
-                />
-                <SidebarLink
-                  to="/analytics"
-                  icon={<BarChart3 size={20} />}
-                  label="My Progress"
-                  active={isActive("/analytics")}
-                  onClick={closeSidebar}
-                />
-                
-                <SectionHeader label="Rewards & Shop" />
-                <SidebarLink
-                  to="/store"
-                  icon={<Store size={20} className="text-yellow-400" />}
-                  label="Marketplace"
-                  active={isActive("/store")}
-                  onClick={closeSidebar}
-                />
-                <SidebarLink
-                  to="/my-rewards"
-                  icon={<Package size={20} className="text-blue-400" />}
-                  label="My Treasures"
-                  active={isActive("/my-rewards")}
-                  onClick={closeSidebar}
-                />
+                <SidebarLink to="/dashboard" icon={<Home size={20} />} label="Home" active={isActive("/dashboard")} onClick={closeSidebar} />
+                <SidebarLink to="/olu-chat" icon={<Sparkles size={20} className="text-[#F4B400] animate-pulse" />} label="Talk to Olukọ" active={isActive("/olu-chat")} onClick={closeSidebar} />
+                <SidebarLink to="/courses" icon={<BookOpen size={20} />} label="My Lessons" active={isActive("/courses")} onClick={closeSidebar} />
               </div>
             )}
 
-            {/* --- 👨‍👩‍👧‍👦 PARENT MENU --- */}
-            {isParentView && !isStaff && (
-              <div className="space-y-1">
-                <SectionHeader label="Parent Portal" />
-                <SidebarLink
-                  to="/parent/dashboard"
-                  icon={<ShieldCheck size={20} className="text-green-300" />}
-                  label="Family Overview"
-                  active={isActive("/parent/dashboard")}
-                  onClick={closeSidebar}
-                />
-                <SidebarLink
-                  to="/parent/messages"
-                  icon={<MessageCircle size={20} className="text-blue-300" />}
-                  label="Admin Chat"
-                  active={isActive("/parent/messages")}
-                  onClick={closeSidebar}
-                />
-              </div>
-            )}
-
-            {/* --- 👑 STAFF/ADMIN/TUTOR MENU --- */}
-            {isStaff && (
+            {/* --- 👑 ADMIN ONLY: CONTROL ROOM & DATABASES --- */}
+            {isAdmin && (
               <div className="mt-2 space-y-1">
                 <SectionHeader label="Staff Control Room" color="text-[#F4B400]" />
-                <SidebarLink
-                  to="/admin"
-                  icon={<Settings size={20} />}
-                  label="Dashboard Overview"
-                  active={isActive("/admin")}
-                  onClick={closeSidebar}
-                />
-                <SidebarLink
-                  to="/admin/users"
-                  icon={<Users size={20} className="text-green-400" />}
-                  label="Student Database"
-                  active={isActive("/admin/users")}
-                  onClick={closeSidebar}
-                />
-                <SidebarLink
-                  to="/admin/parents"
-                  icon={<UserPlus size={20} className="text-blue-400" />}
-                  label="Parent Database"
-                  active={isActive("/admin/parents")}
-                  onClick={closeSidebar}
-                />
+                <SidebarLink to="/admin" icon={<Settings size={20} />} label="Dashboard Overview" active={isActive("/admin")} onClick={closeSidebar} />
+                <SidebarLink to="/admin/users" icon={<Users size={20} className="text-green-400" />} label="Student Database" active={isActive("/admin/users")} onClick={closeSidebar} />
+                <SidebarLink to="/admin/parents" icon={<UserPlus size={20} className="text-blue-400" />} label="Parent Database" active={isActive("/admin/parents")} onClick={closeSidebar} />
+              </div>
+            )}
 
+            {/* --- 👨‍🏫 ACADEMIC CONTENT (Visible to Admin & Tutor) --- */}
+            {isStaff && (
+              <div className="mt-2 space-y-1">
                 <SectionHeader label="Academic Content" />
-                <SidebarLink
-                  to="/admin/schedule"
-                  icon={<Clock size={20} className="text-yellow-200" />}
-                  label="Master Schedule"
-                  active={isActive("/admin/schedule")}
-                  onClick={closeSidebar}
-                />
-                <SidebarLink
-                  to="/admin/live-classes"
-                  icon={<Video size={20} className="text-red-400" />}
-                  label="Live Classes"
-                  active={isActive("/admin/live-classes")}
-                  onClick={closeSidebar}
-                />
-                <SidebarLink
-                  to="/admin/courses/list"
-                  icon={<GraduationCap size={20} />}
-                  label="Courses & Subjects"
-                  active={isActive("/admin/courses/list")}
-                  onClick={closeSidebar}
-                />
-                <SidebarLink
-                  to="/admin/lessons"
-                  icon={<BookText size={20} className="text-orange-300" />}
-                  label="Lessons"
-                  active={isActive("/admin/lessons")}
-                  onClick={closeSidebar}
-                />
-                <SidebarLink
-                  to="/admin/questions"
-                  icon={<HelpCircle size={20} />}
-                  label="Quiz Builder"
-                  active={isActive("/admin/questions")}
-                  onClick={closeSidebar}
-                />
+                <SidebarLink to="/admin/schedule" icon={<Clock size={20} className="text-yellow-200" />} label="Master Schedule" active={isActive("/admin/schedule")} onClick={closeSidebar} />
+                <SidebarLink to="/admin/live-classes" icon={<Video size={20} className="text-red-400" />} label="Live Classes" active={isActive("/admin/live-classes")} onClick={closeSidebar} />
+                <SidebarLink to="/admin/courses/list" icon={<GraduationCap size={20} />} label="Courses & Subjects" active={isActive("/admin/courses/list")} onClick={closeSidebar} />
+                <SidebarLink to="/admin/lessons" icon={<BookText size={20} className="text-orange-300" />} label="Lessons" active={isActive("/admin/lessons")} onClick={closeSidebar} />
+                <SidebarLink to="/admin/questions" icon={<HelpCircle size={20} />} label="Quiz Builder" active={isActive("/admin/questions")} onClick={closeSidebar} />
 
-                {/* --- ⛔ FOUNDER/SUPERADMIN ONLY SECTION --- */}
+                {/* --- 💰 FOUNDER ONLY: PAYMENTS/REWARDS --- */}
                 {isAdmin && (
                   <>
-                    <SectionHeader label="Economics & Fulfillment" color="text-red-300" />
-                    <SidebarLink
-                      to="/admin/payments"
-                      icon={<CreditCard size={20} className="text-blue-400" />}
-                      label="Verify Payments"
-                      active={isActive("/admin/payments")}
-                      onClick={closeSidebar}
-                    />
-                    <SidebarLink
-                      to="/admin/payments/history"
-                      icon={<History size={20} className="text-purple-400" />}
-                      label="Enrollment History"
-                      active={isActive("/admin/payments/history")}
-                      onClick={closeSidebar}
-                    />
-                    <SidebarLink
-                      to="/admin/rewards"
-                      icon={<ShieldCheck size={20} className="text-orange-400" />}
-                      label="Order Fulfillment"
-                      active={isActive("/admin/rewards")}
-                      onClick={closeSidebar}
-                    />
-                    <SidebarLink
-                      to="/admin/manage-rewards"
-                      icon={<PlusCircle size={20} className="text-yellow-400" />}
-                      label="Shop Inventory"
-                      active={isActive("/admin/manage-rewards")}
-                      onClick={closeSidebar}
-                    />
-
-                    <SectionHeader label="Communication" />
-                    <SidebarLink
-                      to="/admin/chats"
-                      icon={<MessageSquare size={20} />}
-                      label="Parent Inbox"
-                      active={isActive("/admin/chats")}
-                      onClick={closeSidebar}
-                    />
+                    <SectionHeader label="Economics" color="text-red-300" />
+                    <SidebarLink to="/admin/payments" icon={<CreditCard size={20} className="text-blue-400" />} label="Verify Payments" active={isActive("/admin/payments")} onClick={closeSidebar} />
+                    <SidebarLink to="/admin/manage-rewards" icon={<PlusCircle size={20} className="text-yellow-400" />} label="Shop Inventory" active={isActive("/admin/manage-rewards")} onClick={closeSidebar} />
                   </>
                 )}
 
                 <SectionHeader label="Settings" />
-                <SidebarLink
-                  to="/admin/profile"
-                  icon={<UserCircle size={20} className="text-gray-300" />}
-                  label={isTutor ? "Tutor Credentials" : "Admin Profile"}
-                  active={isActive("/admin/profile")}
-                  onClick={closeSidebar}
-                />
+                <SidebarLink to="/admin/profile" icon={<UserCircle size={20} className="text-gray-300" />} label={isTutor ? "Tutor Credentials" : "Admin Profile"} active={isActive("/admin/profile")} onClick={closeSidebar} />
               </div>
             )}
           </nav>
