@@ -185,7 +185,7 @@ export default function Sidebar() {
 
                 {/* --- ⚙️ SETTINGS --- */}
                 <SectionHeader label="Account" />
-                <SidebarLink to="/admin/profile" icon={<UserCircle size={20} className="text-gray-300" />} label={isTutor ? "Tutor Credentials" : "Admin Profile"} active={isActive("/admin/profile")} onClick={closeSidebar} />
+                {/* <SidebarLink to="/admin/profile" icon={<UserCircle size={20} className="text-gray-300" />} label={isTutor ? "Tutor Credentials" : "Admin Profile"} active={isActive("/admin/profile")} onClick={closeSidebar} /> */}
               </div>
             )}
           </nav>
