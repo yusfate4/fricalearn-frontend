@@ -142,7 +142,7 @@ export default function Sidebar() {
               </div>
             )}
 
-            {/* --- 👨‍👩‍👧‍👦 PARENT PORTAL (Visible to Parents only) --- */}
+            {/* --- 👨‍👩‍👧‍👦 PARENT PORTAL --- */}
             {isParentView && !isStaff && (
               <div className="space-y-1">
                 <SectionHeader label="Parent Portal" />
@@ -159,6 +159,14 @@ export default function Sidebar() {
                 <SidebarLink to="/admin/users" icon={<Users size={20} className="text-green-400" />} label="Student Database" active={isActive("/admin/users")} onClick={closeSidebar} />
                 <SidebarLink to="/admin/parents" icon={<UserPlus size={20} className="text-blue-400" />} label="Parent Database" active={isActive("/admin/parents")} onClick={closeSidebar} />
                 <SidebarLink to="/admin/chats" icon={<MessageSquare size={20} className="text-purple-400" />} label="Support Inbox" active={isActive("/admin/chats")} onClick={closeSidebar} />
+              </div>
+            )}
+
+            {/* --- 👨‍🏫 TUTOR ONLY: DASHBOARD LINK --- */}
+            {isTutor && (
+              <div className="mt-2 space-y-1">
+                <SectionHeader label="Staff Menu" color="text-[#F4B400]" />
+                <SidebarLink to="/admin" icon={<LayoutDashboard size={20} />} label="Tutor Dashboard" active={isActive("/admin")} onClick={closeSidebar} />
               </div>
             )}
 
