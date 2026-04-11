@@ -31,24 +31,26 @@ const Login: React.FC = () => {
     setLoading(true);
     setError("");
 
+    // 🚀 LEAD CONSULTANT TIP: Explicitly clean the payload
     const payload = { 
-      email: email.trim().toLowerCase(), // 🚀 Force lowercase and no spaces
-      password: password.trim()           // 🚀 No accidental spaces
+      email: email.trim().toLowerCase(), 
+      password: password.trim() 
     };
-
-    console.log("Sending Payload:", payload); // 💡 Check your browser console!
 
     try {
       const response = await api.post("/auth/login", payload);
-
-    
       
       const { token, user } = response.data;
+      
+      // Store session data
       localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user)); // Store user for the sidebar
+      localStorage.setItem("user", JSON.stringify(user));
 
-      // 🚀 THE ROLE-BASED REDIRECT
-      // Check if user is Staff (Admin or Tutor)
+      /**
+       * 🚀 ROLE-BASED REDIRECT
+       * Staff (Admins & Tutors) go to /admin
+       * Students and Parents go to /dashboard
+       */
       if (user.role === 'admin' || user.role === 'tutor' || Number(user.is_admin) === 1) {
         window.location.href = "/admin";
       } else {
@@ -64,6 +66,7 @@ const Login: React.FC = () => {
           } 
         });
       } else {
+        // Handle 422 or 401 errors
         const message = error.response?.data?.message || "Login failed. Please check your credentials.";
         setError(message);
       }
@@ -101,8 +104,7 @@ const Login: React.FC = () => {
             Welcome Back to the <span className="text-green-500">Academy</span>.
           </h1>
           <p className="text-xl font-medium text-white/80 max-w-md italic leading-relaxed">
-            Log in to manage your child's lessons, track their progress, and
-            explore the cultural marketplace.
+            Manage lessons, track student progress, and explore the cultural marketplace of the future.
           </p>
         </div>
 
@@ -119,18 +121,17 @@ const Login: React.FC = () => {
               Academy Login
             </h2>
             <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">
-              Access your family portal
+              Access the command center
             </p>
           </div>
 
-          {/* Registration Success Message */}
+          {/* Success/Error Alerts */}
           {successMsg && !error && (
             <div className="mb-6 p-4 bg-green-50 border-2 border-green-100 text-[#2D5A27] rounded-2xl flex items-center gap-3 font-black text-[11px] uppercase tracking-tight">
               <Info size={18} /> {successMsg}
             </div>
           )}
 
-          {/* Error Message */}
           {error && (
             <div className="mb-6 p-4 bg-red-50 border-2 border-red-100 text-red-600 rounded-2xl flex items-center gap-2 font-black text-[11px] uppercase tracking-tight">
               <AlertCircle size={18} /> {error}
@@ -150,8 +151,7 @@ const Login: React.FC = () => {
                 <input
                   required
                   type="email"
-                  placeholder="parent@example.com"
-                  autoComplete="email"
+                  placeholder="name@fricalearn.com"
                   className="w-full pl-14 pr-6 py-4 rounded-[2rem] border-2 border-gray-100 outline-none focus:border-[#2D5A27] transition-all font-bold text-gray-700 bg-white placeholder:text-gray-200"
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -163,11 +163,8 @@ const Login: React.FC = () => {
                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-400">
                   Password
                 </label>
-                <Link 
-                  to="/forgot-password" 
-                  className="text-[9px] font-black text-[#2D5A27] uppercase tracking-widest hover:text-[#1A1A40] transition-colors"
-                >
-                  Forgot Password?
+                <Link to="/forgot-password" title="Recover account" className="text-[9px] font-black text-[#2D5A27] uppercase tracking-widest hover:text-[#1A1A40]">
+                  Forgot?
                 </Link>
               </div>
               <div className="relative group">
@@ -179,14 +176,13 @@ const Login: React.FC = () => {
                   required
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  autoComplete="current-password"
                   className="w-full pl-14 pr-14 py-4 rounded-[2rem] border-2 border-gray-100 outline-none focus:border-[#2D5A27] transition-all font-bold text-gray-700 bg-white placeholder:text-gray-200"
                   onChange={(e) => setPassword(e.target.value)}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-300 hover:text-[#2D5A27] transition-colors"
+                  className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-300 hover:text-[#2D5A27]"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -196,33 +192,22 @@ const Login: React.FC = () => {
             <button
               disabled={loading}
               type="submit"
-              className="group w-full bg-[#2D5A27] text-white py-5 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs shadow-xl hover:bg-[#1A1A40] transition-all flex items-center justify-center gap-3 disabled:opacity-50 mt-4"
+              className="group w-full bg-[#2D5A27] text-white py-5 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs shadow-xl hover:bg-[#1A1A40] transition-all flex items-center justify-center gap-3 mt-4"
             >
-              {loading ? (
-                <Loader2 className="animate-spin" size={20} />
-              ) : (
+              {loading ? <Loader2 className="animate-spin" size={20} /> : (
                 <>
                   <span>Enter Academy</span>
-                  <ChevronRight
-                    size={18}
-                    className="group-hover:translate-x-1 transition-transform"
-                  />
+                  <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
                 </>
               )}
             </button>
-
-            <div className="text-center mt-6">
-              <p className="text-gray-400 font-bold text-[11px] uppercase tracking-widest">
-                New to the family?{" "}
-                <Link
-                  to="/register"
-                  className="text-[#2D5A27] hover:text-[#1A1A40] transition-colors font-black italic underline decoration-2 underline-offset-4 ml-1"
-                >
-                  Enroll Here
-                </Link>
-              </p>
-            </div>
           </form>
+
+          <div className="text-center mt-8">
+            <p className="text-gray-400 font-bold text-[11px] uppercase tracking-widest">
+              New to the family? <Link to="/register" className="text-[#2D5A27] font-black italic underline underline-offset-4 ml-1">Enroll Here</Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>
