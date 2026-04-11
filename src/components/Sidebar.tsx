@@ -25,8 +25,9 @@ import {
   Clock,
   History,
   Trophy,
+  UserCircle,
 } from "lucide-react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
 export default function Sidebar() {
@@ -42,7 +43,10 @@ export default function Sidebar() {
     setIsImpersonating(impersonating);
   }, [user, location]);
 
+  // --- 👑 ROLE HELPERS ---
   const isAdmin = user?.role === "admin" || Number(user?.is_admin) === 1;
+  const isTutor = user?.role === "tutor";
+  const isStaff = isAdmin || isTutor;
 
   const isStudentView =
     user?.role === "student" ||
@@ -96,7 +100,7 @@ export default function Sidebar() {
               FricaLearn
             </h2>
             <p className="text-[9px] font-bold text-white/40 uppercase tracking-[0.3em] mt-1">
-              Diaspora Academy
+              {isTutor ? "Tutor Command Center" : "Diaspora Academy"}
             </p>
           </div>
           <button
@@ -111,7 +115,7 @@ export default function Sidebar() {
         <div className="flex-1 overflow-y-auto no-scrollbar pb-6 pr-1">
           <nav className="space-y-1">
             {/* --- 🎓 STUDENT MENU --- */}
-            {isStudentView && (
+            {isStudentView && !isTutor && (
               <div className="space-y-1">
                 {user?.role === "parent" && isImpersonating && (
                   <button
@@ -133,13 +137,8 @@ export default function Sidebar() {
                 />
                 <SidebarLink
                   to="/olu-chat"
-                  icon={
-                    <Sparkles
-                      size={20}
-                      className="text-[#F4B400] animate-pulse"
-                    />
-                  }
-                  label="Talk to Olukọ (AI Tutor)"
+                  icon={<Sparkles size={20} className="text-[#F4B400] animate-pulse" />}
+                  label="Talk to Olukọ (AI)"
                   active={isActive("/olu-chat")}
                   onClick={closeSidebar}
                 />
@@ -157,34 +156,11 @@ export default function Sidebar() {
                   active={isActive("/analytics")}
                   onClick={closeSidebar}
                 />
-                <SidebarLink
-                  to="/leaderboard"
-                  icon={<Users size={20} />}
-                  label="Leaderboard"
-                  active={isActive("/leaderboard")}
-                  onClick={closeSidebar}
-                />
-
-                <SectionHeader label="Rewards & Shop" />
-                <SidebarLink
-                  to="/store"
-                  icon={<Store size={20} className="text-yellow-400" />}
-                  label="Marketplace"
-                  active={isActive("/store")}
-                  onClick={closeSidebar}
-                />
-                <SidebarLink
-                  to="/my-rewards"
-                  icon={<Package size={20} className="text-blue-400" />}
-                  label="My Treasures"
-                  active={isActive("/my-rewards")}
-                  onClick={closeSidebar}
-                />
               </div>
             )}
 
             {/* --- 👨‍👩‍👧‍👦 PARENT MENU --- */}
-            {isParentView && !isAdmin && (
+            {isParentView && !isStaff && (
               <div className="space-y-1">
                 <SectionHeader label="Parent Portal" />
                 <SidebarLink
@@ -204,13 +180,10 @@ export default function Sidebar() {
               </div>
             )}
 
-            {/* --- 👑 ADMIN MENU --- */}
-            {isAdmin && (
-              <div className="mt-6 pt-6 border-t border-white/10 space-y-1">
-                <SectionHeader
-                  label="Admin Control Room"
-                  color="text-[#F4B400]"
-                />
+            {/* --- 👑 STAFF/ADMIN/TUTOR MENU --- */}
+            {isStaff && (
+              <div className="mt-2 space-y-1">
+                <SectionHeader label="Staff Control Room" color="text-[#F4B400]" />
                 <SidebarLink
                   to="/admin"
                   icon={<Settings size={20} />}
@@ -270,42 +243,40 @@ export default function Sidebar() {
                   onClick={closeSidebar}
                 />
 
-                <SectionHeader label="Economics & Fulfillment" />
-                <SidebarLink
-                  to="/admin/payments"
-                  icon={<CreditCard size={20} className="text-blue-400" />}
-                  label="Verify Payments"
-                  active={isActive("/admin/payments")}
-                  onClick={closeSidebar}
-                />
-                <SidebarLink
-                  to="/admin/payments/verify"
-                  icon={<History size={20} className="text-purple-400" />}
-                  label="Enrollment History"
-                  active={isActive("/admin/payments/verify")}
-                  onClick={closeSidebar}
-                />
-                <SidebarLink
-                  to="/admin/rewards"
-                  icon={<ShieldCheck size={20} className="text-red-400" />}
-                  label="Order Fulfillment"
-                  active={isActive("/admin/rewards")}
-                  onClick={closeSidebar}
-                />
-                <SidebarLink
-                  to="/admin/manage-rewards"
-                  icon={<PlusCircle size={20} className="text-yellow-400" />}
-                  label="Shop Inventory"
-                  active={isActive("/admin/manage-rewards")}
-                  onClick={closeSidebar}
-                />
+                {/* --- ⛔ FOUNDER ONLY SECTION --- */}
+                {isAdmin && (
+                  <>
+                    <SectionHeader label="Economics & Fulfillment" color="text-red-300" />
+                    <SidebarLink
+                      to="/admin/payments"
+                      icon={<CreditCard size={20} className="text-blue-400" />}
+                      label="Verify Payments"
+                      active={isActive("/admin/payments")}
+                      onClick={closeSidebar}
+                    />
+                    <SidebarLink
+                      to="/admin/rewards"
+                      icon={<ShieldCheck size={20} className="text-red-400" />}
+                      label="Order Fulfillment"
+                      active={isActive("/admin/rewards")}
+                      onClick={closeSidebar}
+                    />
+                    <SidebarLink
+                      to="/admin/manage-rewards"
+                      icon={<PlusCircle size={20} className="text-yellow-400" />}
+                      label="Shop Inventory"
+                      active={isActive("/admin/manage-rewards")}
+                      onClick={closeSidebar}
+                    />
+                  </>
+                )}
 
-                <SectionHeader label="Communication" />
+                <SectionHeader label="My Profile" />
                 <SidebarLink
-                  to="/admin/chats"
-                  icon={<MessageSquare size={20} />}
-                  label="Parent Inbox"
-                  active={isActive("/admin/chats")}
+                  to="/admin/profile"
+                  icon={<UserCircle size={20} className="text-gray-300" />}
+                  label={isTutor ? "Tutor Credentials" : "Admin Profile"}
+                  active={isActive("/admin/profile")}
                   onClick={closeSidebar}
                 />
               </div>
@@ -324,11 +295,8 @@ export default function Sidebar() {
             }}
             className="w-full flex items-center gap-3 px-5 py-4 text-red-300 font-bold hover:bg-red-500/10 rounded-[1.5rem] transition-all group"
           >
-            <LogOut
-              size={20}
-              className="group-hover:-translate-x-1 transition-transform"
-            />
-            <span className="text-sm">Logout</span>
+            <LogOut size={20} className="group-hover:-translate-x-1 transition-transform" />
+            <span className="text-sm uppercase tracking-widest font-black italic">Logout</span>
           </button>
         </div>
       </aside>
@@ -336,17 +304,9 @@ export default function Sidebar() {
   );
 }
 
-function SectionHeader({
-  label,
-  color = "text-white/30",
-}: {
-  label: string;
-  color?: string;
-}) {
+function SectionHeader({ label, color = "text-white/30" }: { label: string; color?: string; }) {
   return (
-    <p
-      className={`px-4 text-[9px] font-black uppercase tracking-[0.2em] mb-2 mt-4 ${color}`}
-    >
+    <p className={`px-4 text-[9px] font-black uppercase tracking-[0.2em] mb-2 mt-4 ${color}`}>
       {label}
     </p>
   );
@@ -363,9 +323,7 @@ function SidebarLink({ to, icon, label, active, onClick }: any) {
           : "text-white/50 hover:text-white hover:bg-white/5"
       }`}
     >
-      <span
-        className={`${active ? "text-white" : "text-white/40 group-hover:text-white"} transition-colors`}
-      >
+      <span className={`${active ? "text-white" : "text-white/40 group-hover:text-white"} transition-colors`}>
         {icon}
       </span>
       <span className="text-[13px] tracking-tight">{label}</span>
