@@ -45,18 +45,11 @@ export default function Sidebar() {
     setIsImpersonating(impersonating);
   }, [user, location]);
 
-  // --- 👑 ROLE HELPERS (Case-Insensitive Fix) ---
+  // --- 👑 ROLE HELPERS ---
   const rawRole = user?.role?.toLowerCase() || "";
   const isAdmin = rawRole === "admin" || Number(user?.is_admin) === 1;
   const isTutor = rawRole === "tutor";
   const isStaff = isAdmin || isTutor;
-
-  // Debugging log for the Lead Consultant
-  useEffect(() => {
-    if (user) {
-      console.log("Surgical Debug [Sidebar]:", { rawRole, isAdmin, isTutor, isStaff });
-    }
-  }, [user, rawRole, isAdmin, isTutor, isStaff]);
 
   const isStudentView =
     rawRole === "student" ||
@@ -170,7 +163,7 @@ export default function Sidebar() {
               </div>
             )}
 
-            {/* --- 👨‍🏫 TUTOR DASHBOARD LINK (Now visible to Tutors) --- */}
+            {/* --- 👨‍🏫 TUTOR DASHBOARD LINK --- */}
             {isTutor && (
               <div className="mt-2 space-y-1">
                 <SectionHeader label="Staff Menu" color="text-[#F4B400]" />
@@ -194,6 +187,8 @@ export default function Sidebar() {
                   <>
                     <SectionHeader label="Economics" color="text-red-300" />
                     <SidebarLink to="/admin/payments" icon={<CreditCard size={20} className="text-blue-400" />} label="Verify Payments" active={isActive("/admin/payments")} onClick={closeSidebar} />
+                    {/* 🚀 RESTORED: Enrollment History for Admin */}
+                    <SidebarLink to="/admin/payments/history" icon={<History size={20} className="text-orange-200" />} label="Enrollment History" active={isActive("/admin/payments/history")} onClick={closeSidebar} />
                     <SidebarLink to="/admin/rewards" icon={<Gift size={20} className="text-pink-400" />} label="Redemptions" active={isActive("/admin/rewards")} onClick={closeSidebar} />
                     <SidebarLink to="/admin/manage-rewards" icon={<PlusCircle size={20} className="text-yellow-400" />} label="Shop Inventory" active={isActive("/admin/manage-rewards")} onClick={closeSidebar} />
                   </>
