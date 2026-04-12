@@ -55,7 +55,7 @@ import ManageLiveClasses from "./pages/admin/ManageLiveClasses";
 import AdminPayments from "./pages/admin/AdminPayments";
 import AdminMasterSchedule from "./pages/admin/AdminMasterSchedule";
 import AdminCourseList from "./pages/admin/AdminCourseList";
-import AdminPaymentVerify from "./pages/admin/AdminPaymentVerify";
+import AdminPaymentVerify from "./pages/admin/AdminPaymentVerify"; // 👈 This is your history page
 import AdminTutorProfile from "./components/AdminTutorProfile"; 
 import TutorDashboard from "./pages/admin/TutorDashboard";
 
@@ -89,8 +89,8 @@ function App() {
   const isTutor = user?.role === "tutor";
   
   /**
-   * 🚀 THE FIX: Staff includes both Admins and Tutors.
-   * This prevents the "Redirect to Dashboard" loop for tutors.
+   * 🚀 THE STAFF HELPERS:
+   * isStaff handles common academic routes.
    */
   const isStaff = isActuallyAdmin || isTutor;
 
@@ -136,14 +136,6 @@ function App() {
           <Route path="/forgot-password" element={!user ? <ForgotPassword /> : <Navigate to="/dashboard" />} />
           <Route path="/reset-password" element={!user ? <ResetPassword /> : <Navigate to="/dashboard" />} />
 
-<Route 
-  path="/admin" 
-  element={
-    isActuallyAdmin ? <AdminDashboard /> : 
-    isTutor ? <TutorDashboard /> : 
-    <Navigate to="/dashboard" />
-  } 
-/>
           {/* --- 🏠 PROTECTED ROUTE TREE --- */}
           <Route
             path="/*"
@@ -152,8 +144,18 @@ function App() {
                 <Navigate to="/login" />
               ) : (
                 <Routes>
-                  {/* Shared Dashboard */}
+                  {/* Shared Dashboard Redirects */}
                   <Route path="/dashboard" element={<Dashboard />} />
+                  
+                  {/* 📊 Root Admin Path (Differentiates between Admin and Tutor Dashboards) */}
+                  <Route 
+                    path="/admin" 
+                    element={
+                      isActuallyAdmin ? <AdminDashboard /> : 
+                      isTutor ? <TutorDashboard /> : 
+                      <Navigate to="/dashboard" />
+                    } 
+                  />
 
                   {/* 👨‍👩‍👧‍👦 Parent Portal */}
                   <Route
@@ -178,8 +180,7 @@ function App() {
                   <Route path="/analytics/:userId?" element={canAccessStudentArea ? <StudentAnalytics /> : <Navigate to="/parent/dashboard" />} />
                   <Route path="/live-room/:id" element={<LiveRoom />} />
 
-                  {/* 👑 Admin/Staff Area */}
-                  <Route path="/admin" element={isStaff ? <AdminDashboard /> : <Navigate to="/dashboard" />} />
+                  {/* 👨‍🏫 Staff Shared Area (Admins & Tutors) */}
                   <Route path="/admin/lessons" element={isStaff ? <AdminLessonList /> : <Navigate to="/dashboard" />} />
                   <Route path="/admin/add-lesson" element={isStaff ? <AdminAddLesson /> : <Navigate to="/dashboard" />} />
                   <Route path="/admin/edit-lesson/:id" element={isStaff ? <AdminEditLesson /> : <Navigate to="/dashboard" />} />
@@ -192,10 +193,12 @@ function App() {
                   <Route path="/admin/live-classes" element={isStaff ? <ManageLiveClasses /> : <Navigate to="/dashboard" />} />
                   <Route path="/admin/courses/list" element={isStaff ? <AdminCourseList /> : <Navigate to="/dashboard" />} />
                   <Route path="/admin/profile" element={isStaff ? <AdminTutorProfile /> : <Navigate to="/dashboard" />} />
+                  
+                  {/* 🚀 FIXED: Enrollment History Path (Accessible to both Admin & Tutor) */}
+                  <Route path="/admin/payments/history" element={isStaff ? <AdminPaymentVerify /> : <Navigate to="/admin" />} />
 
                   {/* ⛔ SuperAdmin (Founder) Only Routes */}
                   <Route path="/admin/payments" element={isActuallyAdmin ? <AdminPayments /> : <Navigate to="/admin" />} />
-                  <Route path="/admin/payments/verify" element={isActuallyAdmin ? <AdminPaymentVerify /> : <Navigate to="/admin" />} />
                   <Route path="/admin/rewards" element={isActuallyAdmin ? <AdminRedemptions /> : <Navigate to="/admin" />} />
                   <Route path="/admin/manage-rewards" element={isActuallyAdmin ? <ManageMarketplace /> : <Navigate to="/admin" />} />
                   <Route path="/admin/chats" element={isActuallyAdmin ? <AdminChatList /> : <Navigate to="/admin" />} />
