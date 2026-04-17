@@ -91,35 +91,29 @@ export default function LiveRoom() {
       </div>
 
       {/* --- JITSI INTEGRATION --- */}
-      <div className="flex-1 w-full bg-gray-950 relative">
-        <JitsiMeeting
-          /* 💡 EMERGENCY CHANGE: Use 8x8.vc instead of meet.jit.si */
-          domain="8x8.vc"
-          /* 💡 For 8x8, the room name usually includes a "magic cookie" for free dev use */
-          roomName={`vpaas-magic-cookie-950989f66439466da7788/${cleanRoomName}`}
-          configOverwrite={{
-            startWithAudioMuted: true,
-            disableModeratorIndicator: false,
-            startScreenSharing: true,
-            prejoinPageEnabled: false,
-            disableThirdPartyRequests: true, // Prevents some tracking that triggers the demo warning
-          }}
-          interfaceConfigOverwrite={{
-            SHOW_JITSI_WATERMARK: false,
-            SHOW_BRAND_WATERMARK: false,
-            SHOW_WATERMARK_FOR_GUESTS: false,
-            HIDE_INVITE_ON_WELCOME_PAGE: true,
-          }}
-          userInfo={{
-            displayName: user?.name || "Frica Student",
-            email: user?.email || "",
-          }}
-          getIFrameRef={(iframeRef) => {
-            iframeRef.style.height = "100%";
-            iframeRef.style.width = "100%";
-          }}
-        />
-      </div>
+ /* --- JITSI INTEGRATION --- */
+<div className="flex-1 w-full bg-gray-950 relative">
+  <iframe
+    /* 🚀 THE MAGIC URL: We point directly to the meeting with config overrides in the URL hash */
+    src={`https://8x8.vc/vpaas-magic-cookie-950989f66439466da7788/${cleanRoomName}#config.prejoinPageEnabled=false&config.disableThirdPartyRequests=true&interfaceConfig.SHOW_JITSI_WATERMARK=false&interfaceConfig.SHOW_BRAND_WATERMARK=false`}
+    allow="camera; microphone; fullscreen; display-capture; autoplay"
+    className="w-full h-full border-none"
+    title={liveClass.title}
+  ></iframe>
+  
+  {/* 💡 EMERGENCY FALLBACK: Only shows if the iframe is blocked */}
+  <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 bg-black/80 p-6 rounded-3xl border border-white/10 backdrop-blur-md">
+     <p className="text-[10px] font-black uppercase tracking-widest text-white/60">Meeting acting up?</p>
+     <a 
+       href={`https://8x8.vc/vpaas-magic-cookie-950989f66439466da7788/${cleanRoomName}`}
+       target="_blank"
+       rel="noreferrer"
+       className="bg-[#2D5A27] text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-[0.2em] shadow-xl hover:bg-[#F4B400] transition-all"
+     >
+       Open in New Tab
+     </a>
+  </div>
+</div>
     </div>
   );
 }
