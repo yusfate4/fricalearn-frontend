@@ -95,7 +95,7 @@ export default function LiveRoom() {
 <div className="flex-1 w-full bg-gray-950 relative">
   <iframe
     /* 🚀 THE MAGIC URL: We point directly to the meeting with config overrides in the URL hash */
-    src={`https://8x8.vc/vpaas-magic-cookie-950989f66439466da7788/${cleanRoomName}#config.prejoinPageEnabled=false&config.disableThirdPartyRequests=true&interfaceConfig.SHOW_JITSI_WATERMARK=false&interfaceConfig.SHOW_BRAND_WATERMARK=false`}
+   src={`https://meet.element.io/${cleanRoomName}#config.prejoinPageEnabled=false`}
     allow="camera; microphone; fullscreen; display-capture; autoplay"
     className="w-full h-full border-none"
     title={liveClass.title}
