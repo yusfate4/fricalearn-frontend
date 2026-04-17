@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { JitsiMeeting } from "@jitsi/react-sdk";
 import api from "../api/axios";
 import { useAuth } from "../hooks/useAuth"; 
 import { Loader2, ArrowLeft, AlertCircle } from "lucide-react";
@@ -61,7 +60,8 @@ export default function LiveRoom() {
       </div>
     );
 
-  const cleanRoomName = `FricaLearn_Room_${id}_${liveClass.title.replace(/[^a-zA-Z0-9]/g, "")}`;
+  // Simple room name without special characters to avoid URL breakage
+  const cleanRoomName = `FricaLearn_Class_${id}`;
 
   return (
     <div className="h-screen bg-black flex flex-col overflow-hidden">
@@ -90,30 +90,16 @@ export default function LiveRoom() {
         </div>
       </div>
 
-      {/* --- JITSI INTEGRATION --- */}
- /* --- JITSI INTEGRATION --- */
-<div className="flex-1 w-full bg-gray-950 relative">
-  <iframe
-    /* 🚀 THE MAGIC URL: We point directly to the meeting with config overrides in the URL hash */
-   src={`https://meet.element.io/${cleanRoomName}#config.prejoinPageEnabled=false`}
-    allow="camera; microphone; fullscreen; display-capture; autoplay"
-    className="w-full h-full border-none"
-    title={liveClass.title}
-  ></iframe>
-  
-  {/* 💡 EMERGENCY FALLBACK: Only shows if the iframe is blocked */}
-  <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 bg-black/80 p-6 rounded-3xl border border-white/10 backdrop-blur-md">
-     <p className="text-[10px] font-black uppercase tracking-widest text-white/60">Meeting acting up?</p>
-     <a 
-       href={`https://8x8.vc/vpaas-magic-cookie-950989f66439466da7788/${cleanRoomName}`}
-       target="_blank"
-       rel="noreferrer"
-       className="bg-[#2D5A27] text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-[0.2em] shadow-xl hover:bg-[#F4B400] transition-all"
-     >
-       Open in New Tab
-     </a>
-  </div>
-</div>
+      {/* --- JITSI INTEGRATION (IFRAME METHOD) --- */}
+      <div className="flex-1 w-full bg-gray-950 relative">
+        <iframe
+          /* 🚀 Using meet.element.io for stable, free embedding without timer warnings */
+          src={`https://meet.element.io/${cleanRoomName}#config.prejoinPageEnabled=false&config.startWithAudioMuted=true&interfaceConfig.SHOW_JITSI_WATERMARK=false&interfaceConfig.SHOW_BRAND_WATERMARK=false`}
+          allow="camera; microphone; fullscreen; display-capture; autoplay"
+          className="w-full h-full border-none"
+          title={liveClass.title}
+        ></iframe>
+      </div>
     </div>
   );
 }
