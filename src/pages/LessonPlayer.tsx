@@ -7,9 +7,7 @@ import {
   HelpCircle,
   FileText,
   Loader2,
-  PlayCircle,
-  Image as ImageIcon,
-  Download,
+  Sparkles,
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import SuccessModal from "../components/SuccessModal";
@@ -20,7 +18,7 @@ import { useAuth } from "../hooks/useAuth";
 export default function LessonPlayer() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth(); // 👈 Added: To get the student's actual name
+  const { user } = useAuth(); 
   const [lesson, setLesson] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [showQuiz, setShowQuiz] = useState(false);
@@ -37,18 +35,16 @@ export default function LessonPlayer() {
 
   const getEmbedUrl = (url: string) => {
     if (!url) return "";
-    const regExp =
-      /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     const match = url.match(regExp);
     return match && match[2].length === 11
-      ? `https://www.youtube.com/embed/${match[2]}`
+      ? `https://www.youtube.com/embed/${match[2]}?autoplay=1`
       : url;
   };
 
   useEffect(() => {
     setLoading(true);
-    api
-      .get(`/lessons/${id}`)
+    api.get(`/lessons/${id}`)
       .then((res) => {
         setLesson(res.data);
         setLoading(false);
@@ -58,21 +54,21 @@ export default function LessonPlayer() {
 
   /**
    * 🏆 Handle Quiz Completion
-   * Logic adjusted for 5 points per correct answer (Item 5)
+   * Receives percentageScore (0-100) from StudentQuiz.tsx
    */
-  const handleQuizCompletion = async (totalPoints: number, passed: boolean) => {
-    setFinalPoints(totalPoints); // totalPoints is already (correct_count * 5) from StudentQuiz
+  const handleQuizCompletion = async (percentageScore: number, passed: boolean) => {
+    // Calculate display points: (Total Possible Points) * (Score Percentage)
+    const possiblePoints = (lesson.questions?.length || 0) * 5;
+    const pointsEarned = Math.round(possiblePoints * (percentageScore / 100));
+    setFinalPoints(pointsEarned);
 
     if (passed) {
       setQuizFailed(false);
       try {
-        const percentageScore = Math.round(
-          (totalPoints / ((lesson.questions?.length || 1) * 5)) * 100,
-        );
-
+        // 🚀 THE FIX: Send score (numeric 0-100) to stop the 422 error
         const response = await api.post(`/lessons/${id}/complete`, {
           score: percentageScore,
-          points: totalPoints,
+          points: pointsEarned,
         });
 
         if (response.data.leveled_up) {
@@ -80,10 +76,11 @@ export default function LessonPlayer() {
           setIsLevelModalOpen(true);
           confetti({ particleCount: 250, spread: 100, origin: { y: 0.5 } });
         } else {
-          confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+          confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
           setIsModalOpen(true);
         }
       } catch (e) {
+        // Fallback for network issues
         setIsModalOpen(true);
       }
     } else {
@@ -91,46 +88,48 @@ export default function LessonPlayer() {
     }
   };
 
-  if (loading)
-    return (
-      <Layout>
-        <div className="p-20 flex flex-col items-center justify-center">
-          <Loader2 className="animate-spin text-[#2D5A27] mb-4" size={40} />
-          <p className="font-bold text-gray-400 italic">
-            Olukọ is preparing your lesson...
-          </p>
-        </div>
-      </Layout>
-    );
+  if (loading) return (
+    <Layout>
+      <div className="min-h-screen flex flex-col items-center justify-center p-20">
+        <Loader2 className="animate-spin text-[#2D5A27] mb-6" size={48} />
+        <p className="font-black text-gray-400 italic uppercase tracking-widest text-sm">
+          Olukọ is preparing your lesson...
+        </p>
+      </div>
+    </Layout>
+  );
 
-  if (!lesson)
-    return (
-      <Layout>
-        <div className="p-20 text-center text-red-500 font-bold uppercase">
-          Lesson not found.
-        </div>
-      </Layout>
-    );
+  if (!lesson) return (
+    <Layout>
+      <div className="p-20 text-center text-red-500 font-black uppercase tracking-tighter text-2xl">
+        Lesson not found.
+      </div>
+    </Layout>
+  );
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto px-4 py-6 md:p-6 pb-24">
+      <div className="max-w-5xl mx-auto px-4 py-8 md:p-10 pb-32">
+        {/* Navigation */}
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center text-gray-400 mb-6 hover:text-[#2D5A27] font-black uppercase tracking-widest text-[10px]"
+          className="group flex items-center text-gray-400 mb-8 hover:text-[#2D5A27] font-black uppercase tracking-widest text-[10px] transition-all"
         >
-          <ArrowLeft size={14} className="mr-2" /> Back to Course
+          <div className="p-2 rounded-xl bg-white shadow-sm mr-3 group-hover:bg-[#2D5A27]/10 transition-all">
+            <ArrowLeft size={16} />
+          </div>
+          Back to library
         </button>
 
         {!showQuiz ? (
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h1 className="text-3xl sm:text-5xl md:text-6xl font-black mb-6 text-gray-800 tracking-tighter italic">
+          <div className="animate-in fade-in slide-in-from-bottom-6 duration-700">
+            <h1 className="text-4xl md:text-7xl font-black mb-8 text-gray-800 tracking-tighter italic uppercase leading-none">
               {lesson.title}
             </h1>
 
-            {/* 📺 Main Video */}
+            {/* 📺 Main Video Content */}
             {lesson.video_url && (
-              <div className="aspect-video w-full bg-black rounded-[2rem] overflow-hidden shadow-2xl mb-8 border-4 border-white">
+              <div className="aspect-video w-full bg-black rounded-[2.5rem] md:rounded-[3.5rem] overflow-hidden shadow-2xl mb-12 border-4 border-white ring-1 ring-gray-100">
                 <iframe
                   className="w-full h-full"
                   src={getEmbedUrl(lesson.video_url)}
@@ -140,116 +139,124 @@ export default function LessonPlayer() {
               </div>
             )}
 
-            {/* 📝 Olukọ Notes (Item 7 Rebrand) */}
-            <div className="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-sm border-2 border-gray-50 mb-8 relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-2 h-full bg-[#2D5A27]"></div>
-              <h2 className="text-xl font-black text-gray-800 italic uppercase mb-4">
-                Olukọ's Notes
-              </h2>
-              <div className="text-gray-600 text-lg leading-relaxed whitespace-pre-line font-medium italic">
+            {/* 📝 Olukọ's Notes Section */}
+            <div className="bg-white p-10 md:p-16 rounded-[3rem] shadow-sm border-2 border-gray-50 mb-12 relative overflow-hidden group">
+              <div className="absolute top-0 left-0 w-2.5 h-full bg-[#2D5A27] group-hover:w-4 transition-all duration-500"></div>
+              <div className="flex items-center gap-3 mb-6">
+                <Sparkles size={20} className="text-[#F4B400]" />
+                <h2 className="text-2xl font-black text-gray-800 italic uppercase tracking-tight">
+                  Olukọ's Notes
+                </h2>
+              </div>
+              <div className="text-gray-600 text-lg md:text-xl leading-relaxed whitespace-pre-line font-medium italic">
                 {lesson.content}
               </div>
             </div>
 
-            {/* 📁 Lesson Materials */}
+            {/* 📁 Lesson Materials / Attachments */}
             {lesson.contents && lesson.contents.length > 0 && (
-              <div className="mb-12 space-y-8">
-                <h3 className="text-sm font-black text-[#2D5A27] uppercase tracking-widest ml-4">
-                  Lesson Materials
-                </h3>
-                {lesson.contents.map((content: any) => (
-                  <div key={content.id} className="group">
-                    {content.content_type === "video" && (
-                      <div className="rounded-[2rem] overflow-hidden border-4 border-gray-900 shadow-xl bg-black">
-                        <video
+              <div className="mb-16 space-y-8">
+                <div className="flex items-center gap-4 ml-4">
+                   <div className="h-px flex-1 bg-gray-100"></div>
+                   <h3 className="text-[10px] font-black text-gray-300 uppercase tracking-[0.4em]">
+                     Learning Resources
+                   </h3>
+                   <div className="h-px flex-1 bg-gray-100"></div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {lesson.contents.map((content: any) => (
+                    <div key={content.id} className="animate-in zoom-in-95 duration-500">
+                      {content.content_type === "image" && (
+                        <img
                           src={content.file_url}
-                          controls
-                          className="w-full h-auto"
-                        ></video>
-                      </div>
-                    )}
-                    {content.content_type === "image" && (
-                      <img
-                        src={content.file_url}
-                        alt="Visual"
-                        className="w-full rounded-[2rem] border-4 border-white shadow-xl"
-                      />
-                    )}
-                    {content.content_type === "document" && (
-                      <div className="flex flex-col sm:flex-row items-center justify-between bg-white p-6 sm:p-8 rounded-[2.5rem] border-2 border-gray-100 gap-4 hover:border-[#2D5A27] transition-all shadow-sm">
-                        <div className="flex items-center gap-4">
-                          <div className="bg-red-50 p-4 rounded-2xl text-red-500">
-                            <FileText size={32} />
+                          alt="Visual Context"
+                          className="w-full rounded-[2.5rem] border-4 border-white shadow-xl hover:scale-[1.02] transition-transform duration-500"
+                        />
+                      )}
+                      {content.content_type === "document" && (
+                        <div className="h-full flex flex-col justify-between bg-white p-8 rounded-[2.5rem] border-2 border-gray-100 hover:border-[#2D5A27] transition-all shadow-sm group">
+                          <div className="flex items-center gap-5 mb-6">
+                            <div className="bg-red-50 p-5 rounded-2xl text-red-500 group-hover:scale-110 transition-transform">
+                              <FileText size={36} />
+                            </div>
+                            <div>
+                              <h4 className="font-black text-gray-800 text-lg uppercase italic leading-none mb-1">
+                                Study Guide
+                              </h4>
+                              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+                                Practice Worksheet (PDF)
+                              </p>
+                            </div>
                           </div>
-                          <div>
-                            <h4 className="font-black text-gray-800 text-lg uppercase italic">
-                              Worksheet / PDF
-                            </h4>
-                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
-                              Download for practice
-                            </p>
-                          </div>
+                          <a
+                            href={content.file_url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="block text-center bg-gray-900 text-white py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-lg hover:bg-[#2D5A27] transition-all"
+                          >
+                            Download PDF
+                          </a>
                         </div>
-                        <a
-                          href={`${content.file_url}?fl_attachment`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="bg-[#2D5A27] text-white px-8 py-4 rounded-2xl font-black shadow-lg text-sm uppercase"
-                        >
-                          View PDF
-                        </a>
-                      </div>
-                    )}
-                  </div>
-                ))}
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 
-            <div className="flex justify-center py-10">
+            {/* Quiz Trigger */}
+            <div className="flex justify-center py-6">
               <button
                 onClick={() => {
                   window.scrollTo({ top: 0, behavior: "smooth" });
                   setShowQuiz(true);
                 }}
-                className="flex items-center gap-4 bg-gray-900 text-white px-10 py-6 rounded-[2rem] font-black text-xl hover:bg-[#2D5A27] transition-all shadow-2xl w-full sm:w-auto justify-center"
+                className="flex items-center gap-5 bg-[#2D5A27] text-white px-12 py-7 rounded-[2.5rem] font-black text-2xl hover:bg-black transition-all shadow-2xl hover:-translate-y-2 active:scale-95 group"
               >
-                <HelpCircle size={24} className="text-yellow-400" /> Start Quiz!
+                <HelpCircle size={28} className="text-[#F4B400] group-hover:rotate-12 transition-transform" />
+                Unlock Your Knowledge
               </button>
             </div>
           </div>
         ) : quizFailed ? (
-          <div className="bg-white p-12 md:p-20 rounded-[3rem] shadow-2xl border-4 border-gray-50 text-center">
-            <div className="text-8xl mb-8 animate-bounce">🦒</div>
-            <h2 className="text-4xl font-black text-gray-800 mb-4 italic uppercase">
-              Keep Going, {studentName}!
+          <div className="bg-white p-12 md:p-24 rounded-[3.5rem] shadow-2xl border-4 border-gray-50 text-center animate-in zoom-in-95 duration-500">
+            <div className="text-9xl mb-10 animate-bounce">🦒</div>
+            <h2 className="text-4xl md:text-5xl font-black text-gray-800 mb-6 italic uppercase tracking-tighter">
+              Ó tọ́ díẹ̀, {studentName}!
             </h2>
-            <p className="text-gray-400 font-bold mb-8 text-lg">
-              You're learning fast. Let's try the quiz one more time!
+            <p className="text-gray-400 font-bold mb-10 text-xl leading-relaxed">
+              Every master was once a student. <br/> Review Olukọ's notes and try one more time!
             </p>
             <button
-              onClick={() => setQuizFailed(false)}
-              className="bg-[#2D5A27] text-white px-12 py-6 rounded-2xl font-black text-lg shadow-xl uppercase italic"
+              onClick={() => {
+                setQuizFailed(false);
+                setShowQuiz(false); // 💡 Return to notes for review
+              }}
+              className="bg-gray-900 text-white px-14 py-7 rounded-[2rem] font-black text-xl shadow-xl uppercase italic tracking-widest hover:bg-[#2D5A27] transition-all"
             >
-              Retry Quiz
+              Review Lesson
             </button>
           </div>
         ) : (
-          <div className="animate-in slide-in-from-right-10 duration-500">
+          <div className="animate-in slide-in-from-right-10 duration-700">
             <StudentQuiz
               lessonId={id as string}
               questions={lesson.questions}
               onQuizComplete={handleQuizCompletion}
               onReviewLesson={() => setShowQuiz(false)}
+              alreadyPassed={lesson.is_completed} 
             />
           </div>
         )}
 
+        {/* --- REWARD MODALS --- */}
         <SuccessModal
           isOpen={isModalOpen}
           studentName={studentName}
           language={learningLanguage}
           points={finalPoints}
-          onConfirm={() => navigate("/dashboard")}
+          onConfirm={() => navigate("/courses")}
         />
 
         <LevelUpModal
@@ -259,7 +266,7 @@ export default function LessonPlayer() {
           language={learningLanguage}
           onClose={() => {
             setIsLevelModalOpen(false);
-            navigate("/dashboard");
+            navigate("/courses");
           }}
         />
       </div>
