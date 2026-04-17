@@ -65,10 +65,10 @@ export default function CourseDetail() {
           <div className="flex flex-col md:flex-row">
             <div className="md:w-1/3 aspect-square relative bg-gray-50">
               <img
-                src={course.thumbnail_url}
-                className="w-full h-full object-cover"
-                alt={course.title}
-              />
+  src={course?.thumbnail_url} 
+  className="w-full h-full object-cover"
+  alt={course?.title || 'Course Image'}
+/>
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
             </div>
 
