@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import api from "../api/axios";
 import {
-  HelpCircle,
   AlertCircle,
   ArrowRight,
   ChevronLeft,
@@ -9,15 +7,15 @@ import {
   CheckCircle2,
   XCircle,
   Sparkles,
-  Loader2,
 } from "lucide-react";
 
 interface StudentQuizProps {
   lessonId: string | number;
   questions: any[];
-  onQuizComplete: (score: number, passed: boolean) => void;
+  // 🚀 Updated: onQuizComplete now expects result from backend
+  onQuizComplete: (score: number, passed: boolean, wasPractice: boolean) => void;
   onReviewLesson: () => void;
-  alreadyPassed?: boolean; // 🚀 New prop to detect if this is a re-attempt
+  alreadyPassed?: boolean; 
 }
 
 export default function StudentQuiz({
@@ -97,7 +95,6 @@ export default function StudentQuiz({
       setShowExplanation(true);
       setIsAnswering(false);
       
-      // 🚀 Auto-scroll to explanation on mobile devices
       setTimeout(() => {
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
       }, 100);
@@ -106,9 +103,13 @@ export default function StudentQuiz({
 
   const finishQuiz = (finalCorrectCount: number) => {
     playSound("complete");
-    const totalPoints = finalCorrectCount * 5;
-    const passed = finalCorrectCount / questions.length >= 0.7;
-    onQuizComplete(totalPoints, passed);
+    // 💡 Logic: Calculate the percentage score (0-100)
+    const percentageScore = Math.round((finalCorrectCount / questions.length) * 100);
+    const passed = percentageScore >= 70;
+    
+    // 🚀 We pass the percentage score to the parent (LessonPage) 
+    // which will then call the backend's submitAttempt method.
+    onQuizComplete(percentageScore, passed, alreadyPassed);
   };
 
   const getEmbedUrl = (url: string) => {
@@ -121,11 +122,11 @@ export default function StudentQuiz({
   if (!questions || questions.length === 0) return null;
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto pb-10 px-2">
+    <div className="space-y-6 max-w-6xl mx-auto pb-10 px-2 animate-in fade-in duration-700">
       {/* 🧭 HEADER & PRACTICE BADGE */}
       <div className="flex flex-col gap-4 sticky top-0 z-30">
         {alreadyPassed && (
-          <div className="bg-orange-100 text-orange-700 px-6 py-2 rounded-full text-center font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 border border-orange-200">
+          <div className="bg-orange-50 text-orange-600 px-6 py-2.5 rounded-2xl text-center font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 border border-orange-100 shadow-sm animate-bounce">
             <Sparkles size={14} /> Mastery Practice Mode (No New Coins)
           </div>
         )}
@@ -136,14 +137,14 @@ export default function StudentQuiz({
               setShowExplanation(false);
             }}
             disabled={currentIndex === 0}
-            className="p-3 disabled:opacity-20"
+            className="p-3 disabled:opacity-20 text-[#2D5A27]"
           >
             <ChevronLeft />
           </button>
           <div className="text-center">
-            <span className="text-[10px] font-black uppercase text-gray-400">Progress</span>
+            <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Syllabus Progress</span>
             <div className="font-black text-[#2D5A27] text-xl">
-              {currentIndex + 1} / {questions.length}
+              {currentIndex + 1} <span className="text-gray-300">/</span> {questions.length}
             </div>
           </div>
           <button
@@ -152,7 +153,7 @@ export default function StudentQuiz({
               setShowExplanation(false);
             }}
             disabled={!hasAnswered || currentIndex + 1 >= questions.length}
-            className="p-3 disabled:opacity-20"
+            className="p-3 disabled:opacity-20 text-[#2D5A27]"
           >
             <ChevronRight />
           </button>
@@ -161,8 +162,13 @@ export default function StudentQuiz({
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
         {/* LEFT: QUESTION */}
-        <div className={`bg-white p-6 md:p-12 rounded-[2.5rem] md:rounded-[3rem] shadow-xl border-4 border-white transition-all ${showExplanation ? "opacity-30 blur-sm pointer-events-none lg:opacity-100 lg:blur-0 lg:pointer-events-auto" : ""}`}>
-          <h2 className="text-xl md:text-3xl font-black text-gray-800 mb-8 md:mb-10 uppercase italic tracking-tighter leading-tight">
+        <div className={`bg-white p-6 md:p-12 rounded-[2.5rem] md:rounded-[3rem] shadow-xl border-4 border-white transition-all duration-500 ${showExplanation ? "opacity-30 blur-sm pointer-events-none lg:opacity-100 lg:blur-0 lg:pointer-events-auto" : ""}`}>
+          <div className="mb-6 flex items-center gap-2">
+             <div className="h-1.5 w-10 bg-[#2D5A27] rounded-full"></div>
+             <span className="text-[10px] font-black text-gray-300 uppercase italic">Weekly Quiz</span>
+          </div>
+          
+          <h2 className="text-2xl md:text-4xl font-black text-gray-800 mb-8 md:mb-12 uppercase italic tracking-tighter leading-tight">
             {currentQuestion.question_text}
           </h2>
 
@@ -177,17 +183,17 @@ export default function StudentQuiz({
                   key={letter}
                   disabled={locked}
                   onClick={() => handleAnswer(letter)}
-                  className={`w-full p-5 md:p-6 rounded-2xl border-2 font-bold text-left flex justify-between items-center transition-all ${
+                  className={`w-full p-6 md:p-8 rounded-3xl border-2 font-black text-left flex justify-between items-center transition-all duration-300 transform active:scale-95 ${
                     isSelected
-                      ? isCorrect ? "border-green-500 bg-green-50 text-green-700" : "border-red-500 bg-red-50 text-red-700"
-                      : locked && isCorrect ? "border-green-200 bg-green-50/20 text-green-600" : "border-gray-50 bg-gray-50 text-gray-500"
+                      ? isCorrect ? "border-green-500 bg-green-50 text-green-700 shadow-lg shadow-green-100" : "border-red-500 bg-red-50 text-red-700 shadow-lg shadow-red-100"
+                      : locked && isCorrect ? "border-green-200 bg-green-50/20 text-green-600" : "border-gray-50 bg-gray-50 text-gray-500 hover:border-gray-200"
                   }`}
                 >
-                  <div className="flex items-center gap-4">
-                    <span className={`w-8 h-8 rounded-lg flex items-center justify-center font-black uppercase ${isSelected ? "bg-current text-white" : "bg-white border text-gray-300"}`}>{letter}</span>
-                    <span className="text-sm md:text-base">{currentQuestion[`option_${letter}`]}</span>
+                  <div className="flex items-center gap-5">
+                    <span className={`w-10 h-10 rounded-xl flex items-center justify-center font-black uppercase text-sm ${isSelected ? "bg-current text-white" : "bg-white border-2 text-gray-300"}`}>{letter}</span>
+                    <span className="text-base md:text-lg tracking-tight">{currentQuestion[`option_${letter}`]}</span>
                   </div>
-                  {isSelected && (isCorrect ? <CheckCircle2 size={20} /> : <XCircle size={20} />)}
+                  {isSelected && (isCorrect ? <CheckCircle2 size={24} /> : <XCircle size={24} />)}
                 </button>
               );
             })}
@@ -196,21 +202,21 @@ export default function StudentQuiz({
 
         {/* RIGHT: EXPLANATION (OLUKO'S REVIEW) */}
         {showExplanation && (
-          <div className="bg-white p-6 md:p-8 rounded-[2.5rem] md:rounded-[3rem] shadow-2xl border-4 border-[#2D5A27]/10 animate-in slide-in-from-bottom-5">
-            <div className="flex items-center gap-3 text-red-500 mb-6">
-              <AlertCircle size={24} />
-              <span className="font-black uppercase italic text-lg">Oluko's Review</span>
+          <div className="bg-white p-6 md:p-10 rounded-[2.5rem] md:rounded-[3rem] shadow-2xl border-4 border-[#2D5A27]/10 animate-in slide-in-from-bottom-10 duration-500">
+            <div className="flex items-center gap-3 text-red-500 mb-8">
+              <AlertCircle size={28} />
+              <span className="font-black uppercase italic text-xl tracking-tighter">Olukọ's Feedback</span>
             </div>
 
             {currentQuestion.explanation_video_url && (
-              <div className="aspect-video rounded-2xl md:rounded-3xl overflow-hidden bg-black mb-6">
+              <div className="aspect-video rounded-[2rem] overflow-hidden bg-black mb-8 border-4 border-gray-50 shadow-inner">
                 <iframe src={getEmbedUrl(currentQuestion.explanation_video_url)} className="w-full h-full" allowFullScreen></iframe>
               </div>
             )}
 
-            <div className="bg-gray-50 p-5 md:p-6 rounded-2xl mb-8 border border-gray-100">
-              <p className="font-bold italic text-gray-700 leading-relaxed text-sm md:text-base">
-                "{currentQuestion.explanation_text || "Keep going! Review the correct answer above to master this concept."}"
+            <div className="bg-gray-50 p-6 md:p-8 rounded-3xl mb-10 border-2 border-dashed border-gray-200">
+              <p className="font-bold italic text-gray-700 leading-relaxed text-base md:text-lg">
+                "{currentQuestion.explanation_text || "Ẹ kú iṣẹ́! Study the correct path and try the next one."}"
               </p>
             </div>
 
@@ -223,9 +229,9 @@ export default function StudentQuiz({
                   finishQuiz(score);
                 }
               }}
-              className="w-full bg-[#2D5A27] text-white py-5 md:py-6 rounded-2xl font-black text-lg md:text-xl flex justify-center items-center gap-4 shadow-xl hover:bg-black transition-all"
+              className="w-full bg-[#2D5A27] text-white py-6 md:py-8 rounded-[2rem] font-black text-xl md:text-2xl flex justify-center items-center gap-4 shadow-xl shadow-green-900/20 hover:bg-black hover:-translate-y-1 transition-all duration-300"
             >
-              Next Question <ArrowRight size={24} />
+              CONTINUE JOURNEY <ArrowRight size={28} />
             </button>
           </div>
         )}
