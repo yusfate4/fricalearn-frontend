@@ -220,18 +220,28 @@ export default function Dashboard() {
         </div>
 
         {/* Live Classes Section */}
-        {liveClasses.length > 0 && (
-          <section className="mt-12 md:mt-16">
-            <h2 className="text-2xl md:text-3xl font-black text-gray-800 uppercase italic tracking-tighter mb-6 md:mb-8 px-2">
-              Upcoming Tribe Meetings
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {liveClasses.map((lc) => (
-                <LiveClassCard key={lc.id} liveClass={lc} />
-              ))}
-            </div>
-          </section>
-        )}
+     {/* Live Classes Section */}
+{liveClasses.length > 0 && (
+  <section className="mt-12 md:mt-16">
+    <div className="flex justify-between items-end px-2 mb-8">
+      <h2 className="text-2xl md:text-3xl font-black text-gray-800 uppercase italic tracking-tighter">
+        Upcoming Live Class
+      </h2>
+      {/* This button directs them to the live room */}
+      <button 
+        onClick={() => navigate(`/live-room/${liveClasses[0].id}`)}
+        className="hidden md:flex items-center gap-2 bg-[#2D5A27] text-white px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-black"
+      >
+        <Video size={14} /> Join Now
+      </button>
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {liveClasses.map((lc) => (
+        <LiveClassCard key={lc.id} liveClass={lc} />
+      ))}
+    </div>
+  </section>
+)}
       </div>
     </Layout>
   );
