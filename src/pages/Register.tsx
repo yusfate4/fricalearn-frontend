@@ -77,8 +77,8 @@ export default function Register() {
             </h3>
             <p className="text-gray-500 font-bold text-sm leading-relaxed mb-8">
               Registration successful! Olukọ has sent a{" "}
-              <span className="text-[#2D5A27]">verification email</span> to your
-              inbox. Please verify to unlock all features.
+              <span className="text-[#2D5A27]">confirmation email</span> to your
+              inbox. Please login with your email and password to unlock all features.
             </p>
             <button
               onClick={closeModalAndRedirect}
