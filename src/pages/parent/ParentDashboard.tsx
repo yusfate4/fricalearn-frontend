@@ -105,7 +105,7 @@ export default function ParentDashboard() {
               className="group flex items-center justify-center gap-4 bg-[#2D5A27] text-white px-10 py-5 rounded-2xl md:rounded-[2.5rem] font-black uppercase text-[10px] md:text-[11px] tracking-widest shadow-2xl hover:bg-black transition-all border-b-4 border-green-900 active:translate-y-1 active:border-b-0"
             >
               <PlusCircle size={20} className="text-[#F4B400] group-hover:rotate-90 transition-transform" />
-              Add Family Member
+              Add Your Kids
             </button>
           </div>
         </div>
