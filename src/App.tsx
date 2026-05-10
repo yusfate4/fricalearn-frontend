@@ -38,6 +38,11 @@ import RewardsCatalog from "./pages/student/RewardsCatalog";
 import MyRewards from "./pages/student/MyRewards";
 import OluChat from "./pages/student/OluChat";
 
+// --- 🚀 NEW: EXTERNAL SUBJECTS ---
+import ExternalSubjects from "./pages/ExternalSubjects";
+import ExternalSubjectView from "./pages/ExternalSubjectView";
+import ExternalLessonViewer from "./pages/ExternalLessonViewer";
+
 // --- 🔐 ADMIN/STAFF PAGES ---
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminCourses from "./pages/admin/AdminCourses";
@@ -173,6 +178,13 @@ function App() {
                   <Route path="/courses" element={canAccessStudentArea ? <Courses /> : <Navigate to="/parent/dashboard" />} />
                   <Route path="/course-detail/:id" element={canAccessStudentArea ? <CourseDetail /> : <Navigate to="/parent/dashboard" />} />
                   <Route path="/lessons/:id" element={canAccessStudentArea ? <LessonPlayer /> : <Navigate to="/parent/dashboard" />} />
+                 
+
+{/* 🚀 NEW: EXTERNAL SUBJECTS (Maths/English) */}
+<Route path="/external-subjects" element={canAccessStudentArea ? <ExternalSubjects /> : <Navigate to="/parent/dashboard" />} />
+<Route path="/external-subjects/:id" element={canAccessStudentArea ? <ExternalSubjectView /> : <Navigate to="/parent/dashboard" />} />
+<Route path="/external-lessons/:id" element={canAccessStudentArea ? <ExternalLessonViewer /> : <Navigate to="/parent/dashboard" />} />
+                 
                   <Route path="/leaderboard" element={canAccessStudentArea ? <Leaderboard /> : <Navigate to="/parent/dashboard" />} />
                   <Route path="/store" element={canAccessStudentArea ? <RewardsCatalog /> : <Navigate to="/parent/dashboard" />} />
                   <Route path="/my-rewards" element={canAccessStudentArea ? <MyRewards /> : <Navigate to="/parent/dashboard" />} />
