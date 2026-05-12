@@ -31,29 +31,7 @@ export default function ExternalLessonViewer() {
   const [quizSubmitted, setQuizSubmitted] = useState(false);
   const [userAnswers, setUserAnswers] = useState<{ [key: string]: string }>({});
   const [quizResults, setQuizResults] = useState<any>(null);
-
   const [studentName, setStudentName] = useState("Explorer");
-
-useEffect(() => {
-  // Get student name - either from active student or logged-in user
-  const getStudentName = async () => {
-    try {
-      if (user?.role === "parent") {
-        const activeStudentId = localStorage.getItem("active_student_id");
-        if (activeStudentId) {
-          const res = await api.get(`/users/${activeStudentId}`);
-          setStudentName(res.data.name || "Explorer");
-        }
-      } else {
-        setStudentName(user?.name || "Explorer");
-      }
-    } catch (err) {
-      setStudentName(user?.name || "Explorer");
-    }
-  };
-  
-  getStudentName();
-}, [user]);
 
   const getEmbedUrl = (url: string) => {
     if (!url) return "";
@@ -68,12 +46,40 @@ useEffect(() => {
     fetchLesson();
   }, [id]);
 
+  useEffect(() => {
+    const getStudentName = async () => {
+      try {
+        if (user?.role === "parent") {
+          const activeStudentId = localStorage.getItem("active_student_id");
+          if (activeStudentId) {
+            const res = await api.get(`/students/${activeStudentId}/info`);
+            setStudentName(res.data.name || "Student");
+          }
+        } else {
+          setStudentName(user?.name || "Explorer");
+        }
+      } catch (err) {
+        console.error("Failed to get student name:", err);
+        setStudentName(user?.name || "Explorer");
+      }
+    };
+
+    if (user) {
+      getStudentName();
+    }
+  }, [user]);
+
   const fetchLesson = async () => {
     setLoading(true);
     try {
-      const res = await api.get(`/external/lessons/${id}`);
+      const activeStudentId = localStorage.getItem("active_student_id");
+      const endpoint = user?.role === "parent" && activeStudentId
+        ? `/external/lessons/${id}?student_id=${activeStudentId}`
+        : `/external/lessons/${id}`;
+
+      const res = await api.get(endpoint);
       setLesson(res.data.lesson);
-      
+
       // If already completed, show results
       if (res.data.progress?.status === "completed") {
         setShowQuiz(true);
@@ -95,7 +101,12 @@ useEffect(() => {
 
   const handleQuizSubmit = async () => {
     try {
-      const res = await api.post(`/external/lessons/${id}/quiz`, {
+      const activeStudentId = localStorage.getItem("active_student_id");
+      const endpoint = user?.role === "parent" && activeStudentId
+        ? `/external/lessons/${id}/quiz?student_id=${activeStudentId}`
+        : `/external/lessons/${id}/quiz`;
+
+      const res = await api.post(endpoint, {
         answers: userAnswers,
       });
 
@@ -112,7 +123,12 @@ useEffect(() => {
 
   const handleMarkVideoWatched = async () => {
     try {
-      await api.post(`/external/lessons/${id}/progress`, {
+      const activeStudentId = localStorage.getItem("active_student_id");
+      const endpoint = user?.role === "parent" && activeStudentId
+        ? `/external/lessons/${id}/progress?student_id=${activeStudentId}`
+        : `/external/lessons/${id}/progress`;
+
+      await api.post(endpoint, {
         video_watched: true,
         status: "in_progress",
       });
