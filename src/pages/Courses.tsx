@@ -66,15 +66,23 @@ const Courses = () => {
     }
   };
 
-  const fetchExternalSubjects = async () => {
-    try {
-      const res = await api.get("/external/subjects");
-      setExternalSubjects(res.data.subjects || []);
-    } catch (err) {
-      console.error("❌ Failed to load external subjects:", err);
-      setExternalSubjects([]);
-    }
-  };
+const fetchExternalSubjects = async () => {
+  try {
+    const activeStudentId = localStorage.getItem("active_student_id");
+    const endpoint =
+      user?.role === "parent" && activeStudentId
+        ? `/external/subjects?student_id=${activeStudentId}`
+        : "/external/subjects";
+
+    console.log('🔍 Fetching external subjects for student:', activeStudentId);
+    const res = await api.get(endpoint);
+    console.log('✅ Response:', res.data);
+    setExternalSubjects(res.data.subjects || []);
+  } catch (err) {
+    console.error("❌ Failed to load external subjects:", err);
+    setExternalSubjects([]);
+  }
+};
 
   const handleCourseClick = (courseId: number) => {
     navigate(`/course-detail/${courseId}`);
