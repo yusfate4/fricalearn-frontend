@@ -32,7 +32,28 @@ export default function ExternalLessonViewer() {
   const [userAnswers, setUserAnswers] = useState<{ [key: string]: string }>({});
   const [quizResults, setQuizResults] = useState<any>(null);
 
-  const studentName = user?.name || "Explorer";
+  const [studentName, setStudentName] = useState("Explorer");
+
+useEffect(() => {
+  // Get student name - either from active student or logged-in user
+  const getStudentName = async () => {
+    try {
+      if (user?.role === "parent") {
+        const activeStudentId = localStorage.getItem("active_student_id");
+        if (activeStudentId) {
+          const res = await api.get(`/users/${activeStudentId}`);
+          setStudentName(res.data.name || "Explorer");
+        }
+      } else {
+        setStudentName(user?.name || "Explorer");
+      }
+    } catch (err) {
+      setStudentName(user?.name || "Explorer");
+    }
+  };
+  
+  getStudentName();
+}, [user]);
 
   const getEmbedUrl = (url: string) => {
     if (!url) return "";
