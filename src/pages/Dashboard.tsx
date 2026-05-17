@@ -13,6 +13,7 @@ import {
   Loader2,
   Clock,
   MessageCircle,
+  Video,
 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { LiveClassCard } from "../components/LiveClass/LiveClassCard";
