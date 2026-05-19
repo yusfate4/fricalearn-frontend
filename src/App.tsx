@@ -22,6 +22,8 @@ import StudentAnalytics from "./pages/student/StudentAnalytics";
 import LiveRoom from "./pages/LiveRoom";
 import VerifyNotice from "./pages/VerifyNotice"; 
 import VerifyEmailHandler from "./pages/VerifyEmailHandler";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 // --- 👨‍👩‍👧‍👦 PARENT PORTAL PAGES ---
 import ParentDashboard from "./pages/parent/ParentDashboard";
@@ -38,10 +40,16 @@ import RewardsCatalog from "./pages/student/RewardsCatalog";
 import MyRewards from "./pages/student/MyRewards";
 import OluChat from "./pages/student/OluChat";
 
-// --- 🚀 NEW: EXTERNAL SUBJECTS ---
+// --- 🌍 NEW: EXTERNAL SUBJECTS (Maths & English) ---
 import ExternalSubjects from "./pages/ExternalSubjects";
 import ExternalSubjectView from "./pages/ExternalSubjectView";
 import ExternalLessonViewer from "./pages/ExternalLessonViewer";
+
+// --- 🚀 NEW: ONBOARDING FLOW ---
+import Step1CourseSelection from "./pages/Onboarding/Step1CourseSelection";
+import Step2GradeSelection from "./pages/Onboarding/Step2GradeSelection";
+import Step3PricingSummary from "./pages/Onboarding/Step3PricingSummary";
+import Step4PaymentUpload from "./pages/Onboarding/Step4PaymentUpload";
 
 // --- 🔐 ADMIN/STAFF PAGES ---
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -60,12 +68,9 @@ import ManageLiveClasses from "./pages/admin/ManageLiveClasses";
 import AdminPayments from "./pages/admin/AdminPayments";
 import AdminMasterSchedule from "./pages/admin/AdminMasterSchedule";
 import AdminCourseList from "./pages/admin/AdminCourseList";
-import AdminPaymentVerify from "./pages/admin/AdminPaymentVerify"; // 👈 This is your history page
+import AdminPaymentVerify from "./pages/admin/AdminPaymentVerify"; 
 import AdminTutorProfile from "./components/AdminTutorProfile"; 
 import TutorDashboard from "./pages/admin/TutorDashboard";
-
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
 
 function App() {
   const { user, loading } = useAuth();
@@ -174,17 +179,22 @@ function App() {
                   <Route path="/select-courses" element={user?.role === "parent" ? <SelectCourses /> : <Navigate to="/login" />} />
                   <Route path="/payment" element={user?.role === "parent" ? <PaymentPage /> : <Navigate to="/login" />} />
 
+                  {/* 🚀 NEW ONBOARDING FLOW (Protected: Parent must be logged in to onboard a child) */}
+                  <Route path="/onboarding/step1" element={user?.role === "parent" ? <Step1CourseSelection /> : <Navigate to="/dashboard" />} />
+                  <Route path="/onboarding/step2" element={user?.role === "parent" ? <Step2GradeSelection /> : <Navigate to="/dashboard" />} />
+                  <Route path="/onboarding/step3" element={user?.role === "parent" ? <Step3PricingSummary /> : <Navigate to="/dashboard" />} />
+                  <Route path="/onboarding/step4" element={user?.role === "parent" ? <Step4PaymentUpload /> : <Navigate to="/dashboard" />} />
+
                   {/* 🎓 Student Area (Accessible by Staff & Impersonating Parents) */}
                   <Route path="/courses" element={canAccessStudentArea ? <Courses /> : <Navigate to="/parent/dashboard" />} />
                   <Route path="/course-detail/:id" element={canAccessStudentArea ? <CourseDetail /> : <Navigate to="/parent/dashboard" />} />
                   <Route path="/lessons/:id" element={canAccessStudentArea ? <LessonPlayer /> : <Navigate to="/parent/dashboard" />} />
                  
+                  {/* 🌍 EXTERNAL SUBJECTS (Maths/English) */}
+                  <Route path="/external-subjects" element={canAccessStudentArea ? <ExternalSubjects /> : <Navigate to="/parent/dashboard" />} />
+                  <Route path="/external-subjects/:id" element={canAccessStudentArea ? <ExternalSubjectView /> : <Navigate to="/parent/dashboard" />} />
+                  <Route path="/external-lessons/:id" element={canAccessStudentArea ? <ExternalLessonViewer /> : <Navigate to="/parent/dashboard" />} />
 
-{/* 🚀 NEW: EXTERNAL SUBJECTS (Maths/English) */}
-<Route path="/external-subjects" element={canAccessStudentArea ? <ExternalSubjects /> : <Navigate to="/parent/dashboard" />} />
-<Route path="/external-subjects/:id" element={canAccessStudentArea ? <ExternalSubjectView /> : <Navigate to="/parent/dashboard" />} />
-<Route path="/external-lessons/:id" element={canAccessStudentArea ? <ExternalLessonViewer /> : <Navigate to="/parent/dashboard" />} />
-                 
                   <Route path="/leaderboard" element={canAccessStudentArea ? <Leaderboard /> : <Navigate to="/parent/dashboard" />} />
                   <Route path="/store" element={canAccessStudentArea ? <RewardsCatalog /> : <Navigate to="/parent/dashboard" />} />
                   <Route path="/my-rewards" element={canAccessStudentArea ? <MyRewards /> : <Navigate to="/parent/dashboard" />} />
@@ -206,7 +216,7 @@ function App() {
                   <Route path="/admin/courses/list" element={isStaff ? <AdminCourseList /> : <Navigate to="/dashboard" />} />
                   <Route path="/admin/profile" element={isStaff ? <AdminTutorProfile /> : <Navigate to="/dashboard" />} />
                   
-                  {/* 🚀 FIXED: Enrollment History Path (Accessible to both Admin & Tutor) */}
+                  {/* Enrollment History Path (Accessible to both Admin & Tutor) */}
                   <Route path="/admin/payments/history" element={isStaff ? <AdminPaymentVerify /> : <Navigate to="/admin" />} />
 
                   {/* ⛔ SuperAdmin (Founder) Only Routes */}
