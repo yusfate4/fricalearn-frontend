@@ -39,8 +39,8 @@ export default function Step4PaymentUpload() {
   } | null>(null);
 
   const [childName, setChildName] = useState("");
-  const [childEmail, setChildEmail] = useState("");
-  const [childPassword, setChildPassword] = useState("");
+  const [childBirthDate, setChildBirthDate] = useState("");
+  const [childGender, setChildGender] = useState("");
   const [receipt, setReceipt] = useState<File | null>(null);
   const [receiptPreview, setReceiptPreview] = useState<string | null>(null);
 
@@ -86,15 +86,15 @@ export default function Step4PaymentUpload() {
 
     // Validation
     if (!childName.trim()) {
-      setStatus({ type: "error", msg: "Please enter child's name" });
+      setStatus({ type: "error", msg: "Please enter child's full name" });
       return;
     }
-    if (!childEmail.trim()) {
-      setStatus({ type: "error", msg: "Please enter child's email" });
+    if (!childBirthDate) {
+      setStatus({ type: "error", msg: "Please select child's birth date" });
       return;
     }
-    if (!childPassword.trim() || childPassword.length < 6) {
-      setStatus({ type: "error", msg: "Password must be at least 6 characters" });
+    if (!childGender) {
+      setStatus({ type: "error", msg: "Please select child's gender" });
       return;
     }
     if (!receipt) {
@@ -108,9 +108,14 @@ export default function Step4PaymentUpload() {
     const formData = new FormData();
     formData.append("parent_id", user?.id.toString() || "");
     formData.append("child_name", childName.trim());
-    formData.append("child_email", childEmail.trim());
-    formData.append("child_password", childPassword);
-    formData.append("selected_courses", JSON.stringify(selectedCourses));
+    formData.append("birth_date", childBirthDate);
+    formData.append("gender", childGender);
+    
+    // 🚀 FIX: Send selected_courses as array (each course separately)
+    selectedCourses.forEach((course: string) => {
+      formData.append("selected_courses[]", course);
+    });
+    
     formData.append("maths_grade", mathsGrade?.toString() || "");
     formData.append("english_grade", englishGrade?.toString() || "");
     formData.append("currency", currency);
@@ -270,37 +275,37 @@ export default function Step4PaymentUpload() {
                     />
                   </div>
 
-                  {/* Email */}
+                  {/* Birth Date */}
                   <div>
                     <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">
                       <Mail size={12} className="inline mr-2" />
-                      Child's Email
+                      Birth Date
                     </label>
                     <input
-                      type="email"
-                      value={childEmail}
-                      onChange={(e) => setChildEmail(e.target.value)}
-                      placeholder="ada@example.com"
+                      type="date"
+                      value={childBirthDate}
+                      onChange={(e) => setChildBirthDate(e.target.value)}
                       className="w-full px-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#2D5A27] font-bold text-sm transition-all"
                       required
                     />
                   </div>
 
-                  {/* Password */}
+                  {/* Gender */}
                   <div>
                     <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">
                       <Lock size={12} className="inline mr-2" />
-                      Create Password (Min. 6 characters)
+                      Gender
                     </label>
-                    <input
-                      type="password"
-                      value={childPassword}
-                      onChange={(e) => setChildPassword(e.target.value)}
-                      placeholder="••••••••"
+                    <select
+                      value={childGender}
+                      onChange={(e) => setChildGender(e.target.value)}
                       className="w-full px-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#2D5A27] font-bold text-sm transition-all"
                       required
-                      minLength={6}
-                    />
+                    >
+                      <option value="">Select Gender</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -394,7 +399,7 @@ export default function Step4PaymentUpload() {
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={!childName || !childEmail || !childPassword || !receipt || loading}
+                disabled={!childName || !childBirthDate || !childGender || !receipt || loading}
                 className="w-full bg-[#2D5A27] text-white py-8 rounded-[2.5rem] font-black uppercase tracking-[0.2em] text-[11px] shadow-2xl flex items-center justify-center gap-4 hover:bg-black transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed border-b-4 border-green-900 active:border-b-0"
               >
                 {loading ? (
