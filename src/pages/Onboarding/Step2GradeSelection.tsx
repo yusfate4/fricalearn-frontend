@@ -217,7 +217,7 @@ export default function Step2GradeSelection() {
             >
               Continue to Pricing Summary
               <ArrowRight
-                size={20}
+                size={10}
                 className="group-hover:translate-x-1 transition-transform"
               />
             </button>
