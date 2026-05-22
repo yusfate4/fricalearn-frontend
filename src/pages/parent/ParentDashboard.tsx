@@ -136,9 +136,17 @@ export default function ParentDashboard() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
                   {data.children.map((child: any) => {
-                    const enrollment = data.active_enrollments?.find(
+                    // Get ALL enrollments for this child
+                    const childEnrollments = data.active_enrollments?.filter(
                       (e: any) => Number(e.student_id) === Number(child.id)
-                    );
+                    ) || [];
+                    
+                    const hasEnrollments = childEnrollments.length > 0;
+
+                    // Get course names for display
+                    const courseNames = childEnrollments
+                      .map((e: any) => e.course?.title || e.external_subject?.name || "Course")
+                      .filter(Boolean);
 
                     return (
                       <div
@@ -158,22 +166,39 @@ export default function ParentDashboard() {
                             </h3>
                         </div>
 
-                        <div className="space-y-3">
-                            <p className="text-gray-400 font-black text-[9px] uppercase tracking-widest flex items-center gap-2">
-                              <span className="w-4 h-[3px] bg-[#2D5A27] rounded-full"></span>{" "}
-                              {child.current_track || "General Heritage Path"}
-                            </p>
+                        <div className="space-y-2 mb-4">
+                            {courseNames.length > 0 ? (
+                              courseNames.map((courseName: string, idx: number) => (
+                                <p key={idx} className="text-gray-400 font-black text-[9px] uppercase tracking-widest flex items-center gap-2">
+                                  <span className="w-4 h-[3px] bg-[#2D5A27] rounded-full"></span>{" "}
+                                  {courseName}
+                                </p>
+                              ))
+                            ) : (
+                              <p className="text-gray-300 font-black text-[9px] uppercase tracking-widest flex items-center gap-2">
+                                <span className="w-4 h-[3px] bg-gray-200 rounded-full"></span>{" "}
+                                No Active Courses
+                              </p>
+                            )}
                         </div>
 
                         <button
-                          onClick={() => enrollment && enterClassroom(child.id, enrollment.course_id)}
+                          onClick={() => {
+                            if (hasEnrollments) {
+                              // Go to student dashboard instead of single course
+                              localStorage.setItem("is_impersonating", "true");
+                              localStorage.setItem("active_student_id", child.id.toString());
+                              window.dispatchEvent(new Event("storage"));
+                              navigate("/dashboard");
+                            }
+                          }}
                           className={`mt-10 w-full py-6 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all shadow-xl ${
-                            enrollment
+                            hasEnrollments
                               ? "bg-gray-900 text-white hover:bg-[#2D5A27]"
                               : "bg-red-50 text-red-400 border-2 border-red-100 cursor-not-allowed"
                           }`}
                         >
-                          {enrollment ? (
+                          {hasEnrollments ? (
                             <>Monitor Progress <ArrowRight size={18} /></>
                           ) : (
                             "Activation Pending"
