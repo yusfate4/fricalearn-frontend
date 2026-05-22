@@ -50,13 +50,17 @@ const Courses = () => {
     setLoading(true);
     try {
       const activeStudentId = localStorage.getItem("active_student_id");
-      const endpoint =
-        user?.role === "parent" && activeStudentId
-          ? `/parent/courses?student_id=${activeStudentId}`
-          : "/courses";
+      
+      // For parent impersonation OR direct student login
+      let endpoint = "/courses/enrolled"; // Default: get MY enrolled courses
+      
+      if (user?.role === "parent" && activeStudentId) {
+        // Parent viewing child's enrolled courses
+        endpoint = `/parent/courses?student_id=${activeStudentId}`;
+      }
 
       const res = await api.get(endpoint);
-      const courseData = res.data.data || res.data;
+      const courseData = res.data.courses || res.data.data || res.data;
       setCourses(Array.isArray(courseData) ? courseData : []);
     } catch (err) {
       console.error("❌ Failed to load courses:", err);
@@ -111,12 +115,12 @@ const fetchExternalSubjects = async () => {
         <div className="mb-12 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
             <h2 className="text-4xl md:text-5xl font-black text-gray-800 tracking-tighter italic uppercase leading-none">
-              {user?.role === "parent" ? "Assigned" : "Explore"}{" "}
+              My{" "}
               <span className="text-[#2D5A27]">Courses</span>
             </h2>
             <div className="text-gray-400 font-bold mt-4 uppercase text-[10px] tracking-[0.3em] flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-[#2D5A27] animate-pulse"></div>
-              <span>The Diaspora Academy Library</span>
+              <span>Your Active Learning Paths</span>
             </div>
           </div>
         </div>
@@ -130,14 +134,14 @@ const fetchExternalSubjects = async () => {
           </div>
         ) : (
           <>
-            {/* BONUS SUBJECTS SECTION */}
+            {/* UK CURRICULUM SECTION */}
             {externalSubjects.length > 0 && (
               <div className="mb-20">
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center gap-3">
-                    <Sparkles size={24} className="text-[#F4B400]" />
+                    <GraduationCap size={24} className="text-[#2D5A27]" />
                     <h3 className="text-3xl font-black text-gray-800 italic uppercase tracking-tighter">
-                      Bonus Subjects
+                      UK Curriculum
                     </h3>
                   </div>
                   <button
