@@ -87,18 +87,11 @@ export default function Dashboard() {
   const aiMinutesUsed = profile?.daily_ai_minutes || 0;
   const aiMinutesLeft = Math.max(120 - aiMinutesUsed, 0);
 
-  // 🌍 Dynamic Greeting Map (Item 5)
-  const greetingMap: Record<string, string> = {
-    Yoruba: "Ẹ káàbọ̀",
-    Igbo: "Nnoo",
-    Hausa: "Barka da zuwa",
-    English: "Welcome",
-  };
-
   const currentLevelPoints = totalPoints % 500;
   const progressPercent = Math.min((currentLevelPoints / 500) * 100, 100);
-  const languageTrack = profile?.learning_language || "Yoruba";
-  const welcomeText = greetingMap[languageTrack] || greetingMap.Yoruba;
+  
+  // Universal welcome message for all language tracks
+  const welcomeText = "Welcome";
 
   return (
     <Layout>
@@ -128,7 +121,7 @@ export default function Dashboard() {
           <p className="text-gray-500 font-bold text-base md:text-lg mt-2">
             You are officially a{" "}
             <span className="text-[#2D5A27] font-black underline decoration-yellow-400 decoration-4">
-              {profile?.rank || "Akeko"}
+              {profile?.current_level || "Beginner"}
             </span>
           </p>
         </div>
@@ -153,7 +146,7 @@ export default function Dashboard() {
             <div className="space-y-4 relative z-10">
               <div className="flex justify-between items-end px-1">
                 <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">
-                  Rank: <span className="text-[#2D5A27] italic">{profile?.rank || "Akeko"}</span>
+                  Rank: <span className="text-[#2D5A27] italic">{profile?.current_level || "Beginner"}</span>
                 </p>
                 <p className="text-[8px] md:text-[10px] font-black text-gray-400 uppercase">
                   {Math.max(500 - currentLevelPoints, 0)} XP to Next
@@ -206,13 +199,13 @@ export default function Dashboard() {
         <div className="bg-gradient-to-br from-[#2D5A27] to-black rounded-[2.5rem] md:rounded-[3.5rem] p-8 md:p-14 text-white flex flex-col md:flex-row items-center justify-between shadow-2xl relative overflow-hidden group">
           <div className="relative z-10 text-center md:text-left mb-8 md:mb-0">
             <h2 className="text-3xl md:text-5xl font-black mb-4 md:mb-8 leading-tight italic tracking-tighter">
-              Ready to learn <br className="hidden md:block" /> with Oluko?
+              Ready to start <br className="hidden md:block" /> your lesson?
             </h2>
             <button
               onClick={() => navigate("/courses")}
               className="w-full md:w-auto bg-yellow-400 text-black px-8 py-5 md:px-12 md:py-6 rounded-2xl md:rounded-[2.5rem] font-black text-xl md:text-2xl flex items-center justify-center gap-4 hover:scale-105 transition-all shadow-xl uppercase italic"
             >
-              <PlayCircle size={24} md:size={32} /> Go to Lessons
+              <PlayCircle size={24} md:size={32} /> Start Learning
             </button>
           </div>
           <div className="hidden lg:block opacity-20 group-hover:opacity-40 transition-opacity">

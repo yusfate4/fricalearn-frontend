@@ -68,8 +68,8 @@ export default function Leaderboard() {
             players.map((profile: any, index: number) => {
               const studentName = profile.user?.name || "Student";
               const totalPoints = profile.total_points || 0;
-              const rankTitle = profile.rank || "Akeko";
-              const track = profile.learning_language || "Yoruba";
+              const rankTitle = profile.current_level || "Beginner";
+              const track = profile.learning_language || "Multi-Track";
 
               return (
                 <div
@@ -128,7 +128,7 @@ export default function Leaderboard() {
                       <div className="flex items-center justify-end gap-1 mt-1 md:mt-2">
                         <Medal size={12} md:size={16} className={getMedalColor(index)} />
                         <p className={`text-[8px] md:text-[10px] font-black uppercase tracking-widest ${getMedalColor(index)}`}>
-                          {index === 0 ? "Oga Ogo" : index === 1 ? "Star Learner" : "Rising Hero"}
+                          {index === 0 ? "Champion" : index === 1 ? "Star Learner" : "Rising Hero"}
                         </p>
                       </div>
                     )}
