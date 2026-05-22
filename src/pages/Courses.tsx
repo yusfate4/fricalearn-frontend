@@ -53,13 +53,15 @@ const Courses = () => {
       
       // For parent impersonation OR direct student login
       let endpoint = "/courses/enrolled"; // Default: get MY enrolled courses
+      const headers: Record<string, string> = {};
       
       if (user?.role === "parent" && activeStudentId) {
         // Parent viewing child's enrolled courses
         endpoint = `/parent/courses?student_id=${activeStudentId}`;
+        headers['X-Active-Student-Id'] = activeStudentId;
       }
 
-      const res = await api.get(endpoint);
+      const res = await api.get(endpoint, { headers });
       const courseData = res.data.courses || res.data.data || res.data;
       setCourses(Array.isArray(courseData) ? courseData : []);
     } catch (err) {
