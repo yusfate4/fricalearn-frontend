@@ -77,7 +77,7 @@ export default function ExternalSubjectView() {
           <div className="p-2 rounded-xl bg-white shadow-sm group-hover:bg-[#2D5A27]/10 transition-all">
             <ArrowLeft size={16} />
           </div>
-          Back to subjects
+          Back to Library
         </button>
 
         {/* SUBJECT HERO */}
