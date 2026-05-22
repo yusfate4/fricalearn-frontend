@@ -146,12 +146,7 @@ const fetchExternalSubjects = async () => {
                       UK Curriculum
                     </h3>
                   </div>
-                  <button
-                    onClick={() => navigate("/external-subjects")}
-                    className="text-[10px] font-black text-gray-400 uppercase tracking-widest hover:text-[#2D5A27] transition-all"
-                  >
-                    View All →
-                  </button>
+                  {/* Removed View All button - we're already on /courses showing all */}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-4">

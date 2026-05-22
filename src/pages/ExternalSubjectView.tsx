@@ -71,7 +71,7 @@ export default function ExternalSubjectView() {
       <div className="max-w-6xl mx-auto p-4 md:p-10 pb-32">
         {/* Back Navigation */}
         <button
-          onClick={() => navigate("/external-subjects")}
+          onClick={() => navigate("/courses")}
           className="group flex items-center gap-2 text-gray-400 hover:text-[#2D5A27] mb-8 transition-all font-black uppercase text-[10px] tracking-widest"
         >
           <div className="p-2 rounded-xl bg-white shadow-sm group-hover:bg-[#2D5A27]/10 transition-all">
