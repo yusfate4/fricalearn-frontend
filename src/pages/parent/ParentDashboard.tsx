@@ -72,14 +72,14 @@ export default function ParentDashboard() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 md:mb-20">
           <div className="w-full md:w-auto">
             <h1 className="text-3xl sm:text-4xl md:text-6xl font-black text-gray-800 italic uppercase tracking-tighter leading-tight">
-              Ẹ n lẹ́, {data?.parent_name?.split(" ")[0] || "Parent"}!
+              Welcome, {data?.parent_name?.split(" ")[0] || "Parent"}!
             </h1>
 
             <div className="flex flex-wrap items-center gap-3 mt-6">
               <div className="bg-white px-4 py-2 rounded-xl border-2 border-gray-50 shadow-sm flex items-center gap-3">
                 <div className="w-2 h-2 rounded-full bg-[#2D5A27] animate-pulse"></div>
                 <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-gray-500">
-                  {data?.stats?.active_courses || 0} Students Active
+                  {data?.stats?.active_students || 0} Students Active
                 </span>
               </div>
               {data?.stats?.pending_count > 0 && (
