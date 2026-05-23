@@ -182,3 +182,95 @@
     border-right-color: var(--border);
   }
 }
+
+
+/* Oak CSS Styling */
+.lesson-view {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.lesson-header {
+  margin-bottom: 30px;
+}
+
+.lesson-header h1 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.lesson-meta {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.lesson-video {
+  margin: 30px 0;
+}
+
+.video-complete-badge {
+  background: #d4edda;
+  color: #155724;
+  padding: 10px;
+  border-radius: 4px;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.start-quiz-btn {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.start-quiz-btn:hover {
+  background: #218838;
+}
+
+.quiz-locked {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  color: #6c757d;
+}
+
+.subjects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  margin: 30px 0;
+}
+
+.subject-card {
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.subject-card:hover {
+  border-color: #007bff;
+  box-shadow: 0 4px 12px rgba(0,123,255,0.1);
+}
+
+.subject-card.active {
+  border-color: #28a745;
+  background: #f0f9f0;
+}
+
+.oak-badge {
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  display: inline-block;
+  margin-top: 10px;
+}
