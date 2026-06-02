@@ -21,9 +21,12 @@ interface Course {
   price_gbp: number;
   type: "paid" | "free";
   grades?: number[];
+  grade_labels?: string[];
   scholarship?: boolean;
   original_price_ngn?: number;
   original_price_gbp?: number;
+  curriculum?: string;
+  source?: string;
   icon: string;
 }
 
@@ -35,13 +38,16 @@ export default function Step1CourseSelection() {
   const [currency, setCurrency] = useState<"NGN" | "GBP">("NGN");
   const [loading, setLoading] = useState(true);
 
+  // ── Refetch courses whenever currency changes ───────────────
   useEffect(() => {
-    fetchCourses();
-  }, []);
+    fetchCourses(currency);
+    setSelectedCourses([]); // reset selections when switching currency
+  }, [currency]);
 
-  const fetchCourses = async () => {
+  const fetchCourses = async (cur: "NGN" | "GBP") => {
+    setLoading(true);
     try {
-      const res = await api.get("/onboarding/courses");
+      const res = await api.get(`/onboarding/courses?currency=${cur}`);
       setCourses(res.data.courses);
     } catch (err) {
       console.error("Failed to load courses", err);
@@ -50,22 +56,20 @@ export default function Step1CourseSelection() {
     }
   };
 
+  const curriculumRegion = currency === "NGN" ? "nigeria" : "uk";
+
   const toggleCourse = (courseId: string) => {
-    if (selectedCourses.includes(courseId)) {
-      setSelectedCourses(selectedCourses.filter((id) => id !== courseId));
-    } else {
-      setSelectedCourses([...selectedCourses, courseId]);
-    }
+    setSelectedCourses((prev) =>
+      prev.includes(courseId)
+        ? prev.filter((id) => id !== courseId)
+        : [...prev, courseId]
+    );
   };
 
   const handleContinue = () => {
     if (selectedCourses.length === 0) return;
-
     navigate("/onboarding/step2", {
-      state: {
-        selectedCourses,
-        currency,
-      },
+      state: { selectedCourses, currency, curriculumRegion },
     });
   };
 
@@ -79,6 +83,16 @@ export default function Step1CourseSelection() {
         return <GraduationCap size={40} className="text-[#2D5A27]" />;
     }
   };
+
+  // Strip curriculum suffix from display name e.g. "(UK Curriculum)" or "(Nigerian Curriculum)"
+  const getDisplayName = (name: string) =>
+    name.replace(/\s*\((UK|Nigerian)\s*Curriculum\)/i, "").trim();
+
+  const curriculumLabel =
+    currency === "NGN" ? "🇳🇬 Nigerian Curriculum (NERDC)" : "🇬🇧 UK National Curriculum (Oak)";
+
+  const gradeRangeLabel =
+    currency === "NGN" ? "Primary 1–6 & JSS 1–3" : "Year 1–11";
 
   if (loading) {
     return (
@@ -119,32 +133,39 @@ export default function Step1CourseSelection() {
                 Choose <span className="text-[#2D5A27]">Courses</span>
               </h1>
               <p className="text-gray-500 font-bold text-sm md:text-base max-w-2xl">
-                Select all courses you'd like your child to learn. You can mix paid and free courses!
+                Select your payment currency first — this determines the curriculum.
+                You can mix paid and free courses!
               </p>
             </div>
 
             {/* Currency Toggle */}
-            <div className="flex bg-gray-100 p-1.5 rounded-[2.5rem] border-2 border-gray-200 shadow-inner">
-              <button
-                onClick={() => setCurrency("NGN")}
-                className={`px-8 py-4 rounded-[2rem] font-black text-[10px] tracking-widest transition-all ${
-                  currency === "NGN"
-                    ? "bg-white text-[#2D5A27] shadow-lg"
-                    : "text-gray-400"
-                }`}
-              >
-                🇳🇬 NAIRA (₦)
-              </button>
-              <button
-                onClick={() => setCurrency("GBP")}
-                className={`px-8 py-4 rounded-[2rem] font-black text-[10px] tracking-widest transition-all ${
-                  currency === "GBP"
-                    ? "bg-white text-[#2D5A27] shadow-lg"
-                    : "text-gray-400"
-                }`}
-              >
-                🇬🇧 POUNDS (£)
-              </button>
+            <div className="flex flex-col items-end gap-2">
+              <div className="flex bg-gray-100 p-1.5 rounded-[2.5rem] border-2 border-gray-200 shadow-inner">
+                <button
+                  onClick={() => setCurrency("NGN")}
+                  className={`px-8 py-4 rounded-[2rem] font-black text-[10px] tracking-widest transition-all ${
+                    currency === "NGN"
+                      ? "bg-white text-[#2D5A27] shadow-lg"
+                      : "text-gray-400"
+                  }`}
+                >
+                  🇳🇬 NAIRA (₦)
+                </button>
+                <button
+                  onClick={() => setCurrency("GBP")}
+                  className={`px-8 py-4 rounded-[2rem] font-black text-[10px] tracking-widest transition-all ${
+                    currency === "GBP"
+                      ? "bg-white text-[#2D5A27] shadow-lg"
+                      : "text-gray-400"
+                  }`}
+                >
+                  🇬🇧 POUNDS (£)
+                </button>
+              </div>
+              {/* Curriculum label shown under toggle */}
+              <p className="text-[9px] font-black uppercase tracking-widest text-gray-400">
+                {curriculumLabel}
+              </p>
             </div>
           </div>
         </div>
@@ -153,7 +174,8 @@ export default function Step1CourseSelection() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
           {courses.map((course) => {
             const isSelected = selectedCourses.includes(course.id);
-            const price = currency === "NGN" ? course.price_ngn : course.price_gbp;
+            const price =
+              currency === "NGN" ? course.price_ngn : course.price_gbp;
             const originalPrice =
               currency === "NGN"
                 ? course.original_price_ngn
@@ -188,16 +210,14 @@ export default function Step1CourseSelection() {
 
                 {/* Icon */}
                 <div className="mb-6 flex justify-center">
-                  <div className={`p-6 rounded-3xl ${
-                    isSelected ? "bg-[#2D5A27]/10" : "bg-gray-50"
-                  } transition-colors`}>
+                  <div className={`p-6 rounded-3xl ${isSelected ? "bg-[#2D5A27]/10" : "bg-gray-50"} transition-colors`}>
                     {getCourseIcon(course.id)}
                   </div>
                 </div>
 
                 {/* Course Info */}
                 <h3 className="text-2xl md:text-3xl font-black text-gray-800 italic uppercase tracking-tighter mb-3 text-center">
-                  {course.name.replace(" (UK Curriculum)", "")}
+                  {getDisplayName(course.name)}
                 </h3>
 
                 <p className="text-gray-400 text-xs md:text-sm font-medium leading-relaxed mb-6 text-center min-h-[3rem]">
@@ -226,17 +246,17 @@ export default function Step1CourseSelection() {
                       </p>
                       <p className="text-3xl font-black text-[#2D5A27] italic">
                         {currency === "NGN" ? "₦" : "£"}
-                        {price.toLocaleString()}
+                        {price?.toLocaleString()}
                       </p>
                     </div>
                   )}
                 </div>
 
-                {/* UK Curriculum Badge */}
-                {course.grades && (
+                {/* Dynamic curriculum badge */}
+                {(course.grades || course.grade_labels) && (
                   <div className="mt-4 text-center">
                     <span className="text-[8px] font-black uppercase tracking-widest text-gray-400 bg-gray-50 px-3 py-2 rounded-lg">
-                      UK Curriculum • Grades 1-10
+                      {curriculumLabel.split("(")[0].trim()} • {gradeRangeLabel}
                     </span>
                   </div>
                 )}
@@ -254,9 +274,9 @@ export default function Step1CourseSelection() {
                   {selectedCourses.length} Course{selectedCourses.length !== 1 ? "s" : ""} Selected
                 </p>
                 <p className="text-sm font-bold text-gray-600">
-                  {selectedCourses.map((id) => 
-                    courses.find((c) => c.id === id)?.name.split(" ")[0]
-                  ).join(", ")}
+                  {selectedCourses
+                    .map((id) => courses.find((c) => c.id === id)?.name.split(" ")[0])
+                    .join(", ")}
                 </p>
               </div>
 

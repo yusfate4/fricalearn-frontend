@@ -2,13 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Layout from "../../components/Layout";
 import api from "../../api/axios";
-import {
-  ArrowRight,
-  ChevronLeft,
-  Award,
-  Loader2,
-  CheckCircle2,
-} from "lucide-react";
+import { ArrowRight, ChevronLeft, Award, Loader2, CheckCircle2 } from "lucide-react";
 
 interface PricingBreakdown {
   course: string;
@@ -21,12 +15,14 @@ interface PricingBreakdown {
 export default function Step3PricingSummary() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { selectedCourses, currency, mathsGrade, englishGrade } =
+  const { selectedCourses, currency, curriculumRegion, mathsGrade, englishGrade } =
     location.state || {};
 
   const [breakdown, setBreakdown] = useState<PricingBreakdown[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+
+  const isNigerian = currency === "NGN" || curriculumRegion === "nigeria";
 
   useEffect(() => {
     calculatePricing();
@@ -38,7 +34,6 @@ export default function Step3PricingSummary() {
         selected_courses: selectedCourses,
         currency,
       });
-
       setBreakdown(res.data.breakdown);
       setTotal(res.data.total);
     } catch (err) {
@@ -53,6 +48,7 @@ export default function Step3PricingSummary() {
       state: {
         selectedCourses,
         currency,
+        curriculumRegion,
         mathsGrade,
         englishGrade,
         total,
@@ -60,22 +56,41 @@ export default function Step3PricingSummary() {
     });
   };
 
-  const getCourseFullName = (courseId: string) => {
-    const names: Record<string, string> = {
-      maths: "Mathematics (UK Curriculum)",
-      english: "English (UK Curriculum)",
-      yoruba: "Yoruba Language",
-      hausa: "Hausa Language",
-      igbo: "Igbo Language",
+  /** Full display name from course id */
+  const getCourseFullName = (courseId: string): string => {
+    const nigerianNames: Record<string, string> = {
+      maths:   "Mathematics (Nigerian Curriculum)",
+      english: "English Language (Nigerian Curriculum)",
+      yoruba:  "Yoruba Language",
+      hausa:   "Hausa Language",
+      igbo:    "Igbo Language",
     };
-    return names[courseId] || courseId;
+    const ukNames: Record<string, string> = {
+      maths:   "Mathematics (UK Curriculum)",
+      english: "English (UK Curriculum)",
+      yoruba:  "Yoruba Language",
+      hausa:   "Hausa Language",
+      igbo:    "Igbo Language",
+    };
+    return isNigerian
+      ? (nigerianNames[courseId] ?? courseId)
+      : (ukNames[courseId] ?? courseId);
   };
 
-  const getGradeForCourse = (courseId: string) => {
-    if (courseId === "maths" && mathsGrade) return `Year ${mathsGrade}`;
-    if (courseId === "english" && englishGrade) return `Year ${englishGrade}`;
-    return null;
+  /** Grade label per course, using the correct curriculum format */
+  const getGradeForCourse = (courseId: string): string | null => {
+    const gradeNum =
+      courseId === "maths" ? mathsGrade : courseId === "english" ? englishGrade : null;
+    if (!gradeNum) return null;
+
+    if (!isNigerian) return `Year ${gradeNum}`;
+    if (gradeNum <= 6) return `Primary ${gradeNum}`;
+    return `JSS ${gradeNum - 6}`;
   };
+
+  /** Original price fallback for scholarship display */
+  const getOriginalPrice = (): string =>
+    currency === "NGN" ? "₦20,000" : "£13.33";
 
   if (loading) {
     return (
@@ -101,9 +116,7 @@ export default function Step3PricingSummary() {
           <div className="p-2 bg-gray-50 rounded-xl group-hover:bg-[#2D5A27]/10">
             <ChevronLeft size={20} />
           </div>
-          <span className="text-[10px] font-black uppercase tracking-[0.2em]">
-            Back
-          </span>
+          <span className="text-[10px] font-black uppercase tracking-[0.2em]">Back</span>
         </button>
 
         <div className="mb-12">
@@ -120,14 +133,19 @@ export default function Step3PricingSummary() {
 
         {/* Pricing Card */}
         <div className="bg-white rounded-[2.5rem] md:rounded-[3rem] p-8 md:p-12 shadow-xl border-4 border-white mb-8">
-          {/* Currency Badge */}
-          <div className="inline-flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-2xl mb-8">
-            <span className="text-2xl">
-              {currency === "NGN" ? "🇳🇬" : "🇬🇧"}
-            </span>
-            <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">
-              Pricing in {currency === "NGN" ? "Nigerian Naira" : "British Pounds"}
-            </span>
+          {/* Currency + Curriculum Badge */}
+          <div className="flex items-center gap-3 mb-8">
+            <div className="inline-flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-2xl">
+              <span className="text-2xl">{currency === "NGN" ? "🇳🇬" : "🇬🇧"}</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">
+                {currency === "NGN" ? "Nigerian Naira" : "British Pounds"}
+              </span>
+            </div>
+            <div className="inline-flex items-center gap-2 bg-[#2D5A27]/10 px-4 py-2 rounded-2xl">
+              <span className="text-[10px] font-black uppercase tracking-widest text-[#2D5A27]">
+                {isNigerian ? "NERDC Curriculum" : "Oak National Academy"}
+              </span>
+            </div>
           </div>
 
           {/* Course List */}
@@ -140,10 +158,7 @@ export default function Step3PricingSummary() {
               >
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
-                    <CheckCircle2
-                      size={20}
-                      className="text-[#2D5A27] flex-shrink-0"
-                    />
+                    <CheckCircle2 size={20} className="text-[#2D5A27] flex-shrink-0" />
                     <h3 className="text-lg md:text-xl font-black text-gray-800 uppercase tracking-tight">
                       {getCourseFullName(item.course)}
                     </h3>
@@ -169,11 +184,9 @@ export default function Step3PricingSummary() {
                   {item.is_free ? (
                     <div>
                       <p className="text-gray-400 text-sm line-through mb-1">
-                        {currency === "NGN" ? "₦" : "£"}20,000
+                        {getOriginalPrice()}
                       </p>
-                      <p className="text-2xl font-black text-[#2D5A27] italic">
-                        FREE
-                      </p>
+                      <p className="text-2xl font-black text-[#2D5A27] italic">FREE</p>
                     </div>
                   ) : (
                     <p className="text-2xl font-black text-gray-800 italic">
@@ -210,28 +223,23 @@ export default function Step3PricingSummary() {
           </div>
         </div>
 
-        {/* Benefits Highlight */}
+        {/* Benefits */}
         <div className="bg-gradient-to-br from-[#2D5A27] to-[#1a3318] rounded-[2.5rem] p-8 md:p-10 text-white mb-32">
           <h3 className="text-xl md:text-2xl font-black italic uppercase tracking-tight mb-6">
             ✨ What's Included:
           </h3>
           <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <CheckCircle2 size={20} className="text-[#F4B400] flex-shrink-0" />
-              <p className="text-sm font-bold">Unlimited access to all lessons & quizzes</p>
-            </div>
-            <div className="flex items-center gap-3">
-              <CheckCircle2 size={20} className="text-[#F4B400] flex-shrink-0" />
-              <p className="text-sm font-bold">Weekly progress reports delivered to your email</p>
-            </div>
-            <div className="flex items-center gap-3">
-              <CheckCircle2 size={20} className="text-[#F4B400] flex-shrink-0" />
-              <p className="text-sm font-bold">AI-powered tutor Olụkọ for 24/7 support</p>
-            </div>
-            <div className="flex items-center gap-3">
-              <CheckCircle2 size={20} className="text-[#F4B400] flex-shrink-0" />
-              <p className="text-sm font-bold">Gamification with points, badges & rewards</p>
-            </div>
+            {[
+              "Unlimited access to all lessons & quizzes",
+              "Weekly progress reports delivered to your email",
+              "AI-powered tutor Olụkọ for 24/7 support",
+              "Gamification with points, badges & rewards",
+            ].map((benefit) => (
+              <div key={benefit} className="flex items-center gap-3">
+                <CheckCircle2 size={20} className="text-[#F4B400] flex-shrink-0" />
+                <p className="text-sm font-bold">{benefit}</p>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -243,10 +251,7 @@ export default function Step3PricingSummary() {
               className="group flex items-center justify-center gap-4 bg-[#2D5A27] text-white px-10 py-6 rounded-[2.5rem] font-black uppercase text-[11px] tracking-widest shadow-2xl hover:bg-black transition-all border-b-4 border-green-900 active:translate-y-1 active:border-b-0 w-full"
             >
               Proceed to Payment
-              <ArrowRight
-                size={20}
-                className="group-hover:translate-x-1 transition-transform"
-              />
+              <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
         </div>
