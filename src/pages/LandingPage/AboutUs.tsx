@@ -22,7 +22,7 @@ const AboutUs: React.FC = () => (
             </p>
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 bg-[#2D5A27] rounded-full" />
-              <p className="text-gray-500 text-xs font-bold uppercase tracking-widest">Yusuf Dahud · Founder, FricaLearn</p>
+              <p className="text-gray-500 text-xs font-bold uppercase tracking-widest">Kabir Akinola · Founder, FricaLearn</p>
             </div>
           </div>
         </div>
@@ -41,7 +41,7 @@ const AboutUs: React.FC = () => (
 
           <p className="text-gray-500 text-lg font-medium leading-relaxed mb-10">
             FricaLearn was born out of a simple yet profound need: to ensure the sounds of our
-            ancestors — Yoruba, Igbo, and Hausa — continue to resonate in the hearts of our children,
+            ancestors - Yoruba, Igbo, and Hausa - continue to resonate in the hearts of our children,
             no matter where they are in the world. And now, we've added world-class academics to match.
           </p>
 
