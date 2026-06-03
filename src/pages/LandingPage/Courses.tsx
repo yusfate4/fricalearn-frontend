@@ -1,123 +1,181 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-// 1. Updated Interface with imageUrl
-interface Course {
-  id: number;
-  title: string;
-  level: string;
-  description: string;
-  highlight: string;
-  color: string; // Used for border and icon fallback color
-  imageUrl: string; // Path to your images (e.g., yoruba-card.png)
-  fallbackIcon: string; // Kept as a graceful fallback/decorative element
-}
-
 const Courses: React.FC = () => {
-  const courses: Course[] = [
-    {
-      id: 1,
-      title: "Yoruba Mastery",
-      level: "Beginner - Advanced",
-      description:
-        "From basic greetings (Oṣe!) to advanced proverbs and Omoluabi etiquette.",
-      highlight: "Cultural Etiquette Focus",
-      color: "border-green-600",
-      imageUrl: "/yoruba-card.png",
-      fallbackIcon: "🇳🇬",
-    },
-    {
-      id: 2,
-      title: "Igbo Heritage",
-      level: "Beginner - Intermediate",
-      description:
-        "Master the tonal nuances of Igbo and learn the rich history of the Nri Kingdom.",
-      highlight: "History & Tones Focus",
-      color: "border-red-600",
-      imageUrl: "/igbo-card.png",
-      fallbackIcon: "🦁",
-    },
-    {
-      id: 3,
-      title: "Hausa Essentials",
-      level: "Beginner - Intermediate",
-      description:
-        "Navigate the language of trade and hospitality used across the Sahel.",
-      highlight: "Trade & Travel Focus",
-      color: "border-blue-600",
-      imageUrl: "/hausa-card.png",
-      fallbackIcon: "🕌",
-    },
-  ];
-
   return (
-    <section className="py-20 bg-gray-50" id="courses">
+    <section className="py-28 bg-white overflow-hidden" id="courses">
       <div className="container mx-auto px-6">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-green-600 font-bold uppercase tracking-widest text-sm mb-4">
-            Curriculum
+
+        {/* ── Header ── */}
+        <div className="max-w-3xl mb-20">
+          <div className="flex items-center gap-3 mb-6">
+            <span className="h-px w-10 bg-[#2D5A27]" />
+            <span className="text-[#2D5A27] font-black text-[10px] uppercase tracking-[0.4em]">
+              What We Offer
+            </span>
+          </div>
+          <h2 className="text-5xl md:text-6xl font-black text-[#0E1C0E] uppercase italic tracking-tighter leading-none mb-6">
+            One Platform.<br />
+            <span className="text-[#2D5A27]">Every Curriculum.</span>
           </h2>
-          <h3 className="text-4xl md:text-5xl font-extrabold text-[#1A1A40]">
-            Our Flagship <span className="text-indigo-900">Programs</span>
-          </h3>
-          <p className="mt-4 text-gray-600 text-lg leading-relaxed">
-            Each course is designed by native educators to bridge the gap
-            between spoken word and lived culture.
+          <p className="text-gray-500 text-lg font-medium leading-relaxed max-w-2xl">
+            Whether your child is in London or Lagos, FricaLearn delivers the exact curriculum they need —
+            with quizzes, progress tracking, and an AI tutor that never sleeps.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {courses.map((course) => (
-            <div
-              key={course.id}
-              className={`bg-white rounded-3xl overflow-hidden border-b-8 ${course.color} shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col`}
-            >
-              {/* 2. Responsive Image Container with proper Aspect Ratio */}
-              <div className="relative aspect-[16/9] overflow-hidden group">
-                <img
-                  src={course.imageUrl}
-                  alt={course.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                {/* Visual Overlay to make text and colors pop */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-              </div>
+        {/* ── 3 Curriculum Cards ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-20">
 
-              {/* Card Content Area (p-8 shifted inside) */}
-              <div className="p-8 flex-grow flex flex-col justify-between">
-                <div>
-                  <div className="flex justify-between items-start gap-2 mb-2">
-                    <h4 className="text-2xl font-bold text-gray-900">
-                      {course.title}
-                    </h4>
-                    {/* Fallback Icon (now smaller, decorative) */}
-                    <span className="text-2xl pt-1">{course.fallbackIcon}</span>
-                  </div>
+          {/* Card 1: UK Curriculum */}
+          <div className="relative bg-[#0E1C0E] text-white rounded-[2.5rem] p-10 flex flex-col overflow-hidden group hover:-translate-y-2 transition-all duration-500 shadow-2xl">
+            <div className="absolute top-0 right-0 w-48 h-48 rounded-full opacity-10"
+              style={{ background: "radial-gradient(circle, #2D5A27, transparent)", transform: "translate(30%, -30%)" }} />
 
-                  <span className="inline-block px-3 py-1 bg-gray-100 text-gray-600 text-xs font-bold rounded-full mb-4 uppercase tracking-wide">
-                    {course.level}
-                  </span>
-
-                  <p className="text-gray-600 mb-6 leading-relaxed">
-                    {course.description}
-                  </p>
-
-                  <div className="bg-indigo-50 p-4 rounded-xl mb-8">
-                    <p className="text-indigo-900 text-sm font-semibold flex items-center gap-2">
-                      ✨ {course.highlight}
-                    </p>
-                  </div>
-                </div>
-
-                <Link
-                  to="/register"
-                  className="w-full py-4 bg-[#1A1A40] text-white font-bold rounded-xl hover:bg-indigo-800 transition shadow-md text-center block"
-                >
-                  Register Now 🚀
-                </Link>
-              </div>
+            <div className="flex items-center justify-between mb-8">
+              <span className="text-5xl">🇬🇧</span>
+              <span className="bg-[#2D5A27] text-white px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest">
+                Oak Academy
+              </span>
             </div>
-          ))}
+
+            <h3 className="text-3xl font-black uppercase italic tracking-tight mb-3">
+              UK National Curriculum
+            </h3>
+            <p className="text-white/60 font-medium text-sm leading-relaxed mb-8">
+              Government-backed lessons from Oak National Academy. Key Stages 1–4, aligned to the English National Curriculum.
+            </p>
+
+            <div className="space-y-3 mb-8">
+              {["Year 1 – Year 11 (Ages 5–16)", "Mathematics & English", "3,000+ lessons with quizzes", "Progress tracking & reports"].map(f => (
+                <div key={f} className="flex items-center gap-3">
+                  <div className="w-5 h-5 rounded-lg bg-[#2D5A27] flex items-center justify-center shrink-0">
+                    <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <span className="text-white/70 text-sm font-medium">{f}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-auto">
+              <p className="text-[#F4B400] font-black text-[10px] uppercase tracking-widest mb-2">Payment</p>
+              <p className="text-2xl font-black text-white mb-6">£13.33 <span className="text-white/40 text-sm font-medium">/ month per subject</span></p>
+              <Link to="/register"
+                className="block text-center bg-[#2D5A27] text-white py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-[#F4B400] hover:text-black transition-all">
+                Enrol in Pounds £
+              </Link>
+            </div>
+          </div>
+
+          {/* Card 2: Nigerian Curriculum — featured */}
+          <div className="relative bg-[#2D5A27] text-white rounded-[2.5rem] p-10 flex flex-col overflow-hidden lg:-mt-4 lg:mb-[-16px] group hover:-translate-y-2 transition-all duration-500 shadow-2xl">
+            <div className="absolute -top-px left-1/2 -translate-x-1/2 bg-[#F4B400] text-[#0E1C0E] px-6 py-1.5 rounded-b-2xl">
+              <span className="font-black text-[9px] uppercase tracking-widest">Most Popular</span>
+            </div>
+            <div className="absolute top-0 right-0 w-48 h-48 rounded-full opacity-10"
+              style={{ background: "radial-gradient(circle, #F4B400, transparent)", transform: "translate(30%, -30%)" }} />
+
+            <div className="flex items-center justify-between mb-8 mt-4">
+              <span className="text-5xl">🇳🇬</span>
+              <span className="bg-white/20 text-white px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest">
+                NERDC
+              </span>
+            </div>
+
+            <h3 className="text-3xl font-black uppercase italic tracking-tight mb-3">
+              Nigerian Curriculum
+            </h3>
+            <p className="text-white/70 font-medium text-sm leading-relaxed mb-8">
+              Fully aligned to Nigeria's NERDC curriculum. From Primary 1 through JSS 3, covering all core subjects.
+            </p>
+
+            <div className="space-y-3 mb-8">
+              {["Primary 1–6 & JSS 1–3 (Ages 6–15)", "Mathematics & English", "Custom lessons with quizzes", "Progress tracking & reports"].map(f => (
+                <div key={f} className="flex items-center gap-3">
+                  <div className="w-5 h-5 rounded-lg bg-[#F4B400] flex items-center justify-center shrink-0">
+                    <svg className="w-3 h-3 text-[#0E1C0E]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <span className="text-white/80 text-sm font-medium">{f}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-auto">
+              <p className="text-[#F4B400] font-black text-[10px] uppercase tracking-widest mb-2">Payment</p>
+              <p className="text-2xl font-black text-white mb-6">₦20,000 <span className="text-white/40 text-sm font-medium">/ month per subject</span></p>
+              <Link to="/register"
+                className="block text-center bg-[#F4B400] text-[#0E1C0E] py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-white transition-all">
+                Enrol in Naira ₦
+              </Link>
+            </div>
+          </div>
+
+          {/* Card 3: African Languages */}
+          <div className="relative bg-gray-50 border-2 border-gray-100 text-[#0E1C0E] rounded-[2.5rem] p-10 flex flex-col overflow-hidden group hover:-translate-y-2 transition-all duration-500 shadow-sm hover:shadow-2xl">
+            <div className="flex items-center justify-between mb-8">
+              <span className="text-5xl">🌍</span>
+              <span className="bg-[#F4B400] text-[#0E1C0E] px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest">
+                Free Scholarship
+              </span>
+            </div>
+
+            <h3 className="text-3xl font-black uppercase italic tracking-tight mb-3 text-[#0E1C0E]">
+              Heritage Languages
+            </h3>
+            <p className="text-gray-500 font-medium text-sm leading-relaxed mb-8">
+              Yoruba, Igbo, and Hausa taught by native-speaking tutors. Culture, etiquette, and proverbs included.
+            </p>
+
+            <div className="space-y-3 mb-8">
+              {["Yoruba — Beginner to Advanced", "Igbo — Heritage & Tones", "Hausa — Essentials", "Full scholarship available"].map(f => (
+                <div key={f} className="flex items-center gap-3">
+                  <div className="w-5 h-5 rounded-lg bg-[#0E1C0E] flex items-center justify-center shrink-0">
+                    <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <span className="text-gray-600 text-sm font-medium">{f}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-auto">
+              <p className="text-[#2D5A27] font-black text-[10px] uppercase tracking-widest mb-2">Scholarship Price</p>
+              <p className="text-2xl font-black text-[#0E1C0E] mb-1">FREE <span className="text-gray-400 text-sm font-medium line-through">₦20,000/mo</span></p>
+              <p className="text-gray-400 text-xs font-medium mb-6">Included with any curriculum plan</p>
+              <Link to="/register"
+                className="block text-center bg-[#0E1C0E] text-white py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-[#2D5A27] transition-all">
+                Claim Scholarship
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Bottom banner ── */}
+        <div className="bg-[#0E1C0E] rounded-[2.5rem] p-10 md:p-14 flex flex-col md:flex-row items-center justify-between gap-8">
+          <div>
+            <p className="text-[#F4B400] font-black text-[10px] uppercase tracking-widest mb-3">Included with every plan</p>
+            <h3 className="text-3xl font-black text-white uppercase italic tracking-tight mb-2">
+              Olụkọ AI Tutor — 24/7
+            </h3>
+            <p className="text-white/50 font-medium text-sm max-w-lg">
+              Every student gets access to Olụkọ, our AI companion that answers questions, explains concepts,
+              and keeps students motivated between live lessons.
+            </p>
+          </div>
+          <div className="shrink-0 flex items-center gap-4">
+            <div className="w-16 h-16 bg-[#2D5A27] rounded-2xl flex items-center justify-center text-3xl shadow-lg">🤖</div>
+            <div className="w-16 h-16 bg-[#F4B400] rounded-2xl flex items-center justify-center shadow-lg">
+              <svg className="w-7 h-7 text-[#0E1C0E]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <div className="w-16 h-16 bg-white/10 border border-white/20 rounded-2xl flex items-center justify-center text-3xl">🏆</div>
+          </div>
         </div>
       </div>
     </section>

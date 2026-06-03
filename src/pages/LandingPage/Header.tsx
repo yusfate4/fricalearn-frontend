@@ -7,9 +7,7 @@ const Header: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -22,109 +20,81 @@ const Header: React.FC = () => {
   ];
 
   return (
-    <header
-      className={`fixed w-full z-[100] transition-all duration-300 ${
-        isScrolled ? "bg-white shadow-md py-3" : "bg-transparent py-5"
-      }`}
-    >
+    <header className={`fixed w-full z-[100] transition-all duration-500 ${
+      isScrolled ? "bg-white/95 backdrop-blur-xl shadow-lg py-3" : "bg-transparent py-5"
+    }`}>
       <div className="container mx-auto px-6 flex justify-between items-center">
-        {/* 🖼️ Logo Integration */}
+
+        {/* Logo */}
         <Link to="/" className="flex items-center gap-2 group">
-          <img
-            src="/logo.png"
-            alt="FricaLearn Logo"
-            className="h-10 md:h-12 w-auto object-contain transition-transform group-hover:scale-105"
-          />
-          <span
-            className={`text-xl font-black tracking-tighter hidden sm:block ${
-              isScrolled ? "text-[#1A1A40]" : "text-[#1A1A40] md:text-white"
-            }`}
-          >
-            
-          </span>
+          <img src="/logo.png" alt="FricaLearn"
+            className="h-10 md:h-12 w-auto object-contain transition-transform group-hover:scale-105" />
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center space-x-8">
+        <nav className="hidden lg:flex items-center gap-8">
           {navLinks.map((link) => (
-            <a
-              key={link.name}
-              href={link.href}
-              className={`font-bold text-sm uppercase tracking-widest transition-opacity duration-300 hover:opacity-70 ${
-                isScrolled ? "text-gray-800" : "text-white"
-              }`}
-            >
+            <a key={link.name} href={link.href}
+              className={`font-black text-xs uppercase tracking-widest transition-all hover:opacity-70 ${
+                isScrolled ? "text-[#0E1C0E]" : "text-white"
+              }`}>
               {link.name}
             </a>
           ))}
 
           <div className="flex items-center gap-3 ml-4">
-            <Link
-              to="/login"
-              className={`px-5 py-2 font-bold rounded-lg transition ${
+            <Link to="/login"
+              className={`px-5 py-2.5 font-black text-xs uppercase tracking-widest rounded-xl border-2 transition-all ${
                 isScrolled
-                  ? "text-[#1A1A40] border-2 border-[#1A1A40] hover:bg-gray-50"
-                  : "text-white border-2 border-white hover:bg-white/10"
-              }`}
-            >
+                  ? "text-[#0E1C0E] border-[#0E1C0E] hover:bg-[#0E1C0E] hover:text-white"
+                  : "text-white border-white hover:bg-white/10"
+              }`}>
               Login
             </Link>
-            <Link
-              to="/register"
-              className="px-5 py-2.5 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition shadow-lg"
-            >
-              Register
+            <Link to="/register"
+              className="px-5 py-2.5 bg-[#2D5A27] text-white font-black text-xs uppercase tracking-widest rounded-xl hover:bg-[#F4B400] hover:text-[#0E1C0E] transition-all shadow-lg">
+              Register Free
             </Link>
           </div>
         </nav>
 
-        {/* Mobile Toggle */}
-        <div className="lg:hidden">
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className={`p-2 transition-colors ${isScrolled ? "text-[#1A1A40]" : "text-white"}`}
-          >
-            {isMobileMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
-          </button>
-        </div>
+        {/* Mobile toggle */}
+        <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="lg:hidden p-2"
+          aria-label="Toggle menu">
+          {isMobileMenuOpen
+            ? <FaTimes size={24} className={isScrolled ? "text-[#0E1C0E]" : "text-white"} />
+            : <FaBars size={24} className={isScrolled ? "text-[#0E1C0E]" : "text-white"} />
+          }
+        </button>
       </div>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile menu */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden bg-white fixed inset-0 w-full h-screen flex flex-col items-center justify-center space-y-8 z-[200]">
-          <button
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="absolute top-6 right-6 text-gray-900 p-2"
-          >
-            <FaTimes size={32} />
+        <div className="lg:hidden bg-[#0E1C0E] fixed inset-0 w-full h-screen flex flex-col items-center justify-center z-[200]">
+          <button onClick={() => setIsMobileMenuOpen(false)}
+            className="absolute top-6 right-6 text-white p-2">
+            <FaTimes size={28} />
           </button>
 
-          <img src="/logo.png" alt="Logo" className="h-16 mb-4" />
+          <img src="/logo.png" alt="FricaLearn" className="h-14 mb-10 brightness-0 invert" />
 
-          {navLinks.map((link) => (
-            <a
-              key={link.name}
-              href={link.href}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="text-2xl font-black text-[#1A1A40] uppercase tracking-tighter"
-            >
-              {link.name}
-            </a>
-          ))}
+          <div className="flex flex-col items-center gap-8 mb-12">
+            {navLinks.map((link) => (
+              <a key={link.name} href={link.href}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-3xl font-black text-white uppercase tracking-tight hover:text-[#F4B400] transition-colors">
+                {link.name}
+              </a>
+            ))}
+          </div>
 
-          <div className="flex flex-col w-full px-10 gap-4 pt-4">
-            <Link
-              to="/register"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="w-full py-4 bg-green-600 text-white text-center font-bold rounded-xl shadow-xl"
-            >
-              Get Started
+          <div className="flex flex-col w-full px-10 gap-4">
+            <Link to="/register" onClick={() => setIsMobileMenuOpen(false)}
+              className="w-full py-5 bg-[#2D5A27] text-white text-center font-black uppercase text-sm tracking-widest rounded-2xl shadow-xl hover:bg-[#F4B400] hover:text-[#0E1C0E] transition-all">
+              Register Free
             </Link>
-            <Link
-              to="/login"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="w-full py-4 border-2 border-[#1A1A40] text-[#1A1A40] text-center font-bold rounded-xl"
-            >
+            <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}
+              className="w-full py-5 border-2 border-white/30 text-white text-center font-black uppercase text-sm tracking-widest rounded-2xl hover:border-white transition-all">
               Student Login
             </Link>
           </div>
