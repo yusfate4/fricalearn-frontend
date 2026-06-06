@@ -3,104 +3,53 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import Layout from "../../components/Layout";
 import api from "../../api/axios";
-import {
-  Upload,
-  CheckCircle2,
-  Loader2,
-  ShieldCheck,
-  AlertCircle,
-  ChevronLeft,
-  Landmark,
-  Info,
-  User,
-  Mail,
-  Lock,
-} from "lucide-react";
+import { Upload, CheckCircle2, Loader2, ShieldCheck, AlertCircle, ChevronLeft, Landmark, Info, User } from "lucide-react";
 
-interface BankAccount {
-  currency: string;
-  bank_name: string;
-  account_number: string;
-  account_name: string;
-  flag: string;
-}
+interface BankAccount { currency: string; bank_name: string; account_number: string; account_name: string; flag: string; }
 
 export default function Step4PaymentUpload() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
+  const { selectedCourses, currency, mathsGrade, englishGrade, total } = location.state || {};
 
-  const { selectedCourses, currency, mathsGrade, englishGrade, total } =
-    location.state || {};
-
-  const [bankDetails, setBankDetails] = useState<{
-    ngn: BankAccount;
-    gbp: BankAccount;
-  } | null>(null);
-
+  const [bankDetails, setBankDetails] = useState<{ ngn: BankAccount; gbp: BankAccount } | null>(null);
   const [childName, setChildName] = useState("");
-  const [childBirthDate, setChildBirthDate] = useState("");
-  const [childGender, setChildGender] = useState("");
+  const [childAge, setChildAge] = useState<string>("");   // ✅ Age (number) instead of DOB
   const [receipt, setReceipt] = useState<File | null>(null);
   const [receiptPreview, setReceiptPreview] = useState<string | null>(null);
-
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState<{
-    type: "success" | "error";
-    msg: string;
-  } | null>(null);
+  const [status, setStatus] = useState<{ type: "success" | "error"; msg: string } | null>(null);
 
-  useEffect(() => {
-    fetchBankDetails();
-  }, []);
+  useEffect(() => { fetchBankDetails(); }, []);
 
   const fetchBankDetails = async () => {
     try {
       const res = await api.get("/onboarding/bank-details");
       setBankDetails(res.data.bank_accounts);
-    } catch (err) {
-      console.error("Failed to load bank details", err);
-    }
+    } catch (err) { console.error("Failed to load bank details", err); }
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setReceipt(file);
-
-      // Create preview for images
       if (file.type.startsWith("image/")) {
         const reader = new FileReader();
         reader.onloadend = () => setReceiptPreview(reader.result as string);
         reader.readAsDataURL(file);
-      } else {
-        setReceiptPreview(null);
-      }
-
+      } else { setReceiptPreview(null); }
       setStatus(null);
     }
   };
 
-  const handleSubmitOnboarding = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Validation
-    if (!childName.trim()) {
-      setStatus({ type: "error", msg: "Please enter child's full name" });
-      return;
+    if (!childName.trim()) { setStatus({ type: "error", msg: "Please enter child's full name" }); return; }
+    if (!childAge || parseInt(childAge) < 3 || parseInt(childAge) > 18) {
+      setStatus({ type: "error", msg: "Please enter a valid age between 3 and 18" }); return;
     }
-    if (!childBirthDate) {
-      setStatus({ type: "error", msg: "Please select child's birth date" });
-      return;
-    }
-    if (!childGender) {
-      setStatus({ type: "error", msg: "Please select child's gender" });
-      return;
-    }
-    if (!receipt) {
-      setStatus({ type: "error", msg: "Please upload your payment receipt" });
-      return;
-    }
+    if (!receipt) { setStatus({ type: "error", msg: "Please upload your payment receipt" }); return; }
 
     setLoading(true);
     setStatus(null);
@@ -108,14 +57,8 @@ export default function Step4PaymentUpload() {
     const formData = new FormData();
     formData.append("parent_id", user?.id.toString() || "");
     formData.append("child_name", childName.trim());
-    formData.append("birth_date", childBirthDate);
-    formData.append("gender", childGender);
-    
-    // 🚀 FIX: Send selected_courses as array (each course separately)
-    selectedCourses.forEach((course: string) => {
-      formData.append("selected_courses[]", course);
-    });
-    
+    formData.append("age", childAge);
+    selectedCourses.forEach((course: string) => formData.append("selected_courses[]", course));
     formData.append("maths_grade", mathsGrade?.toString() || "");
     formData.append("english_grade", englishGrade?.toString() || "");
     formData.append("currency", currency);
@@ -123,27 +66,12 @@ export default function Step4PaymentUpload() {
     formData.append("receipt", receipt);
 
     try {
-      const res = await api.post("/onboarding/submit", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      setStatus({
-        type: "success",
-        msg: "🎉 Success! Your child has been enrolled with immediate access. Redirecting...",
-      });
-
-      setTimeout(() => {
-        navigate("/parent/dashboard");
-      }, 2500);
+      await api.post("/onboarding/submit", formData, { headers: { "Content-Type": "multipart/form-data" } });
+      setStatus({ type: "success", msg: "🎉 Success! Your child has been enrolled with immediate access. Redirecting..." });
+      setTimeout(() => navigate("/parent/dashboard"), 2500);
     } catch (err: any) {
-      console.error("Submission Error:", err.response?.data);
-      setStatus({
-        type: "error",
-        msg: err.response?.data?.message || "Failed to submit. Please try again.",
-      });
-    } finally {
-      setLoading(false);
-    }
+      setStatus({ type: "error", msg: err.response?.data?.message || "Failed to submit. Please try again." });
+    } finally { setLoading(false); }
   };
 
   const currentBankAccount = currency === "NGN" ? bankDetails?.ngn : bankDetails?.gbp;
@@ -151,98 +79,62 @@ export default function Step4PaymentUpload() {
   return (
     <Layout>
       <div className="max-w-6xl mx-auto px-4 md:px-12 py-10 md:py-16 pb-32">
-        {/* Header */}
-        <button
-          onClick={() => navigate(-1)}
-          className="group flex items-center gap-2 text-gray-400 hover:text-[#2D5A27] transition-colors mb-8"
-        >
-          <div className="p-2 bg-gray-50 rounded-xl group-hover:bg-[#2D5A27]/10">
-            <ChevronLeft size={20} />
-          </div>
-          <span className="text-[10px] font-black uppercase tracking-[0.2em]">
-            Back
-          </span>
+        <button onClick={() => navigate(-1)}
+          className="group flex items-center gap-2 text-gray-400 hover:text-[#2D5A27] transition-colors mb-8">
+          <div className="p-2 bg-gray-50 rounded-xl group-hover:bg-[#2D5A27]/10"><ChevronLeft size={20}/></div>
+          <span className="text-[10px] font-black uppercase tracking-[0.2em]">Back</span>
         </button>
 
         <div className="mb-12">
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-4">
-            Step 4 of 4 • Final Step
-          </p>
+          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-4">Step 4 of 4 • Final Step</p>
           <h1 className="text-4xl md:text-6xl font-black text-gray-800 italic uppercase tracking-tighter leading-tight mb-4">
             Complete <span className="text-[#2D5A27]">Payment</span>
           </h1>
-          <p className="text-gray-500 font-bold text-sm md:text-base max-w-2xl">
-            Transfer to our account and upload your receipt for instant access
-          </p>
+          <p className="text-gray-500 font-bold text-sm max-w-2xl">Transfer to our account and upload your receipt for instant access</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           {/* LEFT: Bank Details */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Payment Summary */}
             <div className="bg-gray-900 text-white p-8 rounded-[2.5rem] shadow-xl">
-              <p className="text-[10px] font-black text-white/40 uppercase tracking-widest mb-4">
-                Payment Summary
-              </p>
+              <p className="text-[10px] font-black text-white/40 uppercase tracking-widest mb-4">Payment Summary</p>
               <p className="text-sm font-bold text-white/60 uppercase mb-4">
                 {selectedCourses.length} Course{selectedCourses.length !== 1 ? "s" : ""} Selected
               </p>
               <div className="mt-8 pt-6 border-t border-white/10">
                 <p className="text-4xl font-black text-[#F4B400] italic">
-                  {currency === "NGN" ? "₦" : "£"}
-                  {total?.toLocaleString()}
+                  {currency === "NGN" ? "₦" : "£"}{total?.toLocaleString()}
                 </p>
-                <p className="text-[9px] font-black uppercase tracking-widest text-white/40 mt-2">
-                  Monthly Subscription
-                </p>
+                <p className="text-[9px] font-black uppercase tracking-widest text-white/40 mt-2">Monthly Subscription</p>
               </div>
             </div>
 
-            {/* Bank Account Card */}
             {currentBankAccount && (
-              <div className="bg-white p-8 rounded-[2.5rem] border-2 border-gray-50 shadow-sm">
-                <div className="flex items-center gap-3 mb-6 text-[#2D5A27]">
-                  <Landmark size={24} />
-                  <h3 className="font-black uppercase italic text-sm">
-                    Transfer to {currency === "NGN" ? "Naira" : "Pounds"} Account
+              <div className="bg-white p-8 rounded-[2.5rem] shadow-xl border-2 border-gray-50">
+                <div className="flex items-center gap-3 mb-6">
+                  <Landmark size={20} className="text-[#2D5A27]"/>
+                  <h3 className="font-black text-gray-800 uppercase tracking-tight text-sm">
+                    {currentBankAccount.flag} Transfer to
                   </h3>
                 </div>
-
                 <div className="space-y-4">
                   <div>
-                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">
-                      Bank Name
-                    </p>
-                    <p className="text-lg font-black text-gray-800 tracking-tight">
-                      {currentBankAccount.bank_name}
-                    </p>
+                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Bank Name</p>
+                    <p className="text-lg font-black text-gray-800">{currentBankAccount.bank_name}</p>
                   </div>
-
                   <div>
-                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">
-                      Account Number
-                    </p>
-                    <p className="text-2xl font-black text-[#2D5A27] tracking-tight">
-                      {currentBankAccount.account_number}
-                    </p>
+                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Account Number</p>
+                    <p className="text-2xl font-black text-[#2D5A27] tracking-tight">{currentBankAccount.account_number}</p>
                   </div>
-
                   <div>
-                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">
-                      Account Name
-                    </p>
-                    <p className="text-sm font-bold text-gray-500 uppercase">
-                      {currentBankAccount.account_name}
-                    </p>
+                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Account Name</p>
+                    <p className="text-sm font-bold text-gray-500 uppercase">{currentBankAccount.account_name}</p>
                   </div>
                 </div>
-
-                {/* Important Note */}
                 <div className="mt-6 p-4 bg-blue-50 rounded-2xl border border-blue-100 flex gap-3">
-                  <Info size={20} className="text-blue-600 shrink-0" />
+                  <Info size={20} className="text-blue-600 shrink-0"/>
                   <p className="text-[10px] font-bold text-blue-800 leading-relaxed">
-                    <strong>Use your child's name as the payment reference</strong> for instant
-                    verification!
+                    <strong>Use your child's name as the payment reference</strong> for instant verification!
                   </p>
                 </div>
               </div>
@@ -251,168 +143,92 @@ export default function Step4PaymentUpload() {
 
           {/* RIGHT: Form */}
           <div className="lg:col-span-3">
-            <form onSubmit={handleSubmitOnboarding} className="space-y-6">
-              {/* Child Information Card */}
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-xl border-2 border-gray-50">
                 <h2 className="text-xl md:text-2xl font-black text-gray-800 italic uppercase tracking-tight mb-6">
                   Child's Information
                 </h2>
-
                 <div className="space-y-4">
                   {/* Name */}
                   <div>
                     <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">
-                      <User size={12} className="inline mr-2" />
-                      Child's Full Name
+                      <User size={12} className="inline mr-2"/>Child's Full Name
                     </label>
-                    <input
-                      type="text"
-                      value={childName}
-                      onChange={(e) => setChildName(e.target.value)}
-                      placeholder="Ada Johnson"
-                      className="w-full px-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#2D5A27] font-bold text-sm transition-all"
-                      required
-                    />
+                    <input type="text" value={childName} onChange={e => setChildName(e.target.value)}
+                      placeholder="Ada Johnson" required
+                      className="w-full px-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#2D5A27] font-bold text-sm transition-all"/>
                   </div>
 
-                  {/* Birth Date */}
+                  {/* Age — number input instead of date picker */}
                   <div>
                     <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">
-                      <Mail size={12} className="inline mr-2" />
-                      Birth Date
+                      Child's Age
                     </label>
-                    <input
-                      type="date"
-                      value={childBirthDate}
-                      onChange={(e) => setChildBirthDate(e.target.value)}
-                      className="w-full px-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#2D5A27] font-bold text-sm transition-all"
-                      required
-                    />
-                  </div>
-
-                  {/* Gender */}
-                  <div>
-                    <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">
-                      <Lock size={12} className="inline mr-2" />
-                      Gender
-                    </label>
-                    <select
-                      value={childGender}
-                      onChange={(e) => setChildGender(e.target.value)}
-                      className="w-full px-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#2D5A27] font-bold text-sm transition-all"
-                      required
-                    >
-                      <option value="">Select Gender</option>
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                    </select>
+                    <div className="flex items-center gap-3">
+                      <input type="number" min={3} max={18} value={childAge}
+                        onChange={e => setChildAge(e.target.value)}
+                        placeholder="e.g. 8" required
+                        className="w-32 px-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#2D5A27] font-black text-xl text-center transition-all"/>
+                      <span className="text-gray-500 font-bold text-sm">years old</span>
+                    </div>
+                    <p className="text-[10px] text-gray-400 font-medium mt-2">Enter a number between 3 and 18</p>
                   </div>
                 </div>
               </div>
 
-              {/* Receipt Upload Card */}
+              {/* Receipt Upload */}
               <div className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-xl border-2 border-gray-50">
-                <h2 className="text-xl md:text-2xl font-black text-gray-800 italic uppercase tracking-tight mb-6">
-                  Upload Receipt
-                </h2>
-
+                <h2 className="text-xl md:text-2xl font-black text-gray-800 italic uppercase tracking-tight mb-6">Upload Receipt</h2>
                 <label className="block w-full border-4 border-dashed border-gray-100 rounded-[2rem] p-12 text-center cursor-pointer hover:border-[#2D5A27] transition-all bg-gray-50/30 group relative">
-                  <input
-                    type="file"
-                    className="hidden"
-                    onChange={handleFileUpload}
-                    accept="image/*,application/pdf"
-                  />
+                  <input type="file" className="hidden" onChange={handleFileUpload} accept="image/*,application/pdf"/>
                   {receiptPreview ? (
                     <div className="flex flex-col items-center gap-4">
-                      <img
-                        src={receiptPreview}
-                        alt="Receipt preview"
-                        className="max-h-48 rounded-2xl shadow-lg"
-                      />
-                      <p className="text-xs font-black uppercase tracking-wide text-gray-700">
-                        {receipt?.name}
-                      </p>
-                      <p className="text-[9px] font-bold text-gray-400">
-                        Click to change
-                      </p>
+                      <img src={receiptPreview} alt="Receipt preview" className="max-h-48 rounded-2xl shadow-lg"/>
+                      <p className="text-xs font-black uppercase tracking-wide text-gray-700">{receipt?.name}</p>
+                      <p className="text-[9px] font-bold text-gray-400">Click to change</p>
                     </div>
                   ) : receipt ? (
                     <div className="flex flex-col items-center gap-4">
-                      <div className="bg-white p-6 rounded-2xl shadow-sm">
-                        <Upload size={32} className="text-[#2D5A27]" />
-                      </div>
-                      <p className="font-black text-gray-700 uppercase text-xs tracking-widest">
-                        {receipt.name}
-                      </p>
+                      <div className="bg-white p-6 rounded-2xl shadow-sm"><Upload size={32} className="text-[#2D5A27]"/></div>
+                      <p className="font-black text-gray-700 uppercase text-xs tracking-widest">{receipt.name}</p>
                     </div>
                   ) : (
                     <div className="flex flex-col items-center gap-4">
                       <div className="bg-white p-6 rounded-2xl shadow-sm group-hover:scale-110 transition-transform duration-500">
-                        <Upload size={32} className="text-[#2D5A27]" />
+                        <Upload size={32} className="text-[#2D5A27]"/>
                       </div>
-                      <p className="font-black text-gray-700 uppercase text-xs tracking-widest">
-                        Click to Upload Receipt
-                      </p>
-                      <p className="text-[9px] font-bold text-gray-400">
-                        JPG, PNG, or PDF • Max 5MB
-                      </p>
+                      <p className="font-black text-gray-700 uppercase text-xs tracking-widest">Click to Upload Receipt</p>
+                      <p className="text-[9px] font-bold text-gray-400">JPG, PNG, or PDF • Max 5MB</p>
                     </div>
                   )}
                 </label>
               </div>
 
-              {/* Status Message */}
               {status && (
-                <div
-                  className={`p-6 rounded-2xl flex items-center gap-4 animate-in zoom-in duration-300 ${
-                    status.type === "success"
-                      ? "bg-green-50 text-green-700 border-2 border-green-100"
-                      : "bg-red-50 text-red-700 border-2 border-red-100"
-                  }`}
-                >
-                  {status.type === "success" ? (
-                    <CheckCircle2 size={24} />
-                  ) : (
-                    <AlertCircle size={24} />
-                  )}
-                  <span className="font-black uppercase italic tracking-tight text-xs leading-relaxed">
-                    {status.msg}
-                  </span>
+                <div className={`p-6 rounded-2xl flex items-center gap-4 animate-in zoom-in duration-300 ${
+                  status.type === "success" ? "bg-green-50 text-green-700 border-2 border-green-100" : "bg-red-50 text-red-700 border-2 border-red-100"
+                }`}>
+                  {status.type === "success" ? <CheckCircle2 size={24}/> : <AlertCircle size={24}/>}
+                  <span className="font-black uppercase italic tracking-tight text-xs leading-relaxed">{status.msg}</span>
                 </div>
               )}
 
-              {/* Auto-Approval Notice */}
+              {/* Instant Access Notice */}
               <div className="bg-gradient-to-br from-[#2D5A27] to-[#1a3318] rounded-[2rem] p-6 text-white flex items-start gap-4">
-                <ShieldCheck size={24} className="text-[#F4B400] flex-shrink-0 mt-1" />
+                <ShieldCheck size={24} className="text-[#F4B400] flex-shrink-0 mt-1"/>
                 <div>
-                  <p className="text-sm font-black uppercase tracking-wide mb-2">
-                    ⚡ Instant Access Guarantee
-                  </p>
+                  <p className="text-sm font-black uppercase tracking-wide mb-2">⚡ Instant Access Guarantee</p>
                   <p className="text-xs font-bold opacity-90 leading-relaxed">
-                    Your child will get <strong>immediate access</strong> to all courses upon
-                    submission. Our admin will verify the payment within 24 hours.
+                    Your child gets <strong>immediate access</strong> to all courses upon submission. Admin verifies payment within 24 hours.
                   </p>
                 </div>
               </div>
 
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={!childName || !childBirthDate || !childGender || !receipt || loading}
-                className="w-full bg-[#2D5A27] text-white py-8 rounded-[2.5rem] font-black uppercase tracking-[0.2em] text-[11px] shadow-2xl flex items-center justify-center gap-4 hover:bg-black transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed border-b-4 border-green-900 active:border-b-0"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="animate-spin" size={24} />
-                    Enrolling...
-                  </>
-                ) : (
-                  <>
-                    <ShieldCheck size={24} />
-                    Complete Enrollment
-                  </>
-                )}
+              <button type="submit"
+                disabled={!childName || !childAge || !receipt || loading}
+                className="w-full bg-[#2D5A27] text-white py-8 rounded-[2.5rem] font-black uppercase tracking-[0.2em] text-[11px] shadow-2xl flex items-center justify-center gap-4 hover:bg-black transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed border-b-4 border-green-900 active:border-b-0">
+                {loading ? <><Loader2 className="animate-spin" size={24}/>Enrolling...</>
+                          : <><ShieldCheck size={24}/>Complete Enrollment</>}
               </button>
             </form>
           </div>
