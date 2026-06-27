@@ -115,7 +115,7 @@ const Hero: React.FC = () => {
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">🤖</span>
                   <div>
-                    <p className="text-white font-black text-sm">Olụkọ AI Tutor</p>
+                    <p className="text-white font-black text-sm">AI Tutor</p>
                     <p className="text-white/60 text-[10px] font-medium">Available 24/7</p>
                   </div>
                 </div>

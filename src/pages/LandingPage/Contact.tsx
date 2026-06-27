@@ -1,140 +1,199 @@
 import React, { useState } from "react";
-import { FaCheckCircle, FaTimes } from "react-icons/fa";
-import api from "../../api/axios"; 
+import { FaCheckCircle, FaTimes, FaInstagram, FaTwitter, FaWhatsapp } from "react-icons/fa";
+import api from "../../api/axios";
 
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    role: "parent",
-    message: "",
-    _honeypot: "",
+    name: "", email: "", role: "parent", message: "", _honeypot: "",
   });
-
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [error, setError] = useState(""); // Add error state
+  const [showModal, setShowModal]       = useState(false);
+  const [error, setError]               = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData._honeypot) return;
-
     setIsSubmitting(true);
     setError("");
-
     try {
-      // 🚀 PRODUCTION ENDPOINT: Hits your Laravel API
-      await api.post('/contact', formData);
-
+      await api.post("/contact", formData);
       setShowModal(true);
-
-      setFormData({
-        name: "",
-        email: "",
-        role: "parent",
-        message: "",
-        _honeypot: "",
-      });
+      setFormData({ name: "", email: "", role: "parent", message: "", _honeypot: "" });
     } catch (err: any) {
       console.error("Submission error", err);
-      setError("Oluko is having trouble sending your message. Please try again later.");
+      setError("Something went wrong. Please try again or email us directly.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const field = "w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-[#2D5A27] focus:ring-0 outline-none font-medium text-gray-700 transition-all";
+
   return (
-    <section className="py-20 bg-white" id="contact">
-      <div className="container mx-auto px-6">
-        <div className="max-w-5xl mx-auto bg-indigo-900 rounded-3xl overflow-hidden shadow-2xl flex flex-col md:row">
-          {/* Left Side: Contact Info */}
-          <div className="w-full md:w-1/3 bg-indigo-800 p-10 text-white">
-            <h3 className="text-3xl font-bold mb-6 italic tracking-tighter">FricaLearn.</h3>
-            <p className="text-indigo-100 mb-10 leading-relaxed">
-              Have questions about our curriculum or want to partner with us? Our team is ready to assist you.
-            </p>
-            <div className="space-y-6">
-              <div>
-                <h4 className="font-bold text-green-400">Location</h4>
-                <p className="text-sm">Gillingham, England, United Kingdom</p>
+    <section className="py-20 bg-gray-50" id="contact">
+      <div className="container mx-auto px-4 sm:px-6">
+
+        {/* Section header */}
+        <div className="text-center mb-14">
+          <div className="flex items-center justify-center gap-3 mb-5">
+            <span className="h-px w-10 bg-[#2D5A27]" />
+            <span className="text-[#2D5A27] font-black text-[10px] uppercase tracking-[0.4em]">Get In Touch</span>
+            <span className="h-px w-10 bg-[#2D5A27]" />
+          </div>
+          <h2 className="text-4xl md:text-6xl font-black uppercase italic tracking-tighter text-[#0E1C0E] leading-none mb-4">
+            Let's <span className="text-[#2D5A27]">Talk.</span>
+          </h2>
+          <p className="text-gray-500 font-medium max-w-xl mx-auto">
+            Have questions about our curriculum? Want to partner with us?
+            Our team is ready to help.
+          </p>
+        </div>
+
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-8">
+
+          {/* LEFT: Info panel */}
+          <div className="lg:col-span-2 bg-[#0E1C0E] rounded-[2.5rem] p-8 md:p-10 text-white flex flex-col justify-between">
+            <div>
+              <h3 className="text-3xl font-black italic uppercase tracking-tighter mb-2">FricaLearn.</h3>
+              <p className="text-white/60 font-medium text-sm leading-relaxed mb-10">
+                Raising bilingual achievers — one lesson at a time.
+              </p>
+
+              <div className="space-y-6">
+                <div>
+                  <p className="text-[#F4B400] font-black text-[10px] uppercase tracking-widest mb-2">Location</p>
+                  <p className="text-white/80 font-medium text-sm">Gillingham, England, United Kingdom</p>
+                </div>
+                <div>
+                  <p className="text-[#F4B400] font-black text-[10px] uppercase tracking-widest mb-2">Email</p>
+                  <a href="mailto:hello@fricalearn.com"
+                    className="text-white/80 font-medium text-sm hover:text-[#F4B400] transition-colors">
+                    hello@fricalearn.com
+                  </a>
+                </div>
+                <div>
+                  <p className="text-[#F4B400] font-black text-[10px] uppercase tracking-widest mb-2">WhatsApp</p>
+                  <a href="https://wa.me/2348174485504" target="_blank" rel="noopener noreferrer"
+                    className="text-white/80 font-medium text-sm hover:text-[#F4B400] transition-colors">
+                    +234 817 448 5504
+                  </a>
+                </div>
               </div>
-              <div>
-                <h4 className="font-bold text-green-400">Email</h4>
-                <p className="text-sm">hello@fricalearn.com</p>
+            </div>
+
+            {/* Social links */}
+            <div className="mt-10">
+              <p className="text-[#F4B400] font-black text-[10px] uppercase tracking-widest mb-4">Follow Us</p>
+              <div className="flex gap-3">
+                {[
+                  { icon: <FaInstagram size={18}/>, href: "https://www.instagram.com/fricalearn/" },
+                  { icon: <FaTwitter size={18}/>, href: "https://x.com/FricaLearn" },
+                  { icon: <FaWhatsapp size={18}/>, href: "https://wa.me/2348174485504" },
+                ].map((s, i) => (
+                  <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
+                    className="w-11 h-11 bg-white/10 border border-white/20 rounded-xl flex items-center justify-center text-white hover:bg-[#2D5A27] hover:border-[#2D5A27] transition-all">
+                    {s.icon}
+                  </a>
+                ))}
               </div>
             </div>
           </div>
 
-          {/* Right Side: Form */}
-          <div className="w-full md:w-2/3 bg-white p-10">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Honeypot */}
-              <input type="text" className="hidden" tabIndex={-1} autoComplete="off" 
-                onChange={(e) => setFormData({ ...formData, _honeypot: e.target.value })} 
-              />
+          {/* RIGHT: Form */}
+          <div className="lg:col-span-3 bg-white rounded-[2.5rem] p-8 md:p-10 shadow-sm border-2 border-gray-100">
+            <h3 className="text-2xl font-black uppercase italic tracking-tight text-[#0E1C0E] mb-8">
+              Send us a message
+            </h3>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="flex flex-col">
-                  <label className="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Full Name</label>
-                  <input type="text" required value={formData.name}
-                    className="p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-900 outline-none"
-                    placeholder="Enter your name"
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  />
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Honeypot */}
+              <input type="text" className="hidden" tabIndex={-1} autoComplete="off"
+                onChange={(e) => setFormData({ ...formData, _honeypot: e.target.value })}/>
+
+              {/* Name + Email — stack on mobile, side by side on md+ */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">
+                    Full Name
+                  </label>
+                  <input type="text" required value={formData.name} placeholder="Enter your name"
+                    className={field}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}/>
                 </div>
-                <div className="flex flex-col">
-                  <label className="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Email Address</label>
-                  <input type="email" required value={formData.email}
-                    className="p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-900 outline-none"
-                    placeholder="email@example.com"
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  />
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">
+                    Email Address
+                  </label>
+                  <input type="email" required value={formData.email} placeholder="email@example.com"
+                    className={field}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}/>
                 </div>
               </div>
 
-              <div className="flex flex-col">
-                <label className="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">I am a...</label>
-                <select value={formData.role}
-                  className="p-4 bg-gray-50 border border-gray-200 rounded-xl outline-none font-semibold text-gray-700"
-                  onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                >
+              {/* Role */}
+              <div>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">
+                  I am a...
+                </label>
+                <select value={formData.role} className={field}
+                  onChange={(e) => setFormData({ ...formData, role: e.target.value })}>
                   <option value="parent">Parent interested in lessons</option>
                   <option value="tutor">Qualified Tutor applying to join</option>
-                  <option value="partner">Potential Partner/Investor</option>
+                  <option value="partner">Potential Partner / Investor</option>
                   <option value="other">Other</option>
                 </select>
               </div>
 
-              <div className="flex flex-col">
-                <label className="text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Message</label>
-                <textarea rows={4} required value={formData.message}
-                  className="p-4 bg-gray-50 border border-gray-200 rounded-xl outline-none"
+              {/* Message */}
+              <div>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">
+                  Message
+                </label>
+                <textarea rows={5} required value={formData.message}
                   placeholder="How can we help you?"
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                ></textarea>
+                  className={field}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}/>
               </div>
 
-              {error && <p className="text-red-500 text-xs font-bold italic">{error}</p>}
+              {/* Error */}
+              {error && (
+                <p className="text-red-500 text-xs font-bold bg-red-50 p-3 rounded-xl border border-red-100">
+                  {error}
+                </p>
+              )}
 
+              {/* Submit */}
               <button type="submit" disabled={isSubmitting}
-                className={`w-full py-4 bg-green-600 text-white font-black rounded-xl hover:bg-green-700 transition-all shadow-lg uppercase tracking-widest ${isSubmitting ? "opacity-50" : ""}`}
-              >
-                {isSubmitting ? "Processing..." : "Send Message 🚀"}
+                className={`w-full py-5 bg-[#2D5A27] text-white font-black rounded-2xl uppercase tracking-widest text-sm shadow-lg hover:bg-[#F4B400] hover:text-[#0E1C0E] transition-all border-b-4 border-green-900 hover:border-yellow-600 active:translate-y-1 active:border-b-0 ${isSubmitting ? "opacity-60 cursor-not-allowed" : ""}`}>
+                {isSubmitting ? "Sending..." : "Send Message 🚀"}
               </button>
             </form>
           </div>
         </div>
       </div>
 
-      {/* --- Success Modal --- */}
+      {/* Success modal */}
       {showModal && (
-        <div className="fixed inset-0 z-[1000] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl relative">
-            <button onClick={() => setShowModal(false)} className="absolute top-4 right-4 text-gray-400"><FaTimes size={20} /></button>
-            <div className="flex justify-center mb-6"><FaCheckCircle className="text-green-500" size={80} /></div>
-            <h3 className="text-2xl font-black text-[#1A1A40] mb-2 uppercase">Ẹ ṣé!</h3>
-            <p className="text-gray-600 mb-8 font-medium">Thank you for reaching out. Our team will contact you at <strong>hello@fricalearn.com</strong> shortly.</p>
-            <button onClick={() => setShowModal(false)} className="w-full py-3 bg-[#1A1A40] text-white font-bold rounded-xl">Back to Home</button>
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm">
+          <div className="bg-white rounded-[2.5rem] p-8 sm:p-10 max-w-sm w-full text-center shadow-2xl relative animate-in zoom-in duration-300">
+            <button onClick={() => setShowModal(false)}
+              className="absolute top-5 right-5 text-gray-300 hover:text-gray-600 transition-colors">
+              <FaTimes size={20}/>
+            </button>
+            <div className="flex justify-center mb-6">
+              <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center">
+                <FaCheckCircle className="text-green-500" size={48}/>
+              </div>
+            </div>
+            <h3 className="text-2xl font-black text-[#0E1C0E] mb-2 uppercase italic tracking-tight">Ẹ ṣé! 🎉</h3>
+            <p className="text-gray-500 mb-8 font-medium text-sm leading-relaxed">
+              Thank you for reaching out! Our team will get back to you at{" "}
+              <strong className="text-[#0E1C0E]">hello@fricalearn.com</strong> shortly.
+            </p>
+            <button onClick={() => setShowModal(false)}
+              className="w-full py-4 bg-[#0E1C0E] text-white font-black rounded-2xl uppercase tracking-widest text-sm hover:bg-[#2D5A27] transition-all">
+              Back to Home
+            </button>
           </div>
         </div>
       )}

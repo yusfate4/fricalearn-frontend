@@ -160,7 +160,7 @@ const Courses: React.FC = () => {
           <div>
             <p className="text-[#F4B400] font-black text-[10px] uppercase tracking-widest mb-3">Included with every plan</p>
             <h3 className="text-3xl font-black text-white uppercase italic tracking-tight mb-2">
-              Olụkọ AI Tutor — 24/7
+              AI Tutor — 24/7
             </h3>
             <p className="text-white/50 font-medium text-sm max-w-lg">
               Every student gets access to Olụkọ, our AI companion that answers questions, explains concepts,
