@@ -21,7 +21,7 @@ const faqs: FAQItem[] = [
     answer: "Not at all! While we specialise in helping diaspora children stay connected to their roots, our platform serves families everywhere. Nigerian students get the NERDC curriculum, UK students get the national curriculum, and any child worldwide can learn Yoruba, Igbo, or Hausa."
   },
   {
-    question: "What role does Olụkọ AI play?",
+    question: "What role does AI Tutor play?",
     answer: "Olụkọ is your child's 24/7 AI study companion. Between lessons, students can ask questions, get explanations, and practise concepts. It's a safe, monitored environment focused strictly on education and language learning."
   },
   {

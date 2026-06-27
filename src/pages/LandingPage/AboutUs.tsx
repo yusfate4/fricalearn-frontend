@@ -57,7 +57,7 @@ const AboutUs: React.FC = () => (
               },
               {
                 num: "03", label: "Innovation for Tradition", color: "bg-[#0E1C0E]/10 text-[#0E1C0E]",
-                desc: "Using the Olụkọ AI companion, we provide 24/7 reinforcement, making language learning accessible and fun for the digital age.",
+                desc: "Using the AI Tutor companion, we provide 24/7 reinforcement, making language learning accessible and fun for the digital age.",
               },
             ].map((item) => (
               <div key={item.num} className="flex items-start gap-4">

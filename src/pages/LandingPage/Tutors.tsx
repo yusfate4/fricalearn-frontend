@@ -18,7 +18,7 @@ const features = [
   {
     icon: "🤖",
     title: "AI Tutor — 24/7",
-    description: "Olụkọ AI is always available to explain concepts, answer questions and keep students motivated between learning sessions — day or night, weekday or weekend.",
+    description: "AI Tutor is always available to explain concepts, answer questions and keep students motivated between learning sessions — day or night, weekday or weekend.",
     color: "bg-white",
     textColor: "text-[#0E1C0E]",
     border: true,
@@ -54,7 +54,7 @@ const Tutors: React.FC = () => (
 
           <p className="text-gray-500 text-lg font-medium leading-relaxed mb-6">
             FricaLearn is a <strong className="text-[#0E1C0E]">self-tutor platform</strong> — students
-            work through lessons independently, guided by Olụkọ AI. Every month,
+            work through lessons independently, guided by AI Tutor. Every month,
             parents receive a full progress report. Where gaps are found,
             a qualified tutor is assigned to close them.
           </p>
