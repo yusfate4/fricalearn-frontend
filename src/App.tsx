@@ -153,7 +153,6 @@ function App() {
           <Route path="/verify-email/:id/:hash" element={<VerifyEmailHandler />} />
           <Route path="/forgot-password" element={!user ? <ForgotPassword /> : <Navigate to="/dashboard" />} />
           <Route path="/reset-password" element={!user ? <ResetPassword /> : <Navigate to="/dashboard" />} />
-<CookieConsent />
           {/* --- 🏠 PROTECTED ROUTE TREE --- */}
           <Route
             path="/*"
@@ -239,6 +238,7 @@ function App() {
             }
           />
         </Routes>
+<CookieConsent />
       </div>
     </Router>
   );
