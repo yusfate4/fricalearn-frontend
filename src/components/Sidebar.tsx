@@ -119,7 +119,7 @@ export default function Sidebar() {
                   <SidebarLink to={`/live-room/${upcomingClass.id}`} icon={<Video size={20} className="animate-pulse" />} label="Join Class" active={isActive("/live-room")} collapsed={isCollapsed} onClick={closeSidebar} isHighlight={true} />
                 )}
 
-                <SidebarLink to="/olu-chat" icon={<Sparkles size={20} />} label="Talk to Olukọ" active={isActive("/olu-chat")} collapsed={isCollapsed} onClick={closeSidebar} />
+                <SidebarLink to="/olu-chat" icon={<Sparkles size={20} />} label="Talk to AI Tutor" active={isActive("/olu-chat")} collapsed={isCollapsed} onClick={closeSidebar} />
                 <SidebarLink to="/courses" icon={<BookOpen size={20} />} label="My Lessons" active={isActive("/courses")} collapsed={isCollapsed} onClick={closeSidebar} />
                 <SidebarLink to="/leaderboard" icon={<Trophy size={20} />} label="Leaderboard" active={isActive("/leaderboard")} collapsed={isCollapsed} onClick={closeSidebar} />
                 
