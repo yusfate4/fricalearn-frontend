@@ -15,6 +15,8 @@ import LandingPage from "./pages/LandingPage";
 import TermsOfService from "./pages/LandingPage/TermsOfService";
 import PrivacyPolicy from "./pages/LandingPage/PrivacyPolicy";
 import CookiePolicy from "./pages/LandingPage/CookiePolicy";
+import CookieConsent from "./components/CookieConsent";
+
 
 // --- 🌍 SHARED & AUTH PAGES ---
 import Login from "./pages/Login";
@@ -151,7 +153,7 @@ function App() {
           <Route path="/verify-email/:id/:hash" element={<VerifyEmailHandler />} />
           <Route path="/forgot-password" element={!user ? <ForgotPassword /> : <Navigate to="/dashboard" />} />
           <Route path="/reset-password" element={!user ? <ResetPassword /> : <Navigate to="/dashboard" />} />
-
+<CookieConsent />
           {/* --- 🏠 PROTECTED ROUTE TREE --- */}
           <Route
             path="/*"
