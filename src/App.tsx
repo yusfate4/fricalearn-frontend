@@ -12,6 +12,9 @@ import Layout from "./components/Layout";
 
 // --- 🚀 NEW LANDING PAGE ---
 import LandingPage from "./pages/LandingPage";
+import TermsOfService from "./pages/LandingPage/TermsOfService";
+import PrivacyPolicy from "./pages/LandingPage/PrivacyPolicy";
+import CookiePolicy from "./pages/LandingPage/CookiePolicy";
 
 // --- 🌍 SHARED & AUTH PAGES ---
 import Login from "./pages/Login";
@@ -141,6 +144,9 @@ function App() {
             element={!user ? <Register /> : <Navigate to="/dashboard" />}
           />
           
+          <Route path="/terms" element={<TermsOfService />} />
+<Route path="/privacy" element={<PrivacyPolicy />} />
+<Route path="/cookies" element={<CookiePolicy />} />
           <Route path="/verify-notice" element={<VerifyNotice />} />
           <Route path="/verify-email/:id/:hash" element={<VerifyEmailHandler />} />
           <Route path="/forgot-password" element={!user ? <ForgotPassword /> : <Navigate to="/dashboard" />} />
