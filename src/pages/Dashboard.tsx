@@ -9,6 +9,8 @@ import {
 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { LiveClassCard } from "../components/LiveClass/LiveClassCard";
+import TrialBanner from "../components/TrialBanner";
+import PaywallModal from "../components/PaywallModal";
 
 function ShieldCheck({ size, className }: any) {
   return (
@@ -27,6 +29,7 @@ export default function Dashboard() {
   const [data, setData]           = useState<any>(null);
   const [loading, setLoading]     = useState(true);
   const [liveClasses, setLiveClasses] = useState<any[]>([]);
+  const [showPaywall, setShowPaywall] = useState(false);
 
   const isImpersonating = localStorage.getItem("is_impersonating") === "true";
   const activeStudentId = localStorage.getItem("active_student_id");
@@ -104,6 +107,16 @@ export default function Dashboard() {
       )}
 
       <div className="max-w-6xl mx-auto px-4 py-6 md:p-10 space-y-6 md:space-y-8">
+
+        {/* 🆓 Trial status banner (hidden for premium users) */}
+        <TrialBanner onUpgradeClick={() => setShowPaywall(true)} />
+
+        {/* 💳 Upgrade paywall (opened from banner) */}
+        <PaywallModal
+          open={showPaywall}
+          onClose={() => setShowPaywall(false)}
+          onUnlocked={() => { setShowPaywall(false); window.location.reload(); }}
+        />
 
         {/* ── 1. GREETING (compact) ─────────────────────────── */}
         <div className="animate-in fade-in slide-in-from-left duration-500">

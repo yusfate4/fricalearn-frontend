@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { useAuth } from "../hooks/useAuth";
+import PaywallModal from "../components/PaywallModal";
 
 interface Question {
   question: string; options: string[];
@@ -52,6 +53,7 @@ export default function ExternalLessonViewer() {
 
   const [lesson, setLesson]               = useState<any>(null);
   const [loading, setLoading]             = useState(true);
+  const [showPaywall, setShowPaywall]     = useState(false);
   const [showQuiz, setShowQuiz]           = useState(false);
   const [currentQ, setCurrentQ]           = useState(0);
   const [userAnswers, setUserAnswers]     = useState<Record<string, string>>({});
@@ -86,7 +88,10 @@ export default function ExternalLessonViewer() {
       const res = await api.get(ep);
       setLesson(res.data.lesson);
       if (res.data.progress?.status === "completed") { setShowQuiz(true); setQuizSubmitted(true); }
-    } catch (err) { console.error(err); }
+    } catch (err: any) {
+      if (err.response?.status === 402) setShowPaywall(true); // trial expired
+      else console.error(err);
+    }
     finally { setLoading(false); }
   };
 
@@ -161,6 +166,17 @@ export default function ExternalLessonViewer() {
           First open fetches content from Oak National Academy — may take a few seconds
         </p>
       </div>
+    </Layout>
+  );
+
+  // 🔒 Trial expired — show the paywall instead of "not found"
+  if (showPaywall) return (
+    <Layout>
+      <PaywallModal
+        open={true}
+        onClose={() => navigate(-1)}
+        onUnlocked={() => { setShowPaywall(false); fetchLesson(); }}
+      />
     </Layout>
   );
 
