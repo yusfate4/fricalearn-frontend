@@ -347,6 +347,27 @@ export default function ExternalLessonViewer() {
               </div>
             </div>
 
+            {/* 🏆 Topic evaluation — shows when the whole topic is now complete */}
+            {quizResults?.topic_evaluation && (
+              <div className="bg-gradient-to-br from-[#F4B400] to-yellow-500 rounded-[2rem] p-8 mb-8 text-left shadow-lg animate-in zoom-in duration-500">
+                <p className="text-[10px] font-black uppercase tracking-widest text-[#0E1C0E]/60 mb-2">🏆 Topic Complete!</p>
+                <h3 className="text-2xl font-black text-[#0E1C0E] italic uppercase tracking-tight mb-2">
+                  {quizResults.topic_evaluation.topic_title}
+                </h3>
+                <p className="font-bold text-[#0E1C0E]">
+                  Topic average: {quizResults.topic_evaluation.average_score}% — {quizResults.topic_evaluation.grade_label}
+                </p>
+                <p className="text-xs font-bold text-[#0E1C0E]/60 mt-1">
+                  {quizResults.topic_evaluation.lessons_completed}/{quizResults.topic_evaluation.total_lessons} lessons completed
+                </p>
+                {quizResults.topic_evaluation.weak_lessons?.length > 0 && (
+                  <p className="text-sm font-medium text-[#0E1C0E]/70 mt-3">
+                    💡 Worth revisiting: {quizResults.topic_evaluation.weak_lessons.join(", ")}
+                  </p>
+                )}
+              </div>
+            )}
+
             {/* Answer review */}
             <div className="space-y-4 mb-8">
               <h3 className="text-lg font-black text-gray-700 uppercase tracking-tight">Review Your Answers</h3>
