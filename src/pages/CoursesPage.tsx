@@ -12,6 +12,8 @@ import {
   Sparkles,
   GraduationCap,
 } from "lucide-react";
+import TrialBanner from "../components/TrialBanner";
+import PaywallModal from "../components/PaywallModal";
 
 interface Course {
   id: number;
@@ -37,6 +39,8 @@ const Courses = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [externalSubjects, setExternalSubjects] = useState<ExternalSubject[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [trialStatus, setTrialStatus] = useState<any>(null);
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -44,19 +48,26 @@ const Courses = () => {
   useEffect(() => {
     fetchCourses();
     fetchExternalSubjects();
+    fetchTrialStatus();
   }, [user, location.pathname]);
+
+  const fetchTrialStatus = async () => {
+    try {
+      const sid = localStorage.getItem("active_student_id");
+      const ep  = sid ? `/trial/status?student_id=${sid}` : `/trial/status`;
+      const res = await api.get(ep);
+      setTrialStatus(res.data);
+    } catch (err) { /* silent — banner just won't show */ }
+  };
 
   const fetchCourses = async () => {
     setLoading(true);
     try {
       const activeStudentId = localStorage.getItem("active_student_id");
-      
-      // For parent impersonation OR direct student login
-      let endpoint = "/courses/enrolled"; // Default: get MY enrolled courses
+      let endpoint = "/courses/enrolled";
       const headers: Record<string, string> = {};
-      
+
       if (user?.role === "parent" && activeStudentId) {
-        // Parent viewing child's enrolled courses
         endpoint = `/parent/courses?student_id=${activeStudentId}`;
         headers['X-Active-Student-Id'] = activeStudentId;
       }
@@ -72,37 +83,33 @@ const Courses = () => {
     }
   };
 
-const fetchExternalSubjects = async () => {
-  try {
-    const activeStudentId = localStorage.getItem("active_student_id");
-    const endpoint =
-      user?.role === "parent" && activeStudentId
-        ? `/external/subjects?student_id=${activeStudentId}`
-        : "/external/subjects";
+  const fetchExternalSubjects = async () => {
+    try {
+      const activeStudentId = localStorage.getItem("active_student_id");
+      const endpoint =
+        user?.role === "parent" && activeStudentId
+          ? `/external/subjects?student_id=${activeStudentId}`
+          : "/external/subjects";
 
-    console.log('🔍 Fetching external subjects for student:', activeStudentId);
-    const res = await api.get(endpoint);
-    console.log('✅ Response:', res.data);
-    setExternalSubjects(res.data.subjects || []);
-  } catch (err) {
-    console.error("❌ Failed to load external subjects:", err);
-    setExternalSubjects([]);
-  }
-};
+      const res = await api.get(endpoint);
+      setExternalSubjects(res.data.subjects || []);
+    } catch (err) {
+      console.error("❌ Failed to load external subjects:", err);
+      setExternalSubjects([]);
+    }
+  };
 
   const handleCourseClick = (courseId: number) => {
     navigate(`/course-detail/${courseId}`);
   };
 
   const handleExternalSubjectClick = (subjectId: number) => {
-    navigate(`/external-subjects/${subjectId}`);
-  };
-
-  const getSubjectImage = (name: string) => {
-    if (name === "Maths") {
-      return "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&q=80";
+    // 🔒 If trial + premium have both lapsed, show the paywall instead of navigating
+    if (trialStatus?.access_expired) {
+      setShowPaywall(true);
+      return;
     }
-    return "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&q=80";
+    navigate(`/external-subjects/${subjectId}`);
   };
 
   const getSubjectIcon = (name: string) => {
@@ -113,6 +120,15 @@ const fetchExternalSubjects = async () => {
   return (
     <Layout>
       <div className="max-w-7xl mx-auto p-6 md:p-12 animate-in fade-in duration-700">
+
+        {/* 🆓 Trial banner + paywall */}
+        <TrialBanner onUpgradeClick={() => setShowPaywall(true)} />
+        <PaywallModal
+          open={showPaywall}
+          onClose={() => setShowPaywall(false)}
+          onUnlocked={() => { setShowPaywall(false); fetchTrialStatus(); }}
+        />
+
         {/* HEADER */}
         <div className="mb-12 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
@@ -145,8 +161,13 @@ const fetchExternalSubjects = async () => {
                     <h3 className="text-3xl font-black text-gray-800 italic uppercase tracking-tighter">
                       UK Curriculum
                     </h3>
+                    {/* 🎁 Trial chip — only while on trial */}
+                    {trialStatus?.on_trial && (
+                      <span className="bg-[#F4B400]/15 text-[#b8860b] border border-[#F4B400]/40 px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest">
+                        🎁 Free Trial — {trialStatus.trial_days_left} day{trialStatus.trial_days_left !== 1 ? "s" : ""} left
+                      </span>
+                    )}
                   </div>
-                  {/* Removed View All button - we're already on /courses showing all */}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-4">
@@ -206,9 +227,15 @@ const fetchExternalSubjects = async () => {
 
             {/* MAIN COURSES SECTION */}
             <div className="mb-10">
-              <h3 className="text-2xl font-black text-gray-800 italic uppercase tracking-tighter mb-8">
-                African Language Courses
-              </h3>
+              <div className="flex items-center gap-3 mb-8">
+                <h3 className="text-2xl font-black text-gray-800 italic uppercase tracking-tighter">
+                  African Language Courses
+                </h3>
+                {/* Languages are never gated */}
+                <span className="bg-green-50 text-[#2D5A27] border border-green-100 px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest">
+                  Free Forever
+                </span>
+              </div>
             </div>
 
             {courses.length > 0 ? (
