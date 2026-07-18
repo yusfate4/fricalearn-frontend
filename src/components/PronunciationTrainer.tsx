@@ -32,14 +32,14 @@ export default function PronunciationTrainer({ word }: { word: string }) {
       
       <button 
         onClick={startRecording}
-        className={`p-6 rounded-full transition-all ${recording ? 'bg-red-500 animate-pulse' : 'bg-[#2D5A27] hover:scale-110'}`}
+        className={`p-6 rounded-full transition-all ${recording ? 'bg-red-500 animate-pulse' : 'bg-[#3F2171] hover:scale-110'}`}
       >
         <Mic className="text-white" size={32} />
       </button>
 
       {result && (
         <div className="mt-6 animate-in zoom-in">
-          <p className="text-4xl font-black text-[#2D5A27]">{result.score}%</p>
+          <p className="text-4xl font-black text-[#3F2171]">{result.score}%</p>
           <p className="text-xs font-bold text-gray-400 mt-2 uppercase italic">"{result.feedback}"</p>
         </div>
       )}

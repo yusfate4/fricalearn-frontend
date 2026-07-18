@@ -127,7 +127,7 @@ export default function RewardsCatalog() {
             <h1 className="text-4xl md:text-6xl font-black text-gray-800 italic uppercase tracking-tighter leading-none">
               Marketplace
             </h1>
-            <p className="text-[#2D5A27] font-black text-[10px] uppercase tracking-[0.3em] mt-3">
+            <p className="text-[#3F2171] font-black text-[10px] uppercase tracking-[0.3em] mt-3">
               {isImpersonating ? "Rewarding your child's progress" : "Spend your XP on Yoruba Excellence"}
             </p>
           </div>
@@ -137,11 +137,11 @@ export default function RewardsCatalog() {
               <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
                 {isImpersonating ? "Child's Balance" : "Available XP"}
               </p>
-              <p className="text-3xl font-black text-[#2D5A27] italic">
+              <p className="text-3xl font-black text-[#3F2171] italic">
                 {currentXP}
               </p>
             </div>
-            <div className="h-14 w-14 bg-[#F4B400] rounded-[1.5rem] flex items-center justify-center text-white shadow-lg shadow-yellow-500/30">
+            <div className="h-14 w-14 bg-[#FFFF00] rounded-[1.5rem] flex items-center justify-center text-white shadow-lg shadow-yellow-500/30">
               <Coins size={32} className="animate-pulse" />
             </div>
           </div>
@@ -190,7 +190,7 @@ export default function RewardsCatalog() {
                       disabled={!canAfford}
                       className={`mt-auto w-full py-5 rounded-[1.5rem] font-black uppercase text-[11px] tracking-widest transition-all shadow-lg active:scale-95 ${
                         canAfford 
-                        ? "bg-gray-900 text-white hover:bg-[#2D5A27]" 
+                        ? "bg-gray-900 text-white hover:bg-[#3F2171]" 
                         : "bg-gray-100 text-gray-300 cursor-not-allowed"
                       }`}
                     >
@@ -214,7 +214,7 @@ export default function RewardsCatalog() {
                 Unlock Reward?
               </h2>
               <p className="text-gray-500 font-bold text-sm mb-8">
-                Spending <span className="text-[#2D5A27]">{purchasing.cost_coins} XP</span> on <br/>
+                Spending <span className="text-[#3F2171]">{purchasing.cost_coins} XP</span> on <br/>
                 <span className="text-gray-800 italic underline">"{purchasing.title}"</span>
               </p>
 
@@ -222,7 +222,7 @@ export default function RewardsCatalog() {
                 <button
                   onClick={handlePurchase}
                   disabled={isProcessing}
-                  className="w-full py-5 bg-[#2D5A27] text-white rounded-2xl font-black uppercase tracking-widest hover:bg-black transition-all flex items-center justify-center gap-2"
+                  className="w-full py-5 bg-[#3F2171] text-white rounded-2xl font-black uppercase tracking-widest hover:bg-black transition-all flex items-center justify-center gap-2"
                 >
                   {isProcessing ? <Loader2 className="animate-spin" /> : "Oya, Confirm!"}
                 </button>
@@ -239,10 +239,10 @@ export default function RewardsCatalog() {
 
         {/* --- 🎉 MODAL 2: SUCCESS --- */}
         {successItem && (
-          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-[#2D5A27]/95 backdrop-blur-md animate-in fade-in duration-300">
+          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-[#3F2171]/95 backdrop-blur-md animate-in fade-in duration-300">
             <div className="bg-white w-full max-w-md rounded-[4rem] p-12 text-center shadow-2xl relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-3 bg-[#F4B400]" />
-              <div className="w-24 h-24 bg-green-100 text-[#2D5A27] rounded-full flex items-center justify-center mx-auto mb-8 animate-bounce">
+              <div className="absolute top-0 left-0 w-full h-3 bg-[#FFFF00]" />
+              <div className="w-24 h-24 bg-green-100 text-[#3F2171] rounded-full flex items-center justify-center mx-auto mb-8 animate-bounce">
                 <Trophy size={48} />
               </div>
               <h2 className="text-3xl font-black uppercase italic tracking-tighter mb-4 text-gray-800">

@@ -27,7 +27,7 @@ const Contact: React.FC = () => {
     }
   };
 
-  const field = "w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-[#2D5A27] focus:ring-0 outline-none font-medium text-gray-700 transition-all";
+  const field = "w-full p-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-[#3F2171] focus:ring-0 outline-none font-medium text-gray-700 transition-all";
 
   return (
     <section className="py-20 bg-gray-50" id="contact">
@@ -36,12 +36,12 @@ const Contact: React.FC = () => {
         {/* Section header */}
         <div className="text-center mb-14">
           <div className="flex items-center justify-center gap-3 mb-5">
-            <span className="h-px w-10 bg-[#2D5A27]" />
-            <span className="text-[#2D5A27] font-black text-[10px] uppercase tracking-[0.4em]">Get In Touch</span>
-            <span className="h-px w-10 bg-[#2D5A27]" />
+            <span className="h-px w-10 bg-[#3F2171]" />
+            <span className="text-[#3F2171] font-black text-[10px] uppercase tracking-[0.4em]">Get In Touch</span>
+            <span className="h-px w-10 bg-[#3F2171]" />
           </div>
-          <h2 className="text-4xl md:text-6xl font-black uppercase italic tracking-tighter text-[#0E1C0E] leading-none mb-4">
-            Let's <span className="text-[#2D5A27]">Talk.</span>
+          <h2 className="text-4xl md:text-6xl font-black uppercase italic tracking-tighter text-[#2A1650] leading-none mb-4">
+            Let's <span className="text-[#3F2171]">Talk.</span>
           </h2>
           <p className="text-gray-500 font-medium max-w-xl mx-auto">
             Have questions about our curriculum? Want to partner with us?
@@ -52,7 +52,7 @@ const Contact: React.FC = () => {
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-8">
 
           {/* LEFT: Info panel */}
-          <div className="lg:col-span-2 bg-[#0E1C0E] rounded-[2.5rem] p-8 md:p-10 text-white flex flex-col justify-between">
+          <div className="lg:col-span-2 bg-[#2A1650] rounded-[2.5rem] p-8 md:p-10 text-white flex flex-col justify-between">
             <div>
               <h3 className="text-3xl font-black italic uppercase tracking-tighter mb-2">FricaLearn.</h3>
               <p className="text-white/60 font-medium text-sm leading-relaxed mb-10">
@@ -61,20 +61,20 @@ const Contact: React.FC = () => {
 
               <div className="space-y-6">
                 <div>
-                  <p className="text-[#F4B400] font-black text-[10px] uppercase tracking-widest mb-2">Location</p>
+                  <p className="text-[#FFFF00] font-black text-[10px] uppercase tracking-widest mb-2">Location</p>
                   <p className="text-white/80 font-medium text-sm">Gillingham, England, United Kingdom</p>
                 </div>
                 <div>
-                  <p className="text-[#F4B400] font-black text-[10px] uppercase tracking-widest mb-2">Email</p>
+                  <p className="text-[#FFFF00] font-black text-[10px] uppercase tracking-widest mb-2">Email</p>
                   <a href="mailto:hello@fricalearn.com"
-                    className="text-white/80 font-medium text-sm hover:text-[#F4B400] transition-colors">
+                    className="text-white/80 font-medium text-sm hover:text-[#FFFF00] transition-colors">
                     hello@fricalearn.com
                   </a>
                 </div>
                 <div>
-                  <p className="text-[#F4B400] font-black text-[10px] uppercase tracking-widest mb-2">WhatsApp</p>
+                  <p className="text-[#FFFF00] font-black text-[10px] uppercase tracking-widest mb-2">WhatsApp</p>
                   <a href="https://wa.me/2348174485504" target="_blank" rel="noopener noreferrer"
-                    className="text-white/80 font-medium text-sm hover:text-[#F4B400] transition-colors">
+                    className="text-white/80 font-medium text-sm hover:text-[#FFFF00] transition-colors">
                     +234 817 448 5504
                   </a>
                 </div>
@@ -83,7 +83,7 @@ const Contact: React.FC = () => {
 
             {/* Social links */}
             <div className="mt-10">
-              <p className="text-[#F4B400] font-black text-[10px] uppercase tracking-widest mb-4">Follow Us</p>
+              <p className="text-[#FFFF00] font-black text-[10px] uppercase tracking-widest mb-4">Follow Us</p>
               <div className="flex gap-3">
                 {[
                   { icon: <FaInstagram size={18}/>, href: "https://www.instagram.com/fricalearn/" },
@@ -91,7 +91,7 @@ const Contact: React.FC = () => {
                   { icon: <FaWhatsapp size={18}/>, href: "https://wa.me/2348174485504" },
                 ].map((s, i) => (
                   <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
-                    className="w-11 h-11 bg-white/10 border border-white/20 rounded-xl flex items-center justify-center text-white hover:bg-[#2D5A27] hover:border-[#2D5A27] transition-all">
+                    className="w-11 h-11 bg-white/10 border border-white/20 rounded-xl flex items-center justify-center text-white hover:bg-[#3F2171] hover:border-[#3F2171] transition-all">
                     {s.icon}
                   </a>
                 ))}
@@ -101,7 +101,7 @@ const Contact: React.FC = () => {
 
           {/* RIGHT: Form */}
           <div className="lg:col-span-3 bg-white rounded-[2.5rem] p-8 md:p-10 shadow-sm border-2 border-gray-100">
-            <h3 className="text-2xl font-black uppercase italic tracking-tight text-[#0E1C0E] mb-8">
+            <h3 className="text-2xl font-black uppercase italic tracking-tight text-[#2A1650] mb-8">
               Send us a message
             </h3>
 
@@ -164,7 +164,7 @@ const Contact: React.FC = () => {
 
               {/* Submit */}
               <button type="submit" disabled={isSubmitting}
-                className={`w-full py-5 bg-[#2D5A27] text-white font-black rounded-2xl uppercase tracking-widest text-sm shadow-lg hover:bg-[#F4B400] hover:text-[#0E1C0E] transition-all border-b-4 border-green-900 hover:border-yellow-600 active:translate-y-1 active:border-b-0 ${isSubmitting ? "opacity-60 cursor-not-allowed" : ""}`}>
+                className={`w-full py-5 bg-[#3F2171] text-white font-black rounded-2xl uppercase tracking-widest text-sm shadow-lg hover:bg-[#FFFF00] hover:text-[#2A1650] transition-all border-b-4 border-[#1E1038] hover:border-yellow-600 active:translate-y-1 active:border-b-0 ${isSubmitting ? "opacity-60 cursor-not-allowed" : ""}`}>
                 {isSubmitting ? "Sending..." : "Send Message 🚀"}
               </button>
             </form>
@@ -185,13 +185,13 @@ const Contact: React.FC = () => {
                 <FaCheckCircle className="text-green-500" size={48}/>
               </div>
             </div>
-            <h3 className="text-2xl font-black text-[#0E1C0E] mb-2 uppercase italic tracking-tight">Ẹ ṣé! 🎉</h3>
+            <h3 className="text-2xl font-black text-[#2A1650] mb-2 uppercase italic tracking-tight">Ẹ ṣé! 🎉</h3>
             <p className="text-gray-500 mb-8 font-medium text-sm leading-relaxed">
               Thank you for reaching out! Our team will get back to you at{" "}
-              <strong className="text-[#0E1C0E]">hello@fricalearn.com</strong> shortly.
+              <strong className="text-[#2A1650]">hello@fricalearn.com</strong> shortly.
             </p>
             <button onClick={() => setShowModal(false)}
-              className="w-full py-4 bg-[#0E1C0E] text-white font-black rounded-2xl uppercase tracking-widest text-sm hover:bg-[#2D5A27] transition-all">
+              className="w-full py-4 bg-[#2A1650] text-white font-black rounded-2xl uppercase tracking-widest text-sm hover:bg-[#3F2171] transition-all">
               Back to Home
             </button>
           </div>

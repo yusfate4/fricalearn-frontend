@@ -83,7 +83,7 @@ export default function LevelUpModal({
   const praiseText = praiseMap[language] || praiseMap.Yoruba;
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-[#2D5A27]/80 backdrop-blur-xl p-4 animate-in fade-in duration-500">
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-[#3F2171]/80 backdrop-blur-xl p-4 animate-in fade-in duration-500">
       
       {/* Sunburst Background Effect */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
@@ -100,12 +100,12 @@ export default function LevelUpModal({
           <Trophy size={48} />
         </div>
 
-        <p className="text-[#2D5A27] font-black uppercase tracking-[0.4em] text-[10px] mb-3">
+        <p className="text-[#3F2171] font-black uppercase tracking-[0.4em] text-[10px] mb-3">
           Level Mastered!
         </p>
 
         <h2 className="text-6xl md:text-7xl font-black text-gray-800 italic uppercase tracking-tighter mb-4 leading-none">
-          LVL <span className="text-[#F4B400]">{level}</span>
+          LVL <span className="text-[#FFFF00]">{level}</span>
         </h2>
 
         {/* 📝 Personalized Text (Item 5) */}
@@ -114,14 +114,14 @@ export default function LevelUpModal({
         </p>
 
         <div className="bg-gray-50 p-6 rounded-[2.5rem] mb-10 flex items-center gap-5 text-left border-2 border-gray-100 shadow-inner relative group">
-          <div className="bg-[#2D5A27] p-4 rounded-2xl text-white shadow-lg group-hover:rotate-12 transition-transform">
+          <div className="bg-[#3F2171] p-4 rounded-2xl text-white shadow-lg group-hover:rotate-12 transition-transform">
             <Award size={32} />
           </div>
           <div>
             <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">
               New Status Attained
             </p>
-            <p className="font-black text-[#2D5A27] uppercase italic text-2xl tracking-tighter">
+            <p className="font-black text-[#3F2171] uppercase italic text-2xl tracking-tighter">
               {getRank(level)}
             </p>
           </div>
@@ -129,7 +129,7 @@ export default function LevelUpModal({
 
         <button
           onClick={onClose}
-          className="w-full bg-gray-900 text-white py-7 rounded-[2rem] font-black text-xl shadow-2xl hover:bg-[#2D5A27] hover:scale-105 active:scale-95 transition-all uppercase italic tracking-tighter group flex items-center justify-center gap-3"
+          className="w-full bg-gray-900 text-white py-7 rounded-[2rem] font-black text-xl shadow-2xl hover:bg-[#3F2171] hover:scale-105 active:scale-95 transition-all uppercase italic tracking-tighter group flex items-center justify-center gap-3"
         >
           Keep Climbing, Champion!
         </button>

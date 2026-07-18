@@ -49,20 +49,20 @@ const FAQ: React.FC = () => {
           {/* Left: sticky header */}
           <div className="lg:sticky lg:top-32">
             <div className="flex items-center gap-3 mb-6">
-              <span className="h-px w-10 bg-[#2D5A27]" />
-              <span className="text-[#2D5A27] font-black text-[10px] uppercase tracking-[0.4em]">Got Questions?</span>
+              <span className="h-px w-10 bg-[#3F2171]" />
+              <span className="text-[#3F2171] font-black text-[10px] uppercase tracking-[0.4em]">Got Questions?</span>
             </div>
-            <h2 className="text-5xl md:text-6xl font-black uppercase italic tracking-tighter text-[#0E1C0E] leading-none mb-8">
+            <h2 className="text-5xl md:text-6xl font-black uppercase italic tracking-tighter text-[#2A1650] leading-none mb-8">
               Frequently<br />
-              <span className="text-[#2D5A27]">Asked.</span>
+              <span className="text-[#3F2171]">Asked.</span>
             </h2>
             <p className="text-gray-500 text-lg font-medium leading-relaxed mb-10">
               Everything you need to know about FricaLearn's dual curriculum, pricing, and how to get started.
             </p>
             <a href="#contact"
-              className="inline-flex items-center gap-3 bg-[#0E1C0E] text-white px-8 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-[#2D5A27] transition-all">
+              className="inline-flex items-center gap-3 bg-[#2A1650] text-white px-8 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-[#3F2171] transition-all">
               Still have questions?
-              <span className="text-[#F4B400]">→</span>
+              <span className="text-[#FFFF00]">→</span>
             </a>
           </div>
 
@@ -71,18 +71,18 @@ const FAQ: React.FC = () => {
             {faqs.map((faq, i) => (
               <div key={i}
                 className={`rounded-2xl border-2 transition-all duration-300 overflow-hidden ${
-                  openIndex === i ? "border-[#2D5A27] shadow-lg" : "border-gray-100 shadow-sm"
+                  openIndex === i ? "border-[#3F2171] shadow-lg" : "border-gray-100 shadow-sm"
                 }`}>
                 <button
                   onClick={() => setOpenIndex(openIndex === i ? null : i)}
                   className="w-full flex items-center justify-between p-6 text-left gap-4">
                   <span className={`text-base font-black uppercase tracking-tight transition-colors ${
-                    openIndex === i ? "text-[#2D5A27]" : "text-[#0E1C0E]"
+                    openIndex === i ? "text-[#3F2171]" : "text-[#2A1650]"
                   }`}>
                     {faq.question}
                   </span>
                   <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-all ${
-                    openIndex === i ? "bg-[#2D5A27] text-white rotate-180" : "bg-gray-100 text-gray-400"
+                    openIndex === i ? "bg-[#3F2171] text-white rotate-180" : "bg-gray-100 text-gray-400"
                   }`}>
                     <FaChevronDown size={14} />
                   </div>

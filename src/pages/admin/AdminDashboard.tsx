@@ -133,7 +133,7 @@ export default function AdminDashboard() {
                     </p>
                     <button 
                         onClick={() => navigate('/admin/analytics')}
-                        className="bg-[#2D5A27] text-white px-8 py-4 rounded-2xl font-black shadow-lg shadow-green-900/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-3 group/btn"
+                        className="bg-[#3F2171] text-white px-8 py-4 rounded-2xl font-black shadow-lg shadow-green-900/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-3 group/btn"
                     >
                         View Analytics
                         <ArrowRight size={20} className="group-hover/btn:translate-x-1 transition-transform" />

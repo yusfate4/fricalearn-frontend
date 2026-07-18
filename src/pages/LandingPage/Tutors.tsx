@@ -5,29 +5,29 @@ const features = [
     icon: "🎯",
     title: "Self-Paced Learning",
     description: "Students learn at their own speed — no pressure, no rushing. Every child progresses through lessons when they're ready, building genuine understanding before moving forward.",
-    color: "bg-[#2D5A27]",
+    color: "bg-[#3F2171]",
     textColor: "text-white",
   },
   {
     icon: "📊",
     title: "Monthly Progress Reports",
     description: "Every month, parents receive a detailed report showing exactly what their child has covered, quiz scores, topics mastered, and areas that need more attention.",
-    color: "bg-[#F4B400]",
-    textColor: "text-[#0E1C0E]",
+    color: "bg-[#FFFF00]",
+    textColor: "text-[#2A1650]",
   },
   {
     icon: "🤖",
     title: "AI Tutor — 24/7",
     description: "AI Tutor is always available to explain concepts, answer questions and keep students motivated between learning sessions — day or night, weekday or weekend.",
     color: "bg-white",
-    textColor: "text-[#0E1C0E]",
+    textColor: "text-[#2A1650]",
     border: true,
   },
   {
     icon: "👩‍🏫",
     title: "Expert Tutor on Weak Areas",
     description: "Where the monthly report flags a struggling topic, a vetted native tutor is assigned to give targeted, personalised support — so no child falls behind unnoticed.",
-    color: "bg-[#0E1C0E]",
+    color: "bg-[#2A1650]",
     textColor: "text-white",
   },
 ];
@@ -40,20 +40,20 @@ const Tutors: React.FC = () => (
         {/* Left: Copy */}
         <div>
           <div className="flex items-center gap-3 mb-6">
-            <span className="h-px w-10 bg-[#2D5A27]" />
-            <span className="text-[#2D5A27] font-black text-[10px] uppercase tracking-[0.4em]">
+            <span className="h-px w-10 bg-[#3F2171]" />
+            <span className="text-[#3F2171] font-black text-[10px] uppercase tracking-[0.4em]">
               How It Works
             </span>
           </div>
 
-          <h2 className="text-5xl md:text-6xl font-black uppercase italic tracking-tighter text-[#0E1C0E] leading-none mb-8">
+          <h2 className="text-5xl md:text-6xl font-black uppercase italic tracking-tighter text-[#2A1650] leading-none mb-8">
             Learn at Your Pace.<br />
-            <span className="text-[#2D5A27]">Tutors Step In</span><br />
+            <span className="text-[#3F2171]">Tutors Step In</span><br />
             When It Matters.
           </h2>
 
           <p className="text-gray-500 text-lg font-medium leading-relaxed mb-6">
-            FricaLearn is a <strong className="text-[#0E1C0E]">self-tutor platform</strong> — students
+            FricaLearn is a <strong className="text-[#2A1650]">self-tutor platform</strong> — students
             work through lessons independently, guided by AI Tutor. Every month,
             parents receive a full progress report. Where gaps are found,
             a qualified tutor is assigned to close them.
@@ -72,7 +72,7 @@ const Tutors: React.FC = () => (
               { value: "Top 5%", label: "Tutors" },
             ].map((stat) => (
               <div key={stat.label} className="text-center p-5 bg-gray-50 rounded-2xl">
-                <p className="text-2xl font-black text-[#0E1C0E]">{stat.value}</p>
+                <p className="text-2xl font-black text-[#2A1650]">{stat.value}</p>
                 <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 mt-1">{stat.label}</p>
               </div>
             ))}
@@ -99,8 +99,8 @@ const Tutors: React.FC = () => (
       {/* Bottom banner */}
       <div className="mt-20 bg-gray-50 rounded-[2.5rem] p-10 md:p-14 flex flex-col md:flex-row items-center justify-between gap-8 border-2 border-gray-100">
         <div className="max-w-2xl">
-          <p className="text-[#2D5A27] font-black text-[10px] uppercase tracking-widest mb-3">Our Promise</p>
-          <h3 className="text-3xl font-black text-[#0E1C0E] uppercase italic tracking-tighter mb-3">
+          <p className="text-[#3F2171] font-black text-[10px] uppercase tracking-widest mb-3">Our Promise</p>
+          <h3 className="text-3xl font-black text-[#2A1650] uppercase italic tracking-tighter mb-3">
             No child falls behind unnoticed.
           </h3>
           <p className="text-gray-500 font-medium text-base leading-relaxed">
@@ -110,9 +110,9 @@ const Tutors: React.FC = () => (
           </p>
         </div>
         <div className="shrink-0 flex gap-4">
-          <div className="w-16 h-16 bg-[#2D5A27] rounded-2xl flex items-center justify-center text-3xl shadow-lg">📋</div>
-          <div className="w-16 h-16 bg-[#F4B400] rounded-2xl flex items-center justify-center text-3xl shadow-lg">👩‍🏫</div>
-          <div className="w-16 h-16 bg-[#0E1C0E] rounded-2xl flex items-center justify-center text-3xl shadow-lg">🏆</div>
+          <div className="w-16 h-16 bg-[#3F2171] rounded-2xl flex items-center justify-center text-3xl shadow-lg">📋</div>
+          <div className="w-16 h-16 bg-[#FFFF00] rounded-2xl flex items-center justify-center text-3xl shadow-lg">👩‍🏫</div>
+          <div className="w-16 h-16 bg-[#2A1650] rounded-2xl flex items-center justify-center text-3xl shadow-lg">🏆</div>
         </div>
       </div>
     </div>

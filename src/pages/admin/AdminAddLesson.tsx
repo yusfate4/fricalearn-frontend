@@ -73,7 +73,7 @@ export default function AdminAddLesson() {
       <div className="max-w-4xl mx-auto p-4 md:p-10">
         <button
           onClick={() => navigate("/admin/courses")}
-          className="flex items-center gap-2 text-gray-400 hover:text-[#2D5A27] mb-8 font-black uppercase text-xs tracking-widest transition-all"
+          className="flex items-center gap-2 text-gray-400 hover:text-[#3F2171] mb-8 font-black uppercase text-xs tracking-widest transition-all"
         >
           <ArrowLeft size={16} /> Back to Curriculum
         </button>
@@ -108,7 +108,7 @@ export default function AdminAddLesson() {
                 <select
                   required
                   value={courseId}
-                  className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-[#2D5A27] rounded-2xl font-bold outline-none appearance-none transition-all"
+                  className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-[#3F2171] rounded-2xl font-bold outline-none appearance-none transition-all"
                   onChange={(e) => setCourseId(e.target.value)}
                 >
                   <option value="">-- Select Yoruba, Hausa, or Igbo --</option>
@@ -129,7 +129,7 @@ export default function AdminAddLesson() {
                     type="text"
                     value={title}
                     placeholder="e.g. Greetings in Yoruba"
-                    className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-[#2D5A27] rounded-2xl font-bold outline-none transition-all"
+                    className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-[#3F2171] rounded-2xl font-bold outline-none transition-all"
                     onChange={(e) => setTitle(e.target.value)}
                     required
                   />
@@ -144,7 +144,7 @@ export default function AdminAddLesson() {
                     type="text"
                     value={practiceWord}
                     placeholder="e.g. Bawo ni"
-                    className="w-full p-5 bg-orange-50 border-2 border-dashed border-orange-200 focus:border-orange-400 rounded-2xl font-black text-[#2D5A27] outline-none transition-all italic"
+                    className="w-full p-5 bg-orange-50 border-2 border-dashed border-orange-200 focus:border-orange-400 rounded-2xl font-black text-[#3F2171] outline-none transition-all italic"
                     onChange={(e) => setPracticeWord(e.target.value)}
                   />
                 </div>
@@ -158,7 +158,7 @@ export default function AdminAddLesson() {
                   required
                   value={content}
                   placeholder="What will the children learn in this lesson?"
-                  className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-[#2D5A27] rounded-2xl h-32 font-medium outline-none transition-all resize-none"
+                  className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-[#3F2171] rounded-2xl h-32 font-medium outline-none transition-all resize-none"
                   onChange={(e) => setContent(e.target.value)}
                 />
               </div>
@@ -171,7 +171,7 @@ export default function AdminAddLesson() {
                   type="url"
                   value={videoUrl}
                   placeholder="https://youtube.com/watch?v=..."
-                  className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-[#2D5A27] rounded-2xl font-bold outline-none transition-all"
+                  className="w-full p-5 bg-gray-50 border-2 border-transparent focus:border-[#3F2171] rounded-2xl font-bold outline-none transition-all"
                   onChange={(e) => setVideoUrl(e.target.value)}
                 />
               </div>
@@ -179,7 +179,7 @@ export default function AdminAddLesson() {
               <button
                 disabled={loading || !courseId}
                 type="submit"
-                className="w-full bg-[#2D5A27] text-white py-5 rounded-[1.5rem] font-black text-xl shadow-lg hover:shadow-green-900/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                className="w-full bg-[#3F2171] text-white py-5 rounded-[1.5rem] font-black text-xl shadow-lg hover:shadow-green-900/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <Loader2 className="animate-spin" />
@@ -193,7 +193,7 @@ export default function AdminAddLesson() {
         ) : (
           <div className="animate-in fade-in slide-in-from-right-8 duration-500">
             <div className="bg-green-50 border border-green-100 p-6 rounded-[2rem] flex items-center gap-4 mb-8">
-              <div className="bg-white p-2 rounded-full text-[#2D5A27] shadow-sm">
+              <div className="bg-white p-2 rounded-full text-[#3F2171] shadow-sm">
                 <CheckCircle size={24} />
               </div>
               <div>

@@ -74,7 +74,7 @@ export default function OluChat() {
         {/* ── Header ── */}
         <div className="bg-white rounded-[2rem] p-4 mb-4 border-2 border-gray-100 flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-[#2D5A27] rounded-2xl flex items-center justify-center text-white shadow-lg">
+            <div className="w-12 h-12 bg-[#3F2171] rounded-2xl flex items-center justify-center text-white shadow-lg">
               <Bot size={24}/>
             </div>
             <div>
@@ -101,8 +101,8 @@ export default function OluChat() {
               </div>
             </div>
             <div className="flex items-center gap-2 bg-yellow-50 px-4 py-2 rounded-xl border border-yellow-100">
-              <Sparkles size={16} className="text-[#F4B400]"/>
-              <span className="font-black text-[#2D5A27] text-[10px] uppercase">{learningLanguage}</span>
+              <Sparkles size={16} className="text-[#FFFF00]"/>
+              <span className="font-black text-[#3F2171] text-[10px] uppercase">{learningLanguage}</span>
             </div>
           </div>
         </div>
@@ -127,7 +127,7 @@ export default function OluChat() {
           {loading && (
             <div className="flex justify-start">
               <div className="bg-gray-50 p-4 rounded-2xl flex items-center gap-2">
-                <Loader2 size={16} className="animate-spin text-[#2D5A27]"/>
+                <Loader2 size={16} className="animate-spin text-[#3F2171]"/>
                 <span className="text-[10px] font-black text-gray-400 uppercase">AI Tutor is thinking...</span>
               </div>
             </div>
@@ -151,7 +151,7 @@ export default function OluChat() {
               <div className="flex gap-2 mb-3 justify-center flex-wrap">
                 {chars.map(char => (
                   <button key={char} onClick={() => addChar(char)}
-                    className="w-8 h-8 bg-white border-2 border-gray-100 rounded-xl font-black text-gray-500 hover:border-[#2D5A27] hover:text-[#2D5A27] transition-all text-xs">
+                    className="w-8 h-8 bg-white border-2 border-gray-100 rounded-xl font-black text-gray-500 hover:border-[#3F2171] hover:text-[#3F2171] transition-all text-xs">
                     {char}
                   </button>
                 ))}
@@ -163,10 +163,10 @@ export default function OluChat() {
                 placeholder={`Ask your AI Tutor about Maths, English, or ${learningLanguage}...`}
                 value={input} disabled={loading || isLimitReached}
                 onChange={(e) => setInput(e.target.value)}
-                className="w-full bg-white border-2 border-gray-100 rounded-[2.5rem] py-5 px-8 pr-20 outline-none focus:border-[#2D5A27] shadow-xl font-bold transition-all text-gray-800 placeholder:text-gray-300"
+                className="w-full bg-white border-2 border-gray-100 rounded-[2.5rem] py-5 px-8 pr-20 outline-none focus:border-[#3F2171] shadow-xl font-bold transition-all text-gray-800 placeholder:text-gray-300"
               />
               <button type="submit" disabled={!input.trim() || loading || isLimitReached}
-                className="absolute right-3 top-1/2 -translate-y-1/2 bg-[#2D5A27] text-white p-4 rounded-full hover:scale-110 active:scale-95 transition-all shadow-lg disabled:opacity-30">
+                className="absolute right-3 top-1/2 -translate-y-1/2 bg-[#3F2171] text-white p-4 rounded-full hover:scale-110 active:scale-95 transition-all shadow-lg disabled:opacity-30">
                 {loading ? <Loader2 size={20} className="animate-spin"/> : <Send size={20}/>}
               </button>
             </form>

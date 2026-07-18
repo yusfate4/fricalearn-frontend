@@ -57,7 +57,7 @@ export default function AdminTutorProfile() {
   if (loading) {
     return (
       <div className="flex h-[60vh] items-center justify-center">
-        <Loader2 className="animate-spin text-[#2D5A27]" size={40} />
+        <Loader2 className="animate-spin text-[#3F2171]" size={40} />
       </div>
     );
   }
@@ -76,27 +76,27 @@ export default function AdminTutorProfile() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white p-6 rounded-[2rem] border-2 border-gray-50 shadow-sm">
             <label className="flex items-center gap-2 text-[10px] font-black uppercase text-gray-400 mb-4 tracking-widest">
-              <BookOpen size={14} className="text-[#2D5A27]" /> Specialization
+              <BookOpen size={14} className="text-[#3F2171]" /> Specialization
             </label>
             <input
               type="text"
               value={formData.specialization}
               onChange={(e) => setFormData({ ...formData, specialization: e.target.value })}
               placeholder="e.g. Yoruba Linguistics"
-              className="w-full p-4 bg-gray-50 rounded-xl outline-none focus:ring-4 ring-[#2D5A27]/5 border-none font-bold text-gray-700"
+              className="w-full p-4 bg-gray-50 rounded-xl outline-none focus:ring-4 ring-[#3F2171]/5 border-none font-bold text-gray-700"
             />
           </div>
 
           <div className="bg-white p-6 rounded-[2rem] border-2 border-gray-50 shadow-sm">
             <label className="flex items-center gap-2 text-[10px] font-black uppercase text-gray-400 mb-4 tracking-widest">
-              <Award size={14} className="text-[#2D5A27]" /> Qualification
+              <Award size={14} className="text-[#3F2171]" /> Qualification
             </label>
             <input
               type="text"
               value={formData.qualification}
               onChange={(e) => setFormData({ ...formData, qualification: e.target.value })}
               placeholder="e.g. MA African Studies"
-              className="w-full p-4 bg-gray-50 rounded-xl outline-none focus:ring-4 ring-[#2D5A27]/5 border-none font-bold text-gray-700"
+              className="w-full p-4 bg-gray-50 rounded-xl outline-none focus:ring-4 ring-[#3F2171]/5 border-none font-bold text-gray-700"
             />
           </div>
         </div>
@@ -104,20 +104,20 @@ export default function AdminTutorProfile() {
         {/* Bio Section */}
         <div className="bg-white p-8 rounded-[2.5rem] border-2 border-gray-50 shadow-sm">
           <label className="flex items-center gap-2 text-[10px] font-black uppercase text-gray-400 mb-4 tracking-widest">
-            <UserCircle size={14} className="text-[#2D5A27]" /> Professional Bio
+            <UserCircle size={14} className="text-[#3F2171]" /> Professional Bio
           </label>
           <textarea
             value={formData.bio}
             onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
             placeholder="Tell our community about your experience and teaching style..."
-            className="w-full p-6 bg-gray-50 rounded-2xl min-h-[180px] outline-none focus:ring-4 ring-[#2D5A27]/5 border-none font-medium text-gray-700 leading-relaxed"
+            className="w-full p-6 bg-gray-50 rounded-2xl min-h-[180px] outline-none focus:ring-4 ring-[#3F2171]/5 border-none font-medium text-gray-700 leading-relaxed"
           />
         </div>
       </div>
 
       {status && (
         <div className={`mt-8 p-6 rounded-[2rem] flex items-center gap-4 animate-in slide-in-from-bottom-4 ${
-          status.type === 'success' ? 'bg-green-50 text-[#2D5A27] border border-green-100' : 'bg-red-50 text-red-700 border border-red-100'
+          status.type === 'success' ? 'bg-green-50 text-[#3F2171] border border-green-100' : 'bg-red-50 text-red-700 border border-red-100'
         }`}>
           {status.type === 'success' ? <CheckCircle2 size={24} /> : <AlertCircle size={24} />}
           <span className="font-black uppercase italic text-sm">{status.msg}</span>
@@ -127,7 +127,7 @@ export default function AdminTutorProfile() {
       <button
         onClick={handleSave}
         disabled={saving}
-        className="w-full mt-10 bg-[#1A1A40] text-white py-6 rounded-[2.5rem] font-black uppercase tracking-[0.2em] text-xs shadow-2xl hover:bg-[#2D5A27] transition-all flex items-center justify-center gap-4 disabled:opacity-50"
+        className="w-full mt-10 bg-[#1A1A40] text-white py-6 rounded-[2.5rem] font-black uppercase tracking-[0.2em] text-xs shadow-2xl hover:bg-[#3F2171] transition-all flex items-center justify-center gap-4 disabled:opacity-50"
       >
         {saving ? <Loader2 className="animate-spin" size={24} /> : (
           <><Save size={20} /> Update My Credentials</>

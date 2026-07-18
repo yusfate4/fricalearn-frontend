@@ -157,7 +157,7 @@ export default function StudentChat() {
     return (
       <Layout>
         <div className="flex justify-center mt-20">
-          <Loader2 size={40} className="animate-spin text-[#2D5A27]" />
+          <Loader2 size={40} className="animate-spin text-[#3F2171]" />
         </div>
       </Layout>
     );
@@ -167,7 +167,7 @@ export default function StudentChat() {
       <div className="max-w-4xl mx-auto h-[calc(100vh-140px)] flex flex-col p-2 md:p-6">
         {/* --- CHAT HEADER --- */}
         <div className="bg-white p-4 md:p-6 rounded-t-[2.5rem] border-2 border-b-0 border-gray-100 flex items-center shadow-sm">
-          <div className="bg-[#2D5A27]/10 p-3 rounded-2xl text-[#2D5A27] mr-4">
+          <div className="bg-[#3F2171]/10 p-3 rounded-2xl text-[#3F2171] mr-4">
             <User size={24} />
           </div>
           <div>
@@ -195,7 +195,7 @@ export default function StudentChat() {
                 <div
                   className={`max-w-[85%] md:max-w-[70%] p-4 md:p-5 rounded-[1.8rem] font-bold shadow-sm ${
                     isMe
-                      ? "bg-[#2D5A27] text-white rounded-tr-none"
+                      ? "bg-[#3F2171] text-white rounded-tr-none"
                       : "bg-white text-gray-700 rounded-tl-none border-2 border-gray-50"
                   }`}
                 >
@@ -266,7 +266,7 @@ export default function StudentChat() {
 
             {/* 👈 Audio Preview */}
             {audioPreview && (
-              <div className="relative flex items-center bg-gray-100 p-2 rounded-xl pr-8 border-2 border-[#2D5A27]">
+              <div className="relative flex items-center bg-gray-100 p-2 rounded-xl pr-8 border-2 border-[#3F2171]">
                 <audio controls src={audioPreview} className="h-10 w-48" />
                 <button
                   type="button"
@@ -297,7 +297,7 @@ export default function StudentChat() {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="p-3 md:p-4 bg-gray-50 text-gray-400 rounded-2xl hover:text-[#2D5A27]"
+              className="p-3 md:p-4 bg-gray-50 text-gray-400 rounded-2xl hover:text-[#3F2171]"
             >
               <ImageIcon size={24} />
             </button>
@@ -329,7 +329,7 @@ export default function StudentChat() {
               placeholder={
                 isRecording ? "Recording voice note..." : "Type a message..."
               }
-              className="flex-1 bg-gray-50 border-2 border-transparent focus:border-[#2D5A27] p-3 md:p-4 rounded-2xl outline-none font-bold"
+              className="flex-1 bg-gray-50 border-2 border-transparent focus:border-[#3F2171] p-3 md:p-4 rounded-2xl outline-none font-bold"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               disabled={sending || isRecording}
@@ -342,7 +342,7 @@ export default function StudentChat() {
                 sending ||
                 isRecording
               }
-              className="bg-gray-900 text-white p-3 md:p-4 rounded-2xl hover:bg-[#2D5A27] disabled:opacity-30"
+              className="bg-gray-900 text-white p-3 md:p-4 rounded-2xl hover:bg-[#3F2171] disabled:opacity-30"
             >
               {sending ? (
                 <Loader2 size={24} className="animate-spin" />

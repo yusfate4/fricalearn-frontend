@@ -10,7 +10,7 @@ export default function PrivacyPolicy() {
     >
       <LegalSection number="01" title="Who We Are">
         <p>
-          FricaLearn is operated by <strong className="text-[#0E1C0E]">FRICA SOLUTION LIMITED</strong>,
+          FricaLearn is operated by <strong className="text-[#2A1650]">FRICA SOLUTION LIMITED</strong>,
           Gillingham, England, United Kingdom ("we", "us"). We are the data controller for personal data
           processed on fricalearn.com. Because our learners are children, we take our responsibilities under
           the <strong>UK GDPR</strong>, the ICO's <strong>Age Appropriate Design Code (Children's Code)</strong>,
@@ -20,19 +20,19 @@ export default function PrivacyPolicy() {
       </LegalSection>
 
       <LegalSection number="02" title="What We Collect">
-        <p><strong className="text-[#0E1C0E]">From parents (account holders):</strong></p>
+        <p><strong className="text-[#2A1650]">From parents (account holders):</strong></p>
         <LegalList items={[
           "Name, email address, and password (stored encrypted/hashed);",
           "Payment currency, amounts, and the payment receipt you upload (bank transfer proof);",
           "Messages you send us via the contact form, email, or WhatsApp.",
         ]} />
-        <p className="pt-2"><strong className="text-[#0E1C0E]">About children (entered by the parent):</strong></p>
+        <p className="pt-2"><strong className="text-[#2A1650]">About children (entered by the parent):</strong></p>
         <LegalList items={[
           "Child's name and age (we do not collect date of birth or gender);",
           "Selected subjects, class/year level, and curriculum region;",
           "Learning activity: lessons opened, quiz answers and scores, progress, points/levels, and AI Tutor chat messages and usage minutes.",
         ]} />
-        <p className="pt-2"><strong className="text-[#0E1C0E]">Automatically:</strong></p>
+        <p className="pt-2"><strong className="text-[#2A1650]">Automatically:</strong></p>
         <LegalList items={[
           "Login session data and essential technical data needed to keep the Platform secure and working (see our Cookie Policy).",
         ]} />
@@ -111,10 +111,10 @@ export default function PrivacyPolicy() {
         <p>
           To exercise any right, email <strong>hello@fricalearn.com</strong>. We respond within one month.
           You may also complain to the UK regulator, the{" "}
-          <a href="https://ico.org.uk" target="_blank" rel="noopener noreferrer" className="text-[#2D5A27] font-black underline">
+          <a href="https://ico.org.uk" target="_blank" rel="noopener noreferrer" className="text-[#3F2171] font-black underline">
             Information Commissioner's Office (ICO)
           </a>, or in Nigeria to the{" "}
-          <a href="https://ndpc.gov.ng" target="_blank" rel="noopener noreferrer" className="text-[#2D5A27] font-black underline">
+          <a href="https://ndpc.gov.ng" target="_blank" rel="noopener noreferrer" className="text-[#3F2171] font-black underline">
             Nigeria Data Protection Commission
           </a>.
         </p>

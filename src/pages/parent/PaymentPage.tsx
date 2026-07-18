@@ -71,16 +71,16 @@ export default function PaymentPage() {
       <div className="max-w-5xl mx-auto p-4 md:p-12 pb-32">
         <button
           onClick={() => navigate(-1)}
-          className="group flex items-center gap-2 text-gray-400 hover:text-[#2D5A27] transition-colors mb-8"
+          className="group flex items-center gap-2 text-gray-400 hover:text-[#3F2171] transition-colors mb-8"
         >
-          <div className="p-2 bg-gray-50 rounded-xl group-hover:bg-[#2D5A27]/10">
+          <div className="p-2 bg-gray-50 rounded-xl group-hover:bg-[#3F2171]/10">
             <ChevronLeft size={20} />
           </div>
           <span className="text-[10px] font-black uppercase tracking-[0.2em]">Go Back</span>
         </button>
 
         <h1 className="text-4xl md:text-6xl font-black text-gray-800 italic uppercase tracking-tighter mb-10">
-          Finalize <span className="text-[#2D5A27]">Payment</span>
+          Finalize <span className="text-[#3F2171]">Payment</span>
         </h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
@@ -104,7 +104,7 @@ export default function PaymentPage() {
 
             {/* Bank Accounts Card */}
             <div className="bg-white p-8 rounded-[2.5rem] border-2 border-gray-50 shadow-sm">
-              <div className="flex items-center gap-3 mb-6 text-[#2D5A27]">
+              <div className="flex items-center gap-3 mb-6 text-[#3F2171]">
                 <Landmark size={24} />
                 <h3 className="font-black uppercase italic text-sm">Transfer Details</h3>
               </div>
@@ -140,7 +140,7 @@ export default function PaymentPage() {
             <div className="bg-white p-6 md:p-12 rounded-[3rem] shadow-xl border-2 border-gray-50 h-full">
               <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-6">Step 2: Upload Proof</p>
               
-              <label className="block w-full border-4 border-dashed border-gray-100 rounded-[2.5rem] p-12 text-center cursor-pointer hover:border-[#2D5A27] transition-all bg-gray-50/30 group relative">
+              <label className="block w-full border-4 border-dashed border-gray-100 rounded-[2.5rem] p-12 text-center cursor-pointer hover:border-[#3F2171] transition-all bg-gray-50/30 group relative">
                 <input
                   type="file"
                   className="hidden"
@@ -149,7 +149,7 @@ export default function PaymentPage() {
                 />
                 <div className="flex flex-col items-center gap-4">
                   <div className="bg-white p-6 rounded-2xl shadow-sm group-hover:scale-110 transition-transform duration-500">
-                    <Upload size={32} className="text-[#2D5A27]" />
+                    <Upload size={32} className="text-[#3F2171]" />
                   </div>
                   <p className="font-black text-gray-700 uppercase text-xs tracking-widest">
                     {receipt ? receipt.name : "Select Receipt Image"}
@@ -167,7 +167,7 @@ export default function PaymentPage() {
               <button
                 onClick={handleSubmitPayment}
                 disabled={!receipt || loading}
-                className="w-full mt-10 bg-[#2D5A27] text-white py-8 rounded-[2.5rem] font-black uppercase tracking-[0.2em] text-[11px] shadow-2xl flex items-center justify-center gap-4 hover:bg-black transition-all active:scale-95 disabled:opacity-30"
+                className="w-full mt-10 bg-[#3F2171] text-white py-8 rounded-[2.5rem] font-black uppercase tracking-[0.2em] text-[11px] shadow-2xl flex items-center justify-center gap-4 hover:bg-black transition-all active:scale-95 disabled:opacity-30"
               >
                 {loading ? <Loader2 className="animate-spin" size={24} /> : (
                   <><ShieldCheck size={24} /> Confirm Submission</>

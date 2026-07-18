@@ -78,19 +78,19 @@ export default function Sidebar() {
   return (
     <>
       {/* MOBILE HAMBURGER */}
-      <button onClick={() => setIsOpen(true)} className={`md:hidden fixed top-4 left-4 z-[60] p-3 bg-[#2D5A27] text-white rounded-2xl shadow-xl transition-all ${isOpen ? "opacity-0" : "opacity-100"}`}>
+      <button onClick={() => setIsOpen(true)} className={`md:hidden fixed top-4 left-4 z-[60] p-3 bg-[#3F2171] text-white rounded-2xl shadow-xl transition-all ${isOpen ? "opacity-0" : "opacity-100"}`}>
         <Menu size={24} />
       </button>
 
       {isOpen && <div className="md:hidden fixed inset-0 bg-black/60 z-[70] backdrop-blur-[2px]" onClick={closeSidebar} />}
 
-      <aside className={`fixed top-0 bottom-0 left-0 z-[80] bg-[#2D5A27] flex flex-col text-white shadow-2xl transition-all duration-300 ease-in-out ${isOpen ? "translate-x-0 w-72" : "-translate-x-full md:translate-x-0"} ${isCollapsed ? "md:w-24 px-4" : "md:w-72 p-6"}`}>
+      <aside className={`fixed top-0 bottom-0 left-0 z-[80] bg-[#3F2171] flex flex-col text-white shadow-2xl transition-all duration-300 ease-in-out ${isOpen ? "translate-x-0 w-72" : "-translate-x-full md:translate-x-0"} ${isCollapsed ? "md:w-24 px-4" : "md:w-72 p-6"}`}>
         
         {/* LOGO & TOGGLE */}
         <div className={`flex items-center mb-10 pt-4 md:pt-0 ${isCollapsed ? "justify-center" : "justify-between px-4"}`}>
           {!isCollapsed && (
             <div className="animate-in fade-in duration-500">
-              <h2 className="text-2xl font-black text-[#F4B400] tracking-tighter uppercase italic leading-none">FricaLearn</h2>
+              <h2 className="text-2xl font-black text-[#FFFF00] tracking-tighter uppercase italic leading-none">FricaLearn</h2>
               <p className="text-[9px] font-bold text-white/40 uppercase tracking-[0.3em] mt-1">{isTutor ? "Tutor Portal" : "Diaspora Academy"}</p>
             </div>
           )}
@@ -140,7 +140,7 @@ export default function Sidebar() {
 
             {isStaff && (
               <div className="mt-2 space-y-1">
-                <SectionHeader label={isAdmin ? "Control Room" : "Staff Menu"} color="text-[#F4B400]" collapsed={isCollapsed} />
+                <SectionHeader label={isAdmin ? "Control Room" : "Staff Menu"} color="text-[#FFFF00]" collapsed={isCollapsed} />
                 <SidebarLink to="/admin" icon={<LayoutDashboard size={20} />} label="Dashboard" active={isActive("/admin")} collapsed={isCollapsed} onClick={closeSidebar} />
                 {isAdmin && (
                   <>
@@ -184,7 +184,7 @@ export default function Sidebar() {
 
 function SidebarLink({ to, icon, label, active, collapsed, onClick, isHighlight = false }: any) {
   return (
-    <Link to={to} onClick={onClick} title={collapsed ? label : ""} className={`flex items-center gap-3 rounded-[1.2rem] font-bold transition-all group ${active ? "bg-white/15 text-white shadow-lg" : isHighlight ? "bg-[#F4B400]/20 text-yellow-400 border border-[#F4B400]/30 hover:bg-[#F4B400]/30" : "text-white/50 hover:text-white hover:bg-white/5"} ${collapsed ? "justify-center h-12 w-12 mx-auto" : "px-4 py-3.5"}`}>
+    <Link to={to} onClick={onClick} title={collapsed ? label : ""} className={`flex items-center gap-3 rounded-[1.2rem] font-bold transition-all group ${active ? "bg-white/15 text-white shadow-lg" : isHighlight ? "bg-[#FFFF00]/20 text-yellow-400 border border-[#FFFF00]/30 hover:bg-[#FFFF00]/30" : "text-white/50 hover:text-white hover:bg-white/5"} ${collapsed ? "justify-center h-12 w-12 mx-auto" : "px-4 py-3.5"}`}>
       <span className={`${active || isHighlight ? "text-inherit" : "text-white/40 group-hover:text-white"} transition-colors`}>{icon}</span>
       {!collapsed && <span className={`text-[13px] tracking-tight ${isHighlight ? "font-black" : ""}`}>{label}</span>}
     </Link>

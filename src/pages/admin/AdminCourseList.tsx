@@ -116,7 +116,7 @@ export default function AdminCourseList() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12">
           <div>
             <h1 className="text-4xl md:text-6xl font-black text-gray-800 italic uppercase tracking-tighter leading-none">
-              Course <span className="text-[#2D5A27]">Inventory</span>
+              Course <span className="text-[#3F2171]">Inventory</span>
             </h1>
             {status && (
               <div
@@ -137,7 +137,7 @@ export default function AdminCourseList() {
           <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
             <div className="relative group">
               <Search
-                className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#2D5A27] transition-colors"
+                className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#3F2171] transition-colors"
                 size={18}
               />
               <input
@@ -145,12 +145,12 @@ export default function AdminCourseList() {
                 placeholder="Search inventory..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full sm:w-64 pl-14 pr-6 py-4 bg-white border-2 border-gray-100 rounded-2xl outline-none focus:border-[#2D5A27] font-bold text-sm shadow-sm transition-all"
+                className="w-full sm:w-64 pl-14 pr-6 py-4 bg-white border-2 border-gray-100 rounded-2xl outline-none focus:border-[#3F2171] font-bold text-sm shadow-sm transition-all"
               />
             </div>
             <Link
               to="/admin/courses"
-              className="bg-[#2D5A27] text-white px-10 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-xl flex items-center justify-center gap-2 hover:bg-black transition-all active:scale-95"
+              className="bg-[#3F2171] text-white px-10 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-xl flex items-center justify-center gap-2 hover:bg-black transition-all active:scale-95"
             >
               <Plus size={18} /> Add Course
             </Link>
@@ -161,7 +161,7 @@ export default function AdminCourseList() {
         <div className="grid grid-cols-1 gap-6">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-32 opacity-20">
-              <Loader2 className="animate-spin text-[#2D5A27] mb-4" size={48} />
+              <Loader2 className="animate-spin text-[#3F2171] mb-4" size={48} />
               <p className="font-black uppercase tracking-widest text-xs">
                 Accessing Database...
               </p>
@@ -170,7 +170,7 @@ export default function AdminCourseList() {
             filteredCourses.map((course) => (
               <div
                 key={course.id}
-                className="bg-white p-6 rounded-[2.5rem] border-2 border-gray-50 flex flex-col md:flex-row items-center gap-8 group hover:border-[#2D5A27]/20 hover:shadow-xl transition-all duration-500"
+                className="bg-white p-6 rounded-[2.5rem] border-2 border-gray-50 flex flex-col md:flex-row items-center gap-8 group hover:border-[#3F2171]/20 hover:shadow-xl transition-all duration-500"
               >
                 {/* THUMBNAIL */}
                 <div className="w-full md:w-32 h-32 rounded-[2rem] overflow-hidden bg-gray-50 flex-shrink-0 shadow-inner">
@@ -211,7 +211,7 @@ export default function AdminCourseList() {
                         state: { editCourse: course },
                       })
                     }
-                    className="flex-1 md:flex-none p-5 bg-gray-50 text-gray-400 rounded-2xl hover:bg-[#2D5A27] hover:text-white transition-all shadow-sm"
+                    className="flex-1 md:flex-none p-5 bg-gray-50 text-gray-400 rounded-2xl hover:bg-[#3F2171] hover:text-white transition-all shadow-sm"
                   >
                     <Edit3 size={20} />
                   </button>

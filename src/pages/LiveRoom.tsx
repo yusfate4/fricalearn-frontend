@@ -37,7 +37,7 @@ export default function LiveRoom() {
   if (loading)
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-gray-900 text-white">
-        <Loader2 className="animate-spin mb-4 text-[#2D5A27]" size={48} />
+        <Loader2 className="animate-spin mb-4 text-[#3F2171]" size={48} />
         <p className="font-black uppercase tracking-widest text-xs italic">
           Syncing FricaLive...
         </p>
@@ -53,7 +53,7 @@ export default function LiveRoom() {
         </h2>
         <button
           onClick={handleExit}
-          className="bg-[#2D5A27] px-8 py-3 rounded-xl font-bold uppercase text-xs tracking-widest text-white"
+          className="bg-[#3F2171] px-8 py-3 rounded-xl font-bold uppercase text-xs tracking-widest text-white"
         >
           Return to Safety
         </button>
@@ -69,14 +69,14 @@ export default function LiveRoom() {
       <div className="p-4 bg-black border-b border-white/10 text-white flex justify-between items-center z-10">
         <button
           onClick={handleExit}
-          className="flex items-center gap-2 hover:text-[#2D5A27] transition-all group"
+          className="flex items-center gap-2 hover:text-[#3F2171] transition-all group"
         >
           <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
           <span className="font-black uppercase text-[10px] tracking-widest">Leave Session</span>
         </button>
 
         <div className="text-center">
-          <h2 className="font-black italic uppercase tracking-tighter text-sm text-[#F4B400] leading-none">
+          <h2 className="font-black italic uppercase tracking-tighter text-sm text-[#FFFF00] leading-none">
             {liveClass.title}
           </h2>
           <p className="text-[8px] font-black text-white/40 uppercase tracking-[0.2em] mt-1">

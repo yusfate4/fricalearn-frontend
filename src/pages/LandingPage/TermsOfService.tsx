@@ -11,7 +11,7 @@ export default function TermsOfService() {
       <LegalSection number="01" title="Who We Are & Acceptance">
         <p>
           FricaLearn ("FricaLearn", "we", "us", "our") is an online learning platform operated by{" "}
-          <strong className="text-[#0E1C0E]">FRICA SOLUTION LIMITED</strong>, a company registered in England,
+          <strong className="text-[#2A1650]">FRICA SOLUTION LIMITED</strong>, a company registered in England,
           based in Gillingham, England, United Kingdom.
         </p>
         <p>
@@ -87,7 +87,7 @@ export default function TermsOfService() {
           <strong>Oak National Academy</strong> and contain public sector information licensed under the{" "}
           <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
              target="_blank" rel="noopener noreferrer"
-             className="text-[#2D5A27] font-black underline">
+             className="text-[#3F2171] font-black underline">
             Open Government Licence v3.0
           </a>. Oak National Academy does not endorse FricaLearn.
         </p>

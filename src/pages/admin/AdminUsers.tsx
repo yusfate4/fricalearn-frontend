@@ -51,7 +51,7 @@ export default function AdminUsers() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
           <div>
             <h1 className="text-4xl font-black text-gray-800 uppercase italic tracking-tighter flex items-center gap-3">
-              <Users size={36} className="text-[#2D5A27]" /> Student Registry
+              <Users size={36} className="text-[#3F2171]" /> Student Registry
             </h1>
             <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest mt-1">
               Manage and Monitor Diaspora Learners
@@ -63,7 +63,7 @@ export default function AdminUsers() {
             <input 
               type="text"
               placeholder="Search by name or email..."
-              className="w-full pl-12 pr-4 py-4 bg-white border-2 border-gray-100 rounded-2xl font-bold text-sm outline-none focus:border-[#2D5A27] transition-all"
+              className="w-full pl-12 pr-4 py-4 bg-white border-2 border-gray-100 rounded-2xl font-bold text-sm outline-none focus:border-[#3F2171] transition-all"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -74,7 +74,7 @@ export default function AdminUsers() {
         <div className="bg-white rounded-[2.5rem] shadow-sm border-2 border-gray-50 overflow-hidden">
           {loading ? (
             <div className="p-20 text-center">
-              <Loader2 className="animate-spin mx-auto text-[#2D5A27] mb-4" size={40} />
+              <Loader2 className="animate-spin mx-auto text-[#3F2171] mb-4" size={40} />
               <p className="font-black text-gray-400 uppercase text-xs tracking-widest">Loading Registry...</p>
             </div>
           ) : (
@@ -93,7 +93,7 @@ export default function AdminUsers() {
                     <tr key={u.id} className="hover:bg-gray-50/80 transition-colors group">
                       <td className="p-6">
                         <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center text-[#2D5A27] font-black text-xl shadow-inner">
+                          <div className="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center text-[#3F2171] font-black text-xl shadow-inner">
                             {u.name.charAt(0)}
                           </div>
                           <div>
@@ -110,7 +110,7 @@ export default function AdminUsers() {
                             <ShieldCheck size={12} /> Founder
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 text-[#2D5A27] rounded-full text-[10px] font-black uppercase tracking-widest border border-green-100">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 text-[#3F2171] rounded-full text-[10px] font-black uppercase tracking-widest border border-green-100">
                             <UserCheck size={12} /> Active Student
                           </span>
                         )}
@@ -118,7 +118,7 @@ export default function AdminUsers() {
                       <td className="p-6">
                         <div className="flex items-center gap-3">
                            <div className="text-center bg-gray-50 px-3 py-2 rounded-xl border border-gray-100">
-                              <p className="text-xs font-black text-[#2D5A27] leading-none">{u.student_profile?.total_points || 0}</p>
+                              <p className="text-xs font-black text-[#3F2171] leading-none">{u.student_profile?.total_points || 0}</p>
                               <p className="text-[8px] font-black text-gray-400 uppercase mt-1">Pts</p>
                            </div>
                            <div className="text-center bg-yellow-50 px-3 py-2 rounded-xl border border-yellow-100">
@@ -132,7 +132,7 @@ export default function AdminUsers() {
                            {/* 📊 ANALYTICS BUTTON: Navigates to the shared analytics page */}
                            <button 
                              onClick={() => navigate(`/analytics/${u.id}`)}
-                             className="p-3 bg-white border-2 border-gray-100 text-gray-400 rounded-2xl hover:text-[#2D5A27] hover:border-[#2D5A27] hover:shadow-md transition-all flex items-center gap-2 group/btn"
+                             className="p-3 bg-white border-2 border-gray-100 text-gray-400 rounded-2xl hover:text-[#3F2171] hover:border-[#3F2171] hover:shadow-md transition-all flex items-center gap-2 group/btn"
                            >
                              <BarChart3 size={18} />
                              <span className="text-[10px] font-black uppercase tracking-widest hidden group-hover/btn:block">View Progress</span>
@@ -158,8 +158,8 @@ export default function AdminUsers() {
         </div>
 
         {/* Bottom Stat Summary */}
-        <div className="mt-8 flex items-center gap-4 bg-[#2D5A27]/5 p-6 rounded-[2rem] border-2 border-[#2D5A27]/10">
-           <Trophy className="text-[#2D5A27]" size={32} />
+        <div className="mt-8 flex items-center gap-4 bg-[#3F2171]/5 p-6 rounded-[2rem] border-2 border-[#3F2171]/10">
+           <Trophy className="text-[#3F2171]" size={32} />
            <div>
               <p className="text-xl font-black text-gray-800 uppercase italic leading-none">{users.filter(u => !u.is_admin).length} Registered Learners</p>
               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Building the future of the Diaspora</p>

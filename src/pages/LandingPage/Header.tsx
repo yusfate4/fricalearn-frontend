@@ -36,7 +36,7 @@ const Header: React.FC = () => {
           {navLinks.map((link) => (
             <a key={link.name} href={link.href}
               className={`font-black text-xs uppercase tracking-widest transition-all hover:opacity-70 ${
-                isScrolled ? "text-[#0E1C0E]" : "text-white"
+                isScrolled ? "text-[#2A1650]" : "text-white"
               }`}>
               {link.name}
             </a>
@@ -46,13 +46,13 @@ const Header: React.FC = () => {
             <Link to="/login"
               className={`px-5 py-2.5 font-black text-xs uppercase tracking-widest rounded-xl border-2 transition-all ${
                 isScrolled
-                  ? "text-[#0E1C0E] border-[#0E1C0E] hover:bg-[#0E1C0E] hover:text-white"
+                  ? "text-[#2A1650] border-[#2A1650] hover:bg-[#2A1650] hover:text-white"
                   : "text-white border-white hover:bg-white/10"
               }`}>
               Login
             </Link>
             <Link to="/register"
-              className="px-5 py-2.5 bg-[#2D5A27] text-white font-black text-xs uppercase tracking-widest rounded-xl hover:bg-[#F4B400] hover:text-[#0E1C0E] transition-all shadow-lg">
+              className="px-5 py-2.5 bg-[#3F2171] text-white font-black text-xs uppercase tracking-widest rounded-xl hover:bg-[#FFFF00] hover:text-[#2A1650] transition-all shadow-lg">
               Register Free
             </Link>
           </div>
@@ -62,15 +62,15 @@ const Header: React.FC = () => {
         <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="lg:hidden p-2"
           aria-label="Toggle menu">
           {isMobileMenuOpen
-            ? <FaTimes size={24} className={isScrolled ? "text-[#0E1C0E]" : "text-white"} />
-            : <FaBars size={24} className={isScrolled ? "text-[#0E1C0E]" : "text-white"} />
+            ? <FaTimes size={24} className={isScrolled ? "text-[#2A1650]" : "text-white"} />
+            : <FaBars size={24} className={isScrolled ? "text-[#2A1650]" : "text-white"} />
           }
         </button>
       </div>
 
       {/* Mobile menu */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden bg-[#0E1C0E] fixed inset-0 w-full h-screen flex flex-col items-center justify-center z-[200]">
+        <div className="lg:hidden bg-[#2A1650] fixed inset-0 w-full h-screen flex flex-col items-center justify-center z-[200]">
           <button onClick={() => setIsMobileMenuOpen(false)}
             className="absolute top-6 right-6 text-white p-2">
             <FaTimes size={28} />
@@ -82,7 +82,7 @@ const Header: React.FC = () => {
             {navLinks.map((link) => (
               <a key={link.name} href={link.href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="text-3xl font-black text-white uppercase tracking-tight hover:text-[#F4B400] transition-colors">
+                className="text-3xl font-black text-white uppercase tracking-tight hover:text-[#FFFF00] transition-colors">
                 {link.name}
               </a>
             ))}
@@ -90,7 +90,7 @@ const Header: React.FC = () => {
 
           <div className="flex flex-col w-full px-10 gap-4">
             <Link to="/register" onClick={() => setIsMobileMenuOpen(false)}
-              className="w-full py-5 bg-[#2D5A27] text-white text-center font-black uppercase text-sm tracking-widest rounded-2xl shadow-xl hover:bg-[#F4B400] hover:text-[#0E1C0E] transition-all">
+              className="w-full py-5 bg-[#3F2171] text-white text-center font-black uppercase text-sm tracking-widest rounded-2xl shadow-xl hover:bg-[#FFFF00] hover:text-[#2A1650] transition-all">
               Register Free
             </Link>
             <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}

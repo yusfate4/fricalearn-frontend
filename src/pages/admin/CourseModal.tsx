@@ -226,7 +226,7 @@ export default function CourseModal({
           <button
             disabled={loading}
             type="submit"
-            className="w-full bg-[#2D5A27] text-white py-5 rounded-[1.5rem] font-black text-xl shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 sticky bottom-0"
+            className="w-full bg-[#3F2171] text-white py-5 rounded-[1.5rem] font-black text-xl shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 sticky bottom-0"
           >
             {loading ? (
               <Loader2 className="animate-spin" />

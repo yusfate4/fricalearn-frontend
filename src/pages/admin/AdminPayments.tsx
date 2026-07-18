@@ -85,7 +85,7 @@ export default function AdminPayments() {
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-md p-4 animate-in fade-in duration-300">
           <div className="bg-white p-10 rounded-[3rem] shadow-2xl text-center max-w-sm w-full border-4 border-white">
             {modal.type === "success" ? (
-              <CheckCircle2 className="mx-auto text-[#2D5A27] mb-6" size={60} />
+              <CheckCircle2 className="mx-auto text-[#3F2171] mb-6" size={60} />
             ) : (
               <XCircle className="mx-auto text-red-500 mb-6" size={60} />
             )}
@@ -101,7 +101,7 @@ export default function AdminPayments() {
               onClick={() => setModal({ ...modal, show: false })}
               className={`w-full py-5 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-xl transition-all active:scale-95 ${
                 modal.type === "success"
-                  ? "bg-[#2D5A27] text-white shadow-green-100"
+                  ? "bg-[#3F2171] text-white shadow-green-100"
                   : "bg-red-500 text-white shadow-red-100"
               }`}
             >
@@ -114,12 +114,12 @@ export default function AdminPayments() {
       <div className="max-w-7xl mx-auto p-6 md:p-12 min-h-screen">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16">
           <div className="flex items-center gap-6">
-            <div className="bg-[#2D5A27] p-6 rounded-[2.5rem] text-white shadow-2xl rotate-3">
+            <div className="bg-[#3F2171] p-6 rounded-[2.5rem] text-white shadow-2xl rotate-3">
               <ShieldCheck size={36} />
             </div>
             <div>
               <h1 className="text-4xl md:text-6xl font-black text-gray-800 italic uppercase tracking-tighter leading-none">
-                Payment <span className="text-[#2D5A27]">Fulfillment</span>
+                Payment <span className="text-[#3F2171]">Fulfillment</span>
               </h1>
               <p className="text-gray-400 font-black text-[10px] uppercase tracking-widest mt-3 flex items-center gap-2">
                 <span className="w-8 h-[2px] bg-gray-100"></span> Pending
@@ -131,7 +131,7 @@ export default function AdminPayments() {
 
         {loading ? (
           <div className="py-32 text-center flex flex-col items-center">
-            <Loader2 className="animate-spin text-[#2D5A27] mb-4" size={48} />
+            <Loader2 className="animate-spin text-[#3F2171] mb-4" size={48} />
             <p className="text-[10px] font-black uppercase tracking-widest text-gray-300">
               Syncing ledger...
             </p>
@@ -142,7 +142,7 @@ export default function AdminPayments() {
               payments.map((p) => (
                 <div
                   key={p.id}
-                  className="bg-white rounded-[3.5rem] border-2 border-gray-50 overflow-hidden hover:border-[#2D5A27] transition-all duration-500 shadow-sm hover:shadow-2xl flex flex-col group animate-in slide-in-from-bottom-4"
+                  className="bg-white rounded-[3.5rem] border-2 border-gray-50 overflow-hidden hover:border-[#3F2171] transition-all duration-500 shadow-sm hover:shadow-2xl flex flex-col group animate-in slide-in-from-bottom-4"
                 >
                   <div className="h-64 bg-gray-100 relative overflow-hidden">
                     <img
@@ -188,7 +188,7 @@ export default function AdminPayments() {
                       <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
                         Amount Paid
                       </span>
-                      <p className="text-[#2D5A27] font-black text-2xl italic tracking-tighter">
+                      <p className="text-[#3F2171] font-black text-2xl italic tracking-tighter">
                         {p.currency} {Number(p.amount).toLocaleString()}
                       </p>
                     </div>
@@ -197,7 +197,7 @@ export default function AdminPayments() {
                       <button
                         disabled={processingId === p.id}
                         onClick={() => handleAction(p.id, "approve")}
-                        className="flex-[2] py-5 bg-[#2D5A27] text-white rounded-[1.5rem] font-black text-[10px] uppercase tracking-widest shadow-xl shadow-green-100 hover:bg-black transition-all active:scale-95 disabled:opacity-50"
+                        className="flex-[2] py-5 bg-[#3F2171] text-white rounded-[1.5rem] font-black text-[10px] uppercase tracking-widest shadow-xl shadow-green-100 hover:bg-black transition-all active:scale-95 disabled:opacity-50"
                       >
                         {processingId === p.id ? (
                           <Loader2 className="animate-spin mx-auto" size={18} />

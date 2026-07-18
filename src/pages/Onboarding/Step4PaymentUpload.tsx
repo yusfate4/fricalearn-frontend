@@ -109,8 +109,8 @@ export default function Step4PaymentUpload() {
 
         {/* Back */}
         <button onClick={() => navigate(-1)}
-          className="group flex items-center gap-2 text-gray-400 hover:text-[#2D5A27] transition-colors mb-8">
-          <div className="p-2 bg-gray-50 rounded-xl group-hover:bg-[#2D5A27]/10"><ChevronLeft size={20}/></div>
+          className="group flex items-center gap-2 text-gray-400 hover:text-[#3F2171] transition-colors mb-8">
+          <div className="p-2 bg-gray-50 rounded-xl group-hover:bg-[#3F2171]/10"><ChevronLeft size={20}/></div>
           <span className="text-[10px] font-black uppercase tracking-[0.2em]">Back</span>
         </button>
 
@@ -120,7 +120,7 @@ export default function Step4PaymentUpload() {
             Step 4 of 4 • Final Step
           </p>
           <h1 className="text-4xl md:text-6xl font-black text-gray-800 italic uppercase tracking-tighter leading-tight mb-4">
-            Start Your <span className="text-[#2D5A27]">Free Trial</span>
+            Start Your <span className="text-[#3F2171]">Free Trial</span>
           </h1>
           <p className="text-gray-500 font-bold text-sm md:text-base max-w-2xl">
             {hasPaidCourses
@@ -133,9 +133,9 @@ export default function Step4PaymentUpload() {
 
           {/* Trial benefits strip */}
           {hasPaidCourses && (
-            <div className="bg-gradient-to-br from-[#2D5A27] to-[#1a3318] rounded-[2rem] p-6 md:p-8 text-white flex flex-col sm:flex-row items-start sm:items-center gap-5">
-              <div className="w-14 h-14 bg-[#F4B400] rounded-2xl flex items-center justify-center shrink-0">
-                <Gift size={26} className="text-[#0E1C0E]"/>
+            <div className="bg-gradient-to-br from-[#3F2171] to-[#2A1650] rounded-[2rem] p-6 md:p-8 text-white flex flex-col sm:flex-row items-start sm:items-center gap-5">
+              <div className="w-14 h-14 bg-[#FFFF00] rounded-2xl flex items-center justify-center shrink-0">
+                <Gift size={26} className="text-[#2A1650]"/>
               </div>
               <div>
                 <p className="text-sm font-black uppercase tracking-wide mb-1">🎁 14-Day Free Trial Included</p>
@@ -159,7 +159,7 @@ export default function Step4PaymentUpload() {
                 </label>
                 <input type="text" value={childName} onChange={(e) => setChildName(e.target.value)}
                   placeholder="Ada Johnson"
-                  className="w-full px-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#2D5A27] font-bold text-sm transition-all" required/>
+                  className="w-full px-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#3F2171] font-bold text-sm transition-all" required/>
               </div>
               <div>
                 <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">
@@ -169,7 +169,7 @@ export default function Step4PaymentUpload() {
                   <input type="number" min={3} max={18} value={childAge}
                     onChange={(e) => setChildAge(e.target.value)}
                     placeholder="e.g. 8"
-                    className="w-32 px-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#2D5A27] font-bold text-sm transition-all text-center" required/>
+                    className="w-32 px-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#3F2171] font-bold text-sm transition-all text-center" required/>
                   <span className="text-sm font-bold text-gray-500">years old</span>
                 </div>
                 <p className="text-[9px] font-bold text-gray-400 mt-2">Enter a number between 3 and 18</p>
@@ -190,11 +190,11 @@ export default function Step4PaymentUpload() {
 
           {/* ⭐ PRIMARY CTA — Start Free Trial */}
           <button onClick={() => submit(false)} disabled={!childName || !childAge || loading}
-            className="w-full bg-[#2D5A27] text-white py-8 rounded-[2.5rem] font-black uppercase tracking-[0.2em] text-sm shadow-2xl flex items-center justify-center gap-4 hover:bg-black transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed border-b-4 border-green-900 active:border-b-0">
+            className="w-full bg-[#3F2171] text-white py-8 rounded-[2.5rem] font-black uppercase tracking-[0.2em] text-sm shadow-2xl flex items-center justify-center gap-4 hover:bg-black transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed border-b-4 border-[#1E1038] active:border-b-0">
             {loading && !payNow ? (
               <><Loader2 className="animate-spin" size={24}/>Setting up trial...</>
             ) : (
-              <><Sparkles size={24} className="text-[#F4B400]"/>
+              <><Sparkles size={24} className="text-[#FFFF00]"/>
                 {hasPaidCourses ? "Start Free 14-Day Trial" : "Complete Free Enrolment"}</>
             )}
           </button>
@@ -220,14 +220,14 @@ export default function Step4PaymentUpload() {
                   {/* Bank details */}
                   {currentBankAccount && (
                     <div className="bg-gray-50 rounded-2xl p-6">
-                      <div className="flex items-center gap-3 mb-4 text-[#2D5A27]">
+                      <div className="flex items-center gap-3 mb-4 text-[#3F2171]">
                         <Landmark size={20}/>
                         <h3 className="font-black uppercase italic text-xs">
                           {currentBankAccount.flag} Transfer {priceLabel} to
                         </h3>
                       </div>
                       <p className="text-lg font-black text-gray-800">{currentBankAccount.bank_name}</p>
-                      <p className="text-2xl font-black text-[#2D5A27] tracking-tight my-1">{currentBankAccount.account_number}</p>
+                      <p className="text-2xl font-black text-[#3F2171] tracking-tight my-1">{currentBankAccount.account_number}</p>
                       <p className="text-xs font-bold text-gray-500 uppercase">{currentBankAccount.account_name}</p>
                       <div className="mt-4 p-3 bg-blue-50 rounded-xl border border-blue-100 flex gap-3">
                         <Info size={16} className="text-blue-600 shrink-0"/>
@@ -239,7 +239,7 @@ export default function Step4PaymentUpload() {
                   )}
 
                   {/* Receipt upload */}
-                  <label className="block w-full border-4 border-dashed border-gray-100 rounded-[2rem] p-10 text-center cursor-pointer hover:border-[#2D5A27] transition-all bg-gray-50/30 group">
+                  <label className="block w-full border-4 border-dashed border-gray-100 rounded-[2rem] p-10 text-center cursor-pointer hover:border-[#3F2171] transition-all bg-gray-50/30 group">
                     <input type="file" className="hidden" onChange={handleFileUpload} accept="image/*,application/pdf"/>
                     {receiptPreview ? (
                       <div className="flex flex-col items-center gap-3">
@@ -249,13 +249,13 @@ export default function Step4PaymentUpload() {
                       </div>
                     ) : receipt ? (
                       <div className="flex flex-col items-center gap-3">
-                        <Upload size={28} className="text-[#2D5A27]"/>
+                        <Upload size={28} className="text-[#3F2171]"/>
                         <p className="font-black text-gray-700 uppercase text-xs tracking-widest">{receipt.name}</p>
                       </div>
                     ) : (
                       <div className="flex flex-col items-center gap-3">
                         <div className="bg-white p-5 rounded-2xl shadow-sm group-hover:scale-110 transition-transform">
-                          <Upload size={28} className="text-[#2D5A27]"/>
+                          <Upload size={28} className="text-[#3F2171]"/>
                         </div>
                         <p className="font-black text-gray-700 uppercase text-xs tracking-widest">Click to Upload Receipt</p>
                         <p className="text-[9px] font-bold text-gray-400">JPG, PNG, or PDF • Max 5MB</p>
@@ -264,7 +264,7 @@ export default function Step4PaymentUpload() {
                   </label>
 
                   <button onClick={() => submit(true)} disabled={!childName || !childAge || !receipt || loading}
-                    className="w-full bg-[#F4B400] text-[#0E1C0E] py-6 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs shadow-xl flex items-center justify-center gap-3 hover:bg-yellow-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed border-b-4 border-yellow-600 active:translate-y-1 active:border-b-0">
+                    className="w-full bg-[#FFFF00] text-[#2A1650] py-6 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs shadow-xl flex items-center justify-center gap-3 hover:bg-yellow-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed border-b-4 border-yellow-600 active:translate-y-1 active:border-b-0">
                     {loading && payNow ? (
                       <><Loader2 className="animate-spin" size={20}/>Enrolling...</>
                     ) : (

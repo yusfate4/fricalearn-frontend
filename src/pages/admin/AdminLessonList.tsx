@@ -83,7 +83,7 @@ export default function AdminLessonList() {
           
           <button 
             onClick={() => navigate("/admin/add-lesson")}
-            className="flex items-center gap-2 bg-[#2D5A27] text-white px-8 py-4 rounded-2xl font-black shadow-xl hover:scale-105 transition-all uppercase text-sm"
+            className="flex items-center gap-2 bg-[#3F2171] text-white px-8 py-4 rounded-2xl font-black shadow-xl hover:scale-105 transition-all uppercase text-sm"
           >
             <Plus size={20} /> New Lesson
           </button>
@@ -94,7 +94,7 @@ export default function AdminLessonList() {
           <input 
             type="text"
             placeholder="Search by lesson name or subject..."
-            className="w-full pl-14 pr-6 py-5 bg-white border-2 border-gray-50 rounded-[2rem] shadow-sm outline-none focus:border-[#2D5A27] font-bold transition-all"
+            className="w-full pl-14 pr-6 py-5 bg-white border-2 border-gray-50 rounded-[2rem] shadow-sm outline-none focus:border-[#3F2171] font-bold transition-all"
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
@@ -125,7 +125,7 @@ export default function AdminLessonList() {
                     </td>
                     <td className="p-6">
                       <div className="flex items-center gap-2">
-                        <BookOpen size={14} className="text-[#2D5A27]" />
+                        <BookOpen size={14} className="text-[#3F2171]" />
                         <span className="text-sm font-bold text-gray-600">{lesson.module?.course?.title || "General"}</span>
                       </div>
                     </td>

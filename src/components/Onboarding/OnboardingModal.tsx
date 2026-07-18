@@ -39,7 +39,7 @@ export default function OnboardingModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[100] bg-[#2D5A27] flex items-center justify-center p-6 text-white overflow-hidden">
+    <div className="fixed inset-0 z-[100] bg-[#3F2171] flex items-center justify-center p-6 text-white overflow-hidden">
       {/* Background Decorative Elements */}
       <div className="absolute top-[-10%] right-[-10%] w-64 h-64 bg-white/5 rounded-full blur-3xl" />
       <div className="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-yellow-400/10 rounded-full blur-3xl" />
@@ -49,7 +49,7 @@ export default function OnboardingModal({
         {step === 1 && (
           <>
             <div className="bg-yellow-400 w-24 h-24 rounded-[2rem] flex items-center justify-center mx-auto shadow-2xl rotate-3">
-              <Sparkles size={48} className="text-[#2D5A27]" />
+              <Sparkles size={48} className="text-[#3F2171]" />
             </div>
             <h1 className="text-5xl font-black italic uppercase tracking-tighter">
               Ẹ káàbọ̀!
@@ -69,7 +69,7 @@ export default function OnboardingModal({
                     setGoal(g);
                     setStep(2);
                   }}
-                  className="group flex items-center justify-between px-6 py-5 bg-white/10 border-2 border-white/5 rounded-2xl font-black hover:bg-white hover:text-[#2D5A27] transition-all uppercase italic"
+                  className="group flex items-center justify-between px-6 py-5 bg-white/10 border-2 border-white/5 rounded-2xl font-black hover:bg-white hover:text-[#3F2171] transition-all uppercase italic"
                 >
                   <span>{g}</span>
                   <ChevronRight
@@ -86,7 +86,7 @@ export default function OnboardingModal({
         {step === 2 && (
           <>
             <div className="bg-white w-24 h-24 rounded-[2rem] flex items-center justify-center mx-auto shadow-2xl -rotate-3">
-              <Rocket size={48} className="text-[#2D5A27]" />
+              <Rocket size={48} className="text-[#3F2171]" />
             </div>
             <h2 className="text-4xl font-black italic uppercase tracking-tighter">
               Your Level?
@@ -132,7 +132,7 @@ export default function OnboardingModal({
         {step === 3 && (
           <div className="animate-in zoom-in fade-in duration-700">
             <div className="bg-white w-24 h-24 rounded-[2rem] flex items-center justify-center mx-auto shadow-2xl mb-6">
-              <PartyPopper size={48} className="text-[#2D5A27]" />
+              <PartyPopper size={48} className="text-[#3F2171]" />
             </div>
             <h2 className="text-5xl font-black italic uppercase tracking-tighter mb-2">
               You're Ready!
@@ -141,7 +141,7 @@ export default function OnboardingModal({
               Welcome to the family
             </p>
 
-            <div className="bg-yellow-400 rounded-3xl p-6 text-[#2D5A27] mb-10 transform rotate-2 shadow-xl">
+            <div className="bg-yellow-400 rounded-3xl p-6 text-[#3F2171] mb-10 transform rotate-2 shadow-xl">
               <div className="flex items-center justify-center gap-3">
                 <Zap size={32} fill="currentColor" />
                 <span className="text-4xl font-black italic tracking-tighter">
@@ -158,7 +158,7 @@ export default function OnboardingModal({
                 // 🚀 Force a clean slate. This is the ultimate fix for "State Loops"
                 window.location.reload();
               }}
-              className="w-full py-6 bg-white text-[#2D5A27] rounded-[2.5rem] font-black text-2xl hover:bg-black hover:text-white transition-all shadow-2xl uppercase italic tracking-tight"
+              className="w-full py-6 bg-white text-[#3F2171] rounded-[2.5rem] font-black text-2xl hover:bg-black hover:text-white transition-all shadow-2xl uppercase italic tracking-tight"
             >
               Let's Start!
             </button>

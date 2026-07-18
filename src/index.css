@@ -1,14 +1,24 @@
 @import "tailwindcss";
 
 @theme {
-  --color-frica-green: #2d5a27;
-  --color-frica-gold: #f4b400;
+  --color-frica-green: #3F2171;
+  --color-frica-gold: #FFFF00;
   --color-frica-earth: #8b4513;
 }
 
 .form-input-custom {
-  @apply w-full pl-12 pr-5 py-4 bg-gray-50 border-2 border-transparent focus:border-[#2D5A27] focus:bg-white rounded-2xl font-bold outline-none transition-all text-gray-700 text-sm;
+  @apply w-full pl-12 pr-5 py-4 bg-gray-50 border-2 border-transparent focus:border-[#3F2171] focus:bg-white rounded-2xl font-bold outline-none transition-all text-gray-700 text-sm;
 }
 html {
   scroll-behavior: smooth;
 }
+
+@font-face {
+  font-family: 'Milkyway';
+  src: url('/fonts/Milkyway.woff2') format('woff2'),
+       url('/fonts/Milkyway.ttf') format('truetype');
+  font-display: swap;
+}
+
+body { font-family: 'Poppins', sans-serif; }
+.font-display { font-family: 'Milkyway', 'Poppins', sans-serif; } /* playful headings */

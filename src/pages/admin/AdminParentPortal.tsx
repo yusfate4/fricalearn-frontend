@@ -114,7 +114,7 @@ export default function AdminParentPortal() {
                   <h3 className="text-xl font-black text-gray-800 uppercase italic tracking-tighter leading-none">{student.name}</h3>
                   <div className="flex items-center gap-2 mt-2">
                     <span className="px-2 py-0.5 bg-gray-100 text-gray-400 text-[9px] font-black rounded uppercase tracking-widest">ID: #{student.id}</span>
-                    <span className="px-2 py-0.5 bg-green-50 text-[#2D5A27] text-[9px] font-black rounded uppercase tracking-widest">Active</span>
+                    <span className="px-2 py-0.5 bg-green-50 text-[#3F2171] text-[9px] font-black rounded uppercase tracking-widest">Active</span>
                   </div>
                 </div>
               </div>
