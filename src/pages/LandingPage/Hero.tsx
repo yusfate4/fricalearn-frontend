@@ -40,7 +40,7 @@ const Hero: React.FC = () => {
             {/* Headline */}
             <h1 className="font-black text-white uppercase leading-[0.9] tracking-tighter mb-8">
               <span className="block text-5xl md:text-6xl lg:text-7xl">World-Class</span>
-              <span className="block text-5xl md:text-6xl lg:text-7xl text-[#3F2171] italic">Education</span>
+              <span className="block text-5xl md:text-6xl lg:text-7xl text-[#ffff00] italic">Education</span>
               <span className="block text-5xl md:text-6xl lg:text-7xl">For African</span>
               <span className="block text-5xl md:text-6xl lg:text-7xl">Children.</span>
             </h1>
