@@ -125,7 +125,7 @@ export default function SuccessModal({
               animate={{ rotate: 0, scale: 1 }}
               transition={{ delay: 0.1, type: "spring", bounce: 0.6 }}
               className={`w-24 h-24 md:w-32 md:h-32 rounded-full flex items-center justify-center mx-auto mb-10 shadow-inner relative ${
-                points ? "bg-yellow-50 text-yellow-500" : "bg-green-50 text-[#2D5A27]"
+                points ? "bg-yellow-50 text-yellow-500" : "bg-green-50 text-[#3F2171]"
               }`}
             >
               {points ? (
@@ -140,7 +140,7 @@ export default function SuccessModal({
             </motion.div>
 
             <div className="space-y-2 mb-8">
-                <p className="text-[#2D5A27] font-black uppercase tracking-[0.3em] text-[10px] md:text-xs">
+                <p className="text-[#3F2171] font-black uppercase tracking-[0.3em] text-[10px] md:text-xs">
                     {culturalTitle}
                 </p>
                 <h2 className="text-4xl md:text-5xl font-black text-gray-900 italic uppercase tracking-tighter leading-none">
@@ -157,7 +157,7 @@ export default function SuccessModal({
 
             <button
               onClick={handleContinue}
-              className="group w-full bg-[#1A1A40] text-white py-6 md:py-8 rounded-[2rem] font-black text-lg md:text-xl flex items-center justify-center gap-4 hover:bg-[#2D5A27] transition-all shadow-2xl active:scale-95 relative z-10"
+              className="group w-full bg-[#1A1A40] text-white py-6 md:py-8 rounded-[2rem] font-black text-lg md:text-xl flex items-center justify-center gap-4 hover:bg-[#3F2171] transition-all shadow-2xl active:scale-95 relative z-10"
             >
               <span className="uppercase tracking-widest text-xs">
                 Continue Journey

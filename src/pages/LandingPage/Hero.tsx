@@ -10,7 +10,7 @@ const Hero: React.FC = () => {
   }, []);
 
   return (
-    <section className="relative min-h-screen bg-[#0E1C0E] overflow-hidden flex items-center">
+    <section className="relative min-h-screen bg-[#2A1650] overflow-hidden flex items-center">
 
       {/* ── Background texture ── */}
       <div className="absolute inset-0 opacity-[0.04]"
@@ -31,8 +31,8 @@ const Hero: React.FC = () => {
 
             {/* Eyebrow */}
             <div className="flex items-center gap-3 mb-8">
-              <span className="h-px w-12 bg-[#F4B400]" />
-              <span className="text-[#F4B400] font-black text-[10px] uppercase tracking-[0.4em]">
+              <span className="h-px w-12 bg-[#FFFF00]" />
+              <span className="text-[#FFFF00] font-black text-[10px] uppercase tracking-[0.4em]">
                 Diaspora Academy
               </span>
             </div>
@@ -40,7 +40,7 @@ const Hero: React.FC = () => {
             {/* Headline */}
             <h1 className="font-black text-white uppercase leading-[0.9] tracking-tighter mb-8">
               <span className="block text-5xl md:text-6xl lg:text-7xl">World-Class</span>
-              <span className="block text-5xl md:text-6xl lg:text-7xl text-[#2D5A27] italic">Education</span>
+              <span className="block text-5xl md:text-6xl lg:text-7xl text-[#3F2171] italic">Education</span>
               <span className="block text-5xl md:text-6xl lg:text-7xl">For African</span>
               <span className="block text-5xl md:text-6xl lg:text-7xl">Children.</span>
             </h1>
@@ -78,12 +78,12 @@ const Hero: React.FC = () => {
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4">
               <Link to="/register"
-                className="group flex items-center justify-center gap-3 bg-[#2D5A27] text-white px-8 py-5 rounded-[1.5rem] font-black uppercase text-sm tracking-widest hover:bg-[#F4B400] hover:text-black transition-all shadow-2xl border-b-4 border-green-900 hover:border-yellow-600 active:translate-y-1 active:border-b-0">
+                className="group flex items-center justify-center gap-3 bg-[#3F2171] text-white px-8 py-5 rounded-[1.5rem] font-black uppercase text-sm tracking-widest hover:bg-[#FFFF00] hover:text-black transition-all shadow-2xl border-b-4 border-[#1E1038] hover:border-yellow-600 active:translate-y-1 active:border-b-0">
                 Start in Naira ₦
-                <span className="text-[#F4B400] group-hover:text-black transition-colors">→</span>
+                <span className="text-[#FFFF00] group-hover:text-black transition-colors">→</span>
               </Link>
               <Link to="/register"
-                className="group flex items-center justify-center gap-3 bg-white/10 border-2 border-white/30 text-white px-8 py-5 rounded-[1.5rem] font-black uppercase text-sm tracking-widest hover:bg-white hover:text-[#0E1C0E] transition-all">
+                className="group flex items-center justify-center gap-3 bg-white/10 border-2 border-white/30 text-white px-8 py-5 rounded-[1.5rem] font-black uppercase text-sm tracking-widest hover:bg-white hover:text-[#2A1650] transition-all">
                 Start in Pounds £
               </Link>
             </div>
@@ -97,21 +97,21 @@ const Hero: React.FC = () => {
               <div className="rounded-[3rem] overflow-hidden border-4 border-white/10 shadow-2xl">
                 <img src="/hero-learning.png" alt="Child learning with FricaLearn"
                   className="w-full h-[420px] lg:h-[520px] object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0E1C0E]/60 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#2A1650]/60 to-transparent" />
               </div>
 
               {/* Floating stat cards */}
               <div className="absolute -left-6 top-10 bg-white rounded-2xl p-4 shadow-2xl">
-                <p className="text-3xl font-black text-[#0E1C0E]">3,000+</p>
+                <p className="text-3xl font-black text-[#2A1650]">3,000+</p>
                 <p className="text-gray-500 text-xs font-bold uppercase tracking-wide">Lessons available</p>
               </div>
 
-              <div className="absolute -right-4 bottom-24 bg-[#F4B400] rounded-2xl p-4 shadow-2xl">
-                <p className="text-3xl font-black text-[#0E1C0E]">2</p>
-                <p className="text-[#0E1C0E]/70 text-xs font-bold uppercase tracking-wide">Curricula</p>
+              <div className="absolute -right-4 bottom-24 bg-[#FFFF00] rounded-2xl p-4 shadow-2xl">
+                <p className="text-3xl font-black text-[#2A1650]">2</p>
+                <p className="text-[#2A1650]/70 text-xs font-bold uppercase tracking-wide">Curricula</p>
               </div>
 
-              <div className="absolute left-6 -bottom-6 bg-[#2D5A27] rounded-2xl px-6 py-4 shadow-2xl">
+              <div className="absolute left-6 -bottom-6 bg-[#3F2171] rounded-2xl px-6 py-4 shadow-2xl">
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">🤖</span>
                   <div>
@@ -131,7 +131,7 @@ const Hero: React.FC = () => {
               ].map((stat) => (
                 <div key={stat.label} className="text-center">
                   <p className="text-3xl font-black text-white">{stat.value}</p>
-                  <p className="text-[#F4B400] text-[10px] font-black uppercase tracking-widest mt-1">{stat.label}</p>
+                  <p className="text-[#FFFF00] text-[10px] font-black uppercase tracking-widest mt-1">{stat.label}</p>
                   <p className="text-white/40 text-[9px] font-medium mt-0.5">{stat.sub}</p>
                 </div>
               ))}

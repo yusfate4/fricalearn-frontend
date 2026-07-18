@@ -68,7 +68,7 @@ export default function Step2GradeSelection() {
     const colors = {
       blue:   { active: "bg-blue-500 text-white shadow-2xl scale-110", info: "bg-blue-50 border-blue-100", infoText: "text-blue-600" },
       purple: { active: "bg-purple-500 text-white shadow-2xl scale-110", info: "bg-purple-50 border-purple-100", infoText: "text-purple-600" },
-      green:  { active: "bg-[#2D5A27] text-white shadow-2xl scale-110", info: "bg-green-50 border-green-100", infoText: "text-[#2D5A27]" },
+      green:  { active: "bg-[#3F2171] text-white shadow-2xl scale-110", info: "bg-green-50 border-green-100", infoText: "text-[#3F2171]" },
     }[color];
 
     return (
@@ -127,15 +127,15 @@ export default function Step2GradeSelection() {
     <Layout>
       <div className="max-w-4xl mx-auto px-6 py-10 md:px-12 md:py-16 animate-in fade-in duration-700">
         <button onClick={() => navigate(-1)}
-          className="group flex items-center gap-2 text-gray-400 hover:text-[#2D5A27] transition-colors mb-8">
-          <div className="p-2 bg-gray-50 rounded-xl group-hover:bg-[#2D5A27]/10"><ChevronLeft size={20}/></div>
+          className="group flex items-center gap-2 text-gray-400 hover:text-[#3F2171] transition-colors mb-8">
+          <div className="p-2 bg-gray-50 rounded-xl group-hover:bg-[#3F2171]/10"><ChevronLeft size={20}/></div>
           <span className="text-[10px] font-black uppercase tracking-[0.2em]">Back</span>
         </button>
 
         <div className="mb-12">
           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-4">Step 2 of 4</p>
           <h1 className="text-4xl md:text-6xl font-black text-gray-800 italic uppercase tracking-tighter leading-tight mb-4">
-            Select <span className="text-[#2D5A27]">Grade</span>
+            Select <span className="text-[#3F2171]">Grade</span>
           </h1>
           <p className="text-gray-500 font-bold text-sm max-w-2xl">
             {isNigerian ? "Choose your child's current class" : "Choose your child's year group"} in the {curriculumName}
@@ -154,8 +154,8 @@ export default function Step2GradeSelection() {
           {bothSelected && (
             <div className="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-xl border-4 border-white">
               <div className="flex items-center gap-4 mb-6">
-                <div className="p-4 bg-[#2D5A27]/10 rounded-2xl">
-                  <BookOpen size={32} className="text-[#2D5A27]"/>
+                <div className="p-4 bg-[#3F2171]/10 rounded-2xl">
+                  <BookOpen size={32} className="text-[#3F2171]"/>
                 </div>
                 <div>
                   <h2 className="text-2xl md:text-3xl font-black text-gray-800 italic uppercase tracking-tighter">
@@ -210,7 +210,7 @@ export default function Step2GradeSelection() {
           <div className="max-w-4xl mx-auto">
             <button onClick={handleContinue}
               disabled={bothSelected ? !sharedGrade : (includesMaths && !mathsGrade) || (includesEnglish && !englishGrade)}
-              className="group flex items-center justify-center gap-4 bg-[#2D5A27] text-white px-10 py-6 rounded-[2.5rem] font-black uppercase text-[11px] tracking-widest shadow-2xl hover:bg-black transition-all border-b-4 border-green-900 active:translate-y-1 active:border-b-0 w-full disabled:opacity-50 disabled:cursor-not-allowed">
+              className="group flex items-center justify-center gap-4 bg-[#3F2171] text-white px-10 py-6 rounded-[2.5rem] font-black uppercase text-[11px] tracking-widest shadow-2xl hover:bg-black transition-all border-b-4 border-[#1E1038] active:translate-y-1 active:border-b-0 w-full disabled:opacity-50 disabled:cursor-not-allowed">
               Continue to Pricing Summary
               <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform"/>
             </button>

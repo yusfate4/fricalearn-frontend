@@ -55,7 +55,7 @@ export default function AdminTutorProfile() {
   if (loading) return (
     <Layout>
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="animate-spin text-[#2D5A27]" size={40} />
+        <Loader2 className="animate-spin text-[#3F2171]" size={40} />
       </div>
     </Layout>
   );
@@ -74,13 +74,13 @@ export default function AdminTutorProfile() {
           {/* Bio Section */}
           <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border-2 border-gray-50">
             <label className="flex items-center gap-2 text-[10px] font-black uppercase text-gray-400 mb-4 tracking-widest">
-              <UserCircle size={14} className="text-[#2D5A27]" /> 1. Professional Bio
+              <UserCircle size={14} className="text-[#3F2171]" /> 1. Professional Bio
             </label>
             <textarea
               value={formData.bio}
               onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
               placeholder="Tell parents and students about your passion for African culture..."
-              className="w-full p-6 bg-gray-50 rounded-2xl min-h-[180px] outline-none focus:ring-4 ring-[#2D5A27]/5 border-none font-medium text-gray-700 leading-relaxed"
+              className="w-full p-6 bg-gray-50 rounded-2xl min-h-[180px] outline-none focus:ring-4 ring-[#3F2171]/5 border-none font-medium text-gray-700 leading-relaxed"
             />
           </div>
 
@@ -88,28 +88,28 @@ export default function AdminTutorProfile() {
             {/* Specialization */}
             <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border-2 border-gray-50">
               <label className="flex items-center gap-2 text-[10px] font-black uppercase text-gray-400 mb-4 tracking-widest">
-                <BookOpen size={14} className="text-[#2D5A27]" /> 2. Specialization
+                <BookOpen size={14} className="text-[#3F2171]" /> 2. Specialization
               </label>
               <input
                 type="text"
                 value={formData.specialization}
                 onChange={(e) => setFormData({ ...formData, specialization: e.target.value })}
                 placeholder="e.g. Yoruba Language & History"
-                className="w-full p-5 bg-gray-50 rounded-xl outline-none focus:ring-4 ring-[#2D5A27]/5 border-none font-bold text-gray-700"
+                className="w-full p-5 bg-gray-50 rounded-xl outline-none focus:ring-4 ring-[#3F2171]/5 border-none font-bold text-gray-700"
               />
             </div>
 
             {/* Qualification */}
             <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border-2 border-gray-50">
               <label className="flex items-center gap-2 text-[10px] font-black uppercase text-gray-400 mb-4 tracking-widest">
-                <Award size={14} className="text-[#2D5A27]" /> 3. Qualification
+                <Award size={14} className="text-[#3F2171]" /> 3. Qualification
               </label>
               <input
                 type="text"
                 value={formData.qualification}
                 onChange={(e) => setFormData({ ...formData, qualification: e.target.value })}
                 placeholder="e.g. MA in Linguistics"
-                className="w-full p-5 bg-gray-50 rounded-xl outline-none focus:ring-4 ring-[#2D5A27]/5 border-none font-bold text-gray-700"
+                className="w-full p-5 bg-gray-50 rounded-xl outline-none focus:ring-4 ring-[#3F2171]/5 border-none font-bold text-gray-700"
               />
             </div>
           </div>
@@ -125,7 +125,7 @@ export default function AdminTutorProfile() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="w-full mt-10 bg-gray-900 text-white py-8 rounded-[2.5rem] font-black uppercase tracking-[0.2em] text-xs shadow-2xl hover:bg-[#2D5A27] transition-all flex items-center justify-center gap-4 disabled:opacity-50"
+          className="w-full mt-10 bg-gray-900 text-white py-8 rounded-[2.5rem] font-black uppercase tracking-[0.2em] text-xs shadow-2xl hover:bg-[#3F2171] transition-all flex items-center justify-center gap-4 disabled:opacity-50"
         >
           {saving ? (
             <Loader2 className="animate-spin" size={24} />

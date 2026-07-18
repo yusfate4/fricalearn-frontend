@@ -12,7 +12,7 @@ export const LiveClassCard = ({ liveClass }: { liveClass: any }) => {
   const isOngoing = liveClass.status === 'ongoing' || (now >= startTime);
 
   return (
-    <div className={`relative bg-white rounded-[2rem] p-6 border-2 transition-all ${isOngoing ? 'border-[#2D5A27] shadow-green-100 shadow-lg scale-[1.02]' : 'border-gray-100 opacity-90'}`}>
+    <div className={`relative bg-white rounded-[2rem] p-6 border-2 transition-all ${isOngoing ? 'border-[#3F2171] shadow-green-100 shadow-lg scale-[1.02]' : 'border-gray-100 opacity-90'}`}>
       {isOngoing && (
         <span className="absolute -top-3 left-6 bg-red-500 text-white text-[10px] font-black px-3 py-1 rounded-full animate-pulse uppercase tracking-widest z-10">
           Live Now
@@ -20,7 +20,7 @@ export const LiveClassCard = ({ liveClass }: { liveClass: any }) => {
       )}
 
       <div className="flex justify-between items-start mb-6">
-        <div className={`p-3 rounded-2xl transition-colors ${isOngoing ? 'bg-green-50 text-[#2D5A27]' : 'bg-gray-50 text-gray-400'}`}>
+        <div className={`p-3 rounded-2xl transition-colors ${isOngoing ? 'bg-green-50 text-[#3F2171]' : 'bg-gray-50 text-gray-400'}`}>
           <Video size={24} />
         </div>
         <div className="text-right">
@@ -36,7 +36,7 @@ export const LiveClassCard = ({ liveClass }: { liveClass: any }) => {
       </h3>
       
       <div className="flex items-center gap-2 mb-6">
-        <div className="w-6 h-6 bg-[#2D5A27] rounded-full flex items-center justify-center text-[10px] text-white font-bold italic">
+        <div className="w-6 h-6 bg-[#3F2171] rounded-full flex items-center justify-center text-[10px] text-white font-bold italic">
           {liveClass.tutor?.name?.charAt(0) || 'T'}
         </div>
         <p className="text-xs font-bold text-gray-500">Host: {liveClass.tutor?.name || 'Frica Tutor'}</p>
@@ -44,11 +44,11 @@ export const LiveClassCard = ({ liveClass }: { liveClass: any }) => {
 
       <div className="grid grid-cols-2 gap-3 mb-6">
         <div className="bg-gray-50 p-3 rounded-xl flex items-center gap-2 border border-gray-100">
-          <Clock size={14} className="text-[#2D5A27]" />
+          <Clock size={14} className="text-[#3F2171]" />
           <span className="text-[10px] font-black text-gray-600 uppercase">{liveClass.duration_minutes}m</span>
         </div>
         <div className="bg-gray-50 p-3 rounded-xl flex items-center gap-2 border border-gray-100">
-          <Users size={14} className="text-[#2D5A27]" />
+          <Users size={14} className="text-[#3F2171]" />
           <span className="text-[10px] font-black text-gray-600 uppercase">{liveClass.max_attendees || 20} Max</span>
         </div>
       </div>
@@ -57,7 +57,7 @@ export const LiveClassCard = ({ liveClass }: { liveClass: any }) => {
       {isOngoing ? (
         <Link
           to={`/live-room/${liveClass.id}`}
-          className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all bg-[#2D5A27] text-white hover:bg-black shadow-xl shadow-green-900/20 active:scale-95"
+          className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all bg-[#3F2171] text-white hover:bg-black shadow-xl shadow-green-900/20 active:scale-95"
         >
           Enter Classroom <ExternalLink size={14} />
         </Link>

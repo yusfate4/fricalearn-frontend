@@ -126,7 +126,7 @@ export default function ExternalLessonViewer() {
     setFeedback({ shown: true, isCorrect: isRight });
     if (isRight) {
       playClap();
-      confetti({ particleCount: 60, spread: 50, origin: { y: 0.7 }, colors: ["#2D5A27","#F4B400","#fff"] });
+      confetti({ particleCount: 60, spread: 50, origin: { y: 0.7 }, colors: ["#3F2171","#FFFF00","#fff"] });
     }
   };
 
@@ -160,7 +160,7 @@ export default function ExternalLessonViewer() {
   if (loading) return (
     <Layout>
       <div className="min-h-screen flex flex-col items-center justify-center p-20 text-center">
-        <Loader2 className="animate-spin text-[#2D5A27] mb-6" size={48} />
+        <Loader2 className="animate-spin text-[#3F2171] mb-6" size={48} />
         <p className="font-black text-gray-400 italic uppercase tracking-widest text-sm">Loading lesson...</p>
         <p className="text-gray-300 text-xs mt-3 font-medium max-w-xs">
           First open fetches content from Oak National Academy — may take a few seconds
@@ -200,8 +200,8 @@ export default function ExternalLessonViewer() {
 
         {/* Back */}
         <button onClick={() => navigate(-1)}
-          className="group flex items-center text-gray-400 hover:text-[#2D5A27] font-black uppercase tracking-widest text-[10px] transition-all">
-          <div className="p-2 rounded-xl bg-white shadow-sm mr-3 group-hover:bg-[#2D5A27]/10"><ArrowLeft size={16}/></div>
+          className="group flex items-center text-gray-400 hover:text-[#3F2171] font-black uppercase tracking-widest text-[10px] transition-all">
+          <div className="p-2 rounded-xl bg-white shadow-sm mr-3 group-hover:bg-[#3F2171]/10"><ArrowLeft size={16}/></div>
           Back to subject
         </button>
 
@@ -212,11 +212,11 @@ export default function ExternalLessonViewer() {
 
         {/* Learning Outcome */}
         {meta.outcome && (
-          <div className="bg-[#2D5A27] rounded-[2.5rem] p-8 text-white relative overflow-hidden">
+          <div className="bg-[#3F2171] rounded-[2.5rem] p-8 text-white relative overflow-hidden">
             <div className="absolute top-0 right-0 w-40 h-40 rounded-full opacity-10"
               style={{ background: "radial-gradient(circle,#fff,transparent)", transform: "translate(30%,-30%)" }}/>
             <div className="flex items-center gap-3 mb-3">
-              <Target size={22} className="text-[#F4B400]"/>
+              <Target size={22} className="text-[#FFFF00]"/>
               <p className="font-black text-[10px] uppercase tracking-widest text-white/70">Learning Goal</p>
             </div>
             <p className="text-xl font-black text-white leading-relaxed">{meta.outcome}</p>
@@ -227,13 +227,13 @@ export default function ExternalLessonViewer() {
         {meta.keywords && meta.keywords.length > 0 && (
           <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border-2 border-gray-50">
             <div className="flex items-center gap-3 mb-6">
-              <Lightbulb size={22} className="text-[#F4B400]"/>
+              <Lightbulb size={22} className="text-[#FFFF00]"/>
               <h2 className="text-lg font-black text-gray-800 uppercase tracking-tight italic">Key Words</h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {meta.keywords.map((kw, i) => (
-                <div key={i} className="p-5 bg-[#F4B400]/10 rounded-2xl border border-[#F4B400]/20">
-                  <p className="font-black text-[#2D5A27] uppercase tracking-wide text-sm mb-1">{kw.keyword}</p>
+                <div key={i} className="p-5 bg-[#FFFF00]/10 rounded-2xl border border-[#FFFF00]/20">
+                  <p className="font-black text-[#3F2171] uppercase tracking-wide text-sm mb-1">{kw.keyword}</p>
                   <p className="text-gray-600 text-sm font-medium leading-relaxed">{kw.description}</p>
                 </div>
               ))}
@@ -245,7 +245,7 @@ export default function ExternalLessonViewer() {
         {paragraphs.length > 0 ? (
           <div className="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-sm border-2 border-gray-50">
             <div className="flex items-center gap-3 mb-8">
-              <div className="p-3 bg-[#2D5A27]/10 rounded-2xl"><BookOpen size={22} className="text-[#2D5A27]"/></div>
+              <div className="p-3 bg-[#3F2171]/10 rounded-2xl"><BookOpen size={22} className="text-[#3F2171]"/></div>
               <div>
                 <h2 className="text-xl font-black text-gray-800 uppercase tracking-tight italic">Read the Lesson</h2>
                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-0.5">
@@ -264,7 +264,7 @@ export default function ExternalLessonViewer() {
 
             {paragraphs.length > 6 && (
               <button onClick={() => setExpanded(!expanded)}
-                className="mt-6 flex items-center gap-2 text-[#2D5A27] font-black uppercase text-xs tracking-widest hover:text-black transition-colors">
+                className="mt-6 flex items-center gap-2 text-[#3F2171] font-black uppercase text-xs tracking-widest hover:text-black transition-colors">
                 {expanded ? "Show less ↑" : `Read more (${paragraphs.length - 6} more sections) ↓`}
               </button>
             )}
@@ -281,13 +281,13 @@ export default function ExternalLessonViewer() {
         {meta.key_points && meta.key_points.length > 0 && (
           <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border-2 border-gray-50">
             <div className="flex items-center gap-3 mb-6">
-              <CheckCircle2 size={22} className="text-[#2D5A27]"/>
+              <CheckCircle2 size={22} className="text-[#3F2171]"/>
               <h2 className="text-lg font-black text-gray-800 uppercase tracking-tight italic">Key Points to Remember</h2>
             </div>
             <ul className="space-y-4">
               {meta.key_points.map((point, i) => (
                 <li key={i} className="flex items-start gap-4 p-4 bg-green-50 rounded-2xl">
-                  <span className="w-7 h-7 bg-[#2D5A27] text-white rounded-xl flex items-center justify-center font-black text-xs shrink-0">{i + 1}</span>
+                  <span className="w-7 h-7 bg-[#3F2171] text-white rounded-xl flex items-center justify-center font-black text-xs shrink-0">{i + 1}</span>
                   <span className="text-gray-700 font-medium text-sm leading-relaxed">{point}</span>
                 </li>
               ))}
@@ -322,7 +322,7 @@ export default function ExternalLessonViewer() {
           <div className="text-center pt-4">
             <p className="text-gray-400 font-bold text-sm mb-6">Read the lesson above, then test your understanding:</p>
             <button onClick={() => { setCurrentQ(0); setFeedback(null); setShowQuiz(true); }}
-              className="group inline-flex items-center gap-4 bg-[#2D5A27] text-white px-14 py-7 rounded-[2.5rem] font-black uppercase text-sm tracking-widest shadow-2xl hover:bg-black transition-all border-b-4 border-green-900 active:translate-y-1 active:border-b-0">
+              className="group inline-flex items-center gap-4 bg-[#3F2171] text-white px-14 py-7 rounded-[2.5rem] font-black uppercase text-sm tracking-widest shadow-2xl hover:bg-black transition-all border-b-4 border-[#1E1038] active:translate-y-1 active:border-b-0">
               Take the Quiz ({questions.length} questions)
               <Award size={20} className="group-hover:rotate-12 transition-transform"/>
             </button>
@@ -342,13 +342,13 @@ export default function ExternalLessonViewer() {
   if (quizSubmitted && quizResults) return (
     <Layout>
       <div className="max-w-3xl mx-auto px-4 py-10 pb-32">
-        <button onClick={() => navigate(-1)} className="group flex items-center text-gray-400 hover:text-[#2D5A27] font-black uppercase tracking-widest text-[10px] mb-8 transition-all">
-          <div className="p-2 rounded-xl bg-white shadow-sm mr-3 group-hover:bg-[#2D5A27]/10"><ArrowLeft size={16}/></div>
+        <button onClick={() => navigate(-1)} className="group flex items-center text-gray-400 hover:text-[#3F2171] font-black uppercase tracking-widest text-[10px] mb-8 transition-all">
+          <div className="p-2 rounded-xl bg-white shadow-sm mr-3 group-hover:bg-[#3F2171]/10"><ArrowLeft size={16}/></div>
           Back to subject
         </button>
 
         <div className="bg-white rounded-[3.5rem] shadow-2xl border-4 border-gray-50 overflow-hidden">
-          <div className="bg-gradient-to-r from-[#2D5A27] to-[#1a3518] p-10 md:p-14 text-center">
+          <div className="bg-gradient-to-r from-[#3F2171] to-[#2A1650] p-10 md:p-14 text-center">
             <h2 className="text-4xl font-black text-white mb-2 italic uppercase tracking-tighter">Quiz Complete!</h2>
             <p className="text-white/70 font-medium text-sm">{lesson.title}</p>
           </div>
@@ -365,19 +365,19 @@ export default function ExternalLessonViewer() {
 
             {/* 🏆 Topic evaluation — shows when the whole topic is now complete */}
             {quizResults?.topic_evaluation && (
-              <div className="bg-gradient-to-br from-[#F4B400] to-yellow-500 rounded-[2rem] p-8 mb-8 text-left shadow-lg animate-in zoom-in duration-500">
-                <p className="text-[10px] font-black uppercase tracking-widest text-[#0E1C0E]/60 mb-2">🏆 Topic Complete!</p>
-                <h3 className="text-2xl font-black text-[#0E1C0E] italic uppercase tracking-tight mb-2">
+              <div className="bg-gradient-to-br from-[#FFFF00] to-yellow-500 rounded-[2rem] p-8 mb-8 text-left shadow-lg animate-in zoom-in duration-500">
+                <p className="text-[10px] font-black uppercase tracking-widest text-[#2A1650]/60 mb-2">🏆 Topic Complete!</p>
+                <h3 className="text-2xl font-black text-[#2A1650] italic uppercase tracking-tight mb-2">
                   {quizResults.topic_evaluation.topic_title}
                 </h3>
-                <p className="font-bold text-[#0E1C0E]">
+                <p className="font-bold text-[#2A1650]">
                   Topic average: {quizResults.topic_evaluation.average_score}% — {quizResults.topic_evaluation.grade_label}
                 </p>
-                <p className="text-xs font-bold text-[#0E1C0E]/60 mt-1">
+                <p className="text-xs font-bold text-[#2A1650]/60 mt-1">
                   {quizResults.topic_evaluation.lessons_completed}/{quizResults.topic_evaluation.total_lessons} lessons completed
                 </p>
                 {quizResults.topic_evaluation.weak_lessons?.length > 0 && (
-                  <p className="text-sm font-medium text-[#0E1C0E]/70 mt-3">
+                  <p className="text-sm font-medium text-[#2A1650]/70 mt-3">
                     💡 Worth revisiting: {quizResults.topic_evaluation.weak_lessons.join(", ")}
                   </p>
                 )}
@@ -406,7 +406,7 @@ export default function ExternalLessonViewer() {
             {quizResults.passed ? (
               <div className="text-center space-y-4">
                 <h3 className="text-3xl font-black text-gray-800 italic uppercase tracking-tighter">Well done, {studentName}! 🎉</h3>
-                <button onClick={() => navigate(-1)} className="w-full bg-[#2D5A27] text-white py-7 rounded-[2rem] font-black text-xl uppercase tracking-widest hover:bg-black transition-all shadow-xl">
+                <button onClick={() => navigate(-1)} className="w-full bg-[#3F2171] text-white py-7 rounded-[2rem] font-black text-xl uppercase tracking-widest hover:bg-black transition-all shadow-xl">
                   Continue Learning
                 </button>
               </div>
@@ -414,7 +414,7 @@ export default function ExternalLessonViewer() {
               <div className="text-center space-y-4">
                 <h3 className="text-3xl font-black text-gray-800 italic uppercase tracking-tighter">Keep Practising! 💪</h3>
                 <p className="text-gray-500 font-bold text-sm">Re-read the lesson then try again.</p>
-                <button onClick={resetQuiz} className="w-full bg-gray-900 text-white py-7 rounded-[2rem] font-black text-xl uppercase tracking-widest hover:bg-[#2D5A27] transition-all shadow-xl">
+                <button onClick={resetQuiz} className="w-full bg-gray-900 text-white py-7 rounded-[2rem] font-black text-xl uppercase tracking-widest hover:bg-[#3F2171] transition-all shadow-xl">
                   Try Again
                 </button>
               </div>
@@ -438,8 +438,8 @@ export default function ExternalLessonViewer() {
   return (
     <Layout>
       <div className="max-w-3xl mx-auto px-4 py-8 md:p-10 pb-32">
-        <button onClick={() => setShowQuiz(false)} className="group flex items-center text-gray-400 hover:text-[#2D5A27] font-black uppercase tracking-widest text-[10px] mb-8 transition-all">
-          <div className="p-2 rounded-xl bg-white shadow-sm mr-3 group-hover:bg-[#2D5A27]/10"><ArrowLeft size={16}/></div>
+        <button onClick={() => setShowQuiz(false)} className="group flex items-center text-gray-400 hover:text-[#3F2171] font-black uppercase tracking-widest text-[10px] mb-8 transition-all">
+          <div className="p-2 rounded-xl bg-white shadow-sm mr-3 group-hover:bg-[#3F2171]/10"><ArrowLeft size={16}/></div>
           Back to lesson
         </button>
 
@@ -447,16 +447,16 @@ export default function ExternalLessonViewer() {
         <div className="mb-8">
           <div className="flex justify-between mb-3">
             <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Question {currentQ + 1} of {questions.length}</p>
-            <p className="text-[10px] font-black uppercase tracking-widest text-[#2D5A27]">{Object.keys(userAnswers).length} answered</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-[#3F2171]">{Object.keys(userAnswers).length} answered</p>
           </div>
           <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
-            <div className="h-full bg-[#2D5A27] rounded-full transition-all duration-500" style={{ width: `${progress}%` }}/>
+            <div className="h-full bg-[#3F2171] rounded-full transition-all duration-500" style={{ width: `${progress}%` }}/>
           </div>
         </div>
 
         {/* Question */}
         <div className="bg-white rounded-[3rem] shadow-xl border-4 border-gray-50 overflow-hidden mb-6">
-          <div className="bg-gradient-to-r from-[#2D5A27] to-[#1a3518] p-8 md:p-10">
+          <div className="bg-gradient-to-r from-[#3F2171] to-[#2A1650] p-8 md:p-10">
             <p className="text-white/60 font-black uppercase text-[10px] tracking-widest mb-3">{lesson.title}</p>
             <h2 className="text-2xl md:text-3xl font-black text-white leading-tight">{q.question}</h2>
           </div>
@@ -473,12 +473,12 @@ export default function ExternalLessonViewer() {
                       ? isCorrectOpt ? "bg-green-50 border-green-400 text-green-800 scale-[1.01]"
                         : isWrong ? "bg-red-50 border-red-300 text-red-700"
                         : "bg-gray-50 border-gray-200 text-gray-400 opacity-50"
-                      : isSelected ? "bg-[#2D5A27] border-[#2D5A27] text-white shadow-lg scale-[1.01]"
-                      : "bg-white border-gray-200 text-gray-700 hover:border-[#2D5A27] hover:bg-[#2D5A27]/5"
+                      : isSelected ? "bg-[#3F2171] border-[#3F2171] text-white shadow-lg scale-[1.01]"
+                      : "bg-white border-gray-200 text-gray-700 hover:border-[#3F2171] hover:bg-[#3F2171]/5"
                   }`}>
                   <span className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm shrink-0 ${
                     feedbackOn ? isCorrectOpt ? "bg-green-500 text-white" : isWrong ? "bg-red-500 text-white" : "bg-gray-200 text-gray-400"
-                    : isSelected ? "bg-white text-[#2D5A27]" : "bg-gray-100 text-gray-500"
+                    : isSelected ? "bg-white text-[#3F2171]" : "bg-gray-100 text-gray-500"
                   }`}>
                     {feedbackOn && isCorrectOpt ? "✓" : feedbackOn && isWrong ? "✗" : String.fromCharCode(65 + i)}
                   </span>
@@ -533,13 +533,13 @@ export default function ExternalLessonViewer() {
           {feedbackOn ? (
             isLast ? (
               <button onClick={handleSubmit} disabled={submitting}
-                className="flex-1 flex items-center justify-center gap-3 bg-[#2D5A27] text-white px-8 py-5 rounded-2xl font-black uppercase text-sm tracking-widest hover:bg-black transition-all shadow-xl disabled:opacity-50">
+                className="flex-1 flex items-center justify-center gap-3 bg-[#3F2171] text-white px-8 py-5 rounded-2xl font-black uppercase text-sm tracking-widest hover:bg-black transition-all shadow-xl disabled:opacity-50">
                 {submitting ? <Loader2 size={20} className="animate-spin"/> : <Award size={20}/>}
                 {submitting ? "Submitting..." : "Submit Quiz"}
               </button>
             ) : (
               <button onClick={handleNext}
-                className="flex-1 flex items-center justify-center gap-3 bg-[#2D5A27] text-white px-8 py-5 rounded-2xl font-black uppercase text-sm tracking-widest hover:bg-black transition-all shadow-xl">
+                className="flex-1 flex items-center justify-center gap-3 bg-[#3F2171] text-white px-8 py-5 rounded-2xl font-black uppercase text-sm tracking-widest hover:bg-black transition-all shadow-xl">
                 {feedback.isCorrect ? "Next Question" : "Got it, Next"} <ChevronRight size={18}/>
               </button>
             )
@@ -555,7 +555,7 @@ export default function ExternalLessonViewer() {
           {questions.map((_, i) => (
             <button key={i} onClick={() => { if (!feedbackOn) setCurrentQ(i); }}
               className={`w-8 h-8 rounded-lg text-xs font-black transition-all ${
-                i === currentQ ? "bg-[#2D5A27] text-white"
+                i === currentQ ? "bg-[#3F2171] text-white"
                 : userAnswers[`q${i + 1}`]
                   ? userAnswers[`q${i + 1}`] === correctAnswer(questions[i])
                     ? "bg-green-100 text-green-700 border border-green-300"

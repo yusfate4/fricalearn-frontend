@@ -81,7 +81,7 @@ const Login: React.FC = () => {
       {/* 🏠 BACK TO HOME BUTTON */}
       <Link 
         to="/" 
-        className="absolute top-6 left-6 z-50 flex items-center gap-2 text-[#2D5A27] font-black uppercase tracking-widest text-[10px] bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-gray-100 shadow-sm hover:bg-[#2D5A27] hover:text-white transition-all group"
+        className="absolute top-6 left-6 z-50 flex items-center gap-2 text-[#3F2171] font-black uppercase tracking-widest text-[10px] bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-gray-100 shadow-sm hover:bg-[#3F2171] hover:text-white transition-all group"
       >
         <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
         Back to Home
@@ -127,7 +127,7 @@ const Login: React.FC = () => {
 
           {/* Success/Error Alerts */}
           {successMsg && !error && (
-            <div className="mb-6 p-4 bg-green-50 border-2 border-green-100 text-[#2D5A27] rounded-2xl flex items-center gap-3 font-black text-[11px] uppercase tracking-tight">
+            <div className="mb-6 p-4 bg-green-50 border-2 border-green-100 text-[#3F2171] rounded-2xl flex items-center gap-3 font-black text-[11px] uppercase tracking-tight">
               <Info size={18} /> {successMsg}
             </div>
           )}
@@ -145,14 +145,14 @@ const Login: React.FC = () => {
               </label>
               <div className="relative group">
                 <Mail
-                  className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#2D5A27] transition-colors"
+                  className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#3F2171] transition-colors"
                   size={18}
                 />
                 <input
                   required
                   type="email"
                   placeholder="name@fricalearn.com"
-                  className="w-full pl-14 pr-6 py-4 rounded-[2rem] border-2 border-gray-100 outline-none focus:border-[#2D5A27] transition-all font-bold text-gray-700 bg-white placeholder:text-gray-200"
+                  className="w-full pl-14 pr-6 py-4 rounded-[2rem] border-2 border-gray-100 outline-none focus:border-[#3F2171] transition-all font-bold text-gray-700 bg-white placeholder:text-gray-200"
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
@@ -163,26 +163,26 @@ const Login: React.FC = () => {
                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-400">
                   Password
                 </label>
-                <Link to="/forgot-password" title="Recover account" className="text-[9px] font-black text-[#2D5A27] uppercase tracking-widest hover:text-[#1A1A40]">
+                <Link to="/forgot-password" title="Recover account" className="text-[9px] font-black text-[#3F2171] uppercase tracking-widest hover:text-[#1A1A40]">
                   Forgot?
                 </Link>
               </div>
               <div className="relative group">
                 <Lock
-                  className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#2D5A27] transition-colors"
+                  className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#3F2171] transition-colors"
                   size={18}
                 />
                 <input
                   required
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  className="w-full pl-14 pr-14 py-4 rounded-[2rem] border-2 border-gray-100 outline-none focus:border-[#2D5A27] transition-all font-bold text-gray-700 bg-white placeholder:text-gray-200"
+                  className="w-full pl-14 pr-14 py-4 rounded-[2rem] border-2 border-gray-100 outline-none focus:border-[#3F2171] transition-all font-bold text-gray-700 bg-white placeholder:text-gray-200"
                   onChange={(e) => setPassword(e.target.value)}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-300 hover:text-[#2D5A27]"
+                  className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-300 hover:text-[#3F2171]"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -192,7 +192,7 @@ const Login: React.FC = () => {
             <button
               disabled={loading}
               type="submit"
-              className="group w-full bg-[#2D5A27] text-white py-5 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs shadow-xl hover:bg-[#1A1A40] transition-all flex items-center justify-center gap-3 mt-4"
+              className="group w-full bg-[#3F2171] text-white py-5 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs shadow-xl hover:bg-[#1A1A40] transition-all flex items-center justify-center gap-3 mt-4"
             >
               {loading ? <Loader2 className="animate-spin" size={20} /> : (
                 <>
@@ -205,7 +205,7 @@ const Login: React.FC = () => {
 
           <div className="text-center mt-8">
             <p className="text-gray-400 font-bold text-[11px] uppercase tracking-widest">
-              New to the family? <Link to="/register" className="text-[#2D5A27] font-black italic underline underline-offset-4 ml-1">Enroll Here</Link>
+              New to the family? <Link to="/register" className="text-[#3F2171] font-black italic underline underline-offset-4 ml-1">Enroll Here</Link>
             </p>
           </div>
         </div>

@@ -82,7 +82,7 @@ export default function SelectCourses() {
   if (loading)
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-white">
-        <Loader2 className="animate-spin text-[#2D5A27] mb-4" size={48} />
+        <Loader2 className="animate-spin text-[#3F2171] mb-4" size={48} />
         <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">
           Loading Subjects...
         </p>
@@ -96,10 +96,10 @@ export default function SelectCourses() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-12">
           <div className="w-full md:w-auto">
             <h1 className="text-4xl md:text-6xl font-black text-gray-800 italic uppercase tracking-tighter mb-6 leading-none">
-              Choose a <span className="text-[#2D5A27]">Subject</span>
+              Choose a <span className="text-[#3F2171]">Subject</span>
             </h1>
             <div className="inline-flex items-center gap-3 bg-white px-5 py-3 rounded-2xl border-2 border-gray-50 shadow-sm">
-              <div className="w-2 h-2 bg-[#F4B400] rounded-full animate-ping" />
+              <div className="w-2 h-2 bg-[#FFFF00] rounded-full animate-ping" />
               <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">
                 Enrolling:{" "}
                 <span className="text-gray-800">{childData.name}</span> •{" "}
@@ -116,7 +116,7 @@ export default function SelectCourses() {
                 setDiscount(0);
                 setCoupon("");
               }}
-              className={`flex-1 md:px-10 py-4 rounded-[2rem] font-black text-[10px] tracking-widest transition-all ${currency === "NGN" ? "bg-white text-[#2D5A27] shadow-lg" : "text-gray-400"}`}
+              className={`flex-1 md:px-10 py-4 rounded-[2rem] font-black text-[10px] tracking-widest transition-all ${currency === "NGN" ? "bg-white text-[#3F2171] shadow-lg" : "text-gray-400"}`}
             >
               🇳🇬 NAIRA (₦)
             </button>
@@ -126,7 +126,7 @@ export default function SelectCourses() {
                 setDiscount(0);
                 setCoupon("");
               }}
-              className={`flex-1 md:px-10 py-4 rounded-[2rem] font-black text-[10px] tracking-widest transition-all ${currency === "GBP" ? "bg-white text-[#2D5A27] shadow-lg" : "text-gray-400"}`}
+              className={`flex-1 md:px-10 py-4 rounded-[2rem] font-black text-[10px] tracking-widest transition-all ${currency === "GBP" ? "bg-white text-[#3F2171] shadow-lg" : "text-gray-400"}`}
             >
               🇬🇧 POUNDS (£)
             </button>
@@ -156,7 +156,7 @@ export default function SelectCourses() {
                 }}
                 className={`bg-white rounded-[3rem] md:rounded-[3.5rem] overflow-hidden border-4 transition-all duration-500 cursor-pointer group relative flex flex-col h-full ${
                   selectedCourse?.id === course.id
-                    ? "border-[#2D5A27] shadow-2xl -translate-y-2"
+                    ? "border-[#3F2171] shadow-2xl -translate-y-2"
                     : "border-transparent shadow-sm hover:border-gray-100"
                 }`}
               >
@@ -170,18 +170,18 @@ export default function SelectCourses() {
                     alt={course.title}
                     className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                   />
-                  <div className="absolute top-6 left-6 bg-white/95 backdrop-blur-md px-4 py-2 rounded-2xl text-[9px] font-black uppercase text-[#2D5A27] shadow-xl">
+                  <div className="absolute top-6 left-6 bg-white/95 backdrop-blur-md px-4 py-2 rounded-2xl text-[9px] font-black uppercase text-[#3F2171] shadow-xl">
                     {course.level || "Standard"}
                   </div>
                 </div>
 
                 <div className="p-8 flex flex-col flex-1">
                   <div className="mb-2">
-                    <span className="text-[8px] font-black uppercase tracking-widest text-[#F4B400] bg-orange-50 px-3 py-1.5 rounded-lg">
+                    <span className="text-[8px] font-black uppercase tracking-widest text-[#FFFF00] bg-orange-50 px-3 py-1.5 rounded-lg">
                       {course.category}
                     </span>
                   </div>
-                  <h3 className="text-2xl font-black text-gray-800 italic uppercase tracking-tighter mb-3 group-hover:text-[#2D5A27] transition-colors leading-tight">
+                  <h3 className="text-2xl font-black text-gray-800 italic uppercase tracking-tighter mb-3 group-hover:text-[#3F2171] transition-colors leading-tight">
                     {course.title}
                   </h3>
                   <p className="text-gray-400 text-[13px] font-medium leading-relaxed mb-8 line-clamp-2 italic">
@@ -193,14 +193,14 @@ export default function SelectCourses() {
                       <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest mb-1">
                         Monthly Sub
                       </p>
-                      <p className="text-3xl font-black text-[#2D5A27] italic tracking-tight">
+                      <p className="text-3xl font-black text-[#3F2171] italic tracking-tight">
                         {currency === "NGN"
                           ? `₦${Number(course.price_ngn).toLocaleString()}`
                           : `£${course.price_gbp}`}
                       </p>
                     </div>
                     {selectedCourse?.id === course.id && (
-                      <div className="bg-[#2D5A27] p-3.5 rounded-2xl text-white shadow-xl animate-in zoom-in duration-300 ring-4 ring-green-50">
+                      <div className="bg-[#3F2171] p-3.5 rounded-2xl text-white shadow-xl animate-in zoom-in duration-300 ring-4 ring-green-50">
                         <CheckCircle2 size={24} />
                       </div>
                     )}
@@ -233,12 +233,12 @@ export default function SelectCourses() {
                     placeholder="ENTER COUPON"
                     value={coupon}
                     onChange={(e) => setCoupon(e.target.value)}
-                    className="w-full pl-16 pr-6 py-5 bg-gray-50 border-2 border-gray-100 rounded-[1.5rem] outline-none focus:border-[#2D5A27] font-black text-[11px] uppercase tracking-widest transition-all shadow-inner"
+                    className="w-full pl-16 pr-6 py-5 bg-gray-50 border-2 border-gray-100 rounded-[1.5rem] outline-none focus:border-[#3F2171] font-black text-[11px] uppercase tracking-widest transition-all shadow-inner"
                   />
                 </div>
                 <button
                   onClick={handleApplyCoupon}
-                  className="bg-gray-900 text-white px-8 py-5 rounded-[1.5rem] font-black text-[11px] uppercase tracking-widest hover:bg-[#2D5A27] transition-all shadow-xl active:scale-95"
+                  className="bg-gray-900 text-white px-8 py-5 rounded-[1.5rem] font-black text-[11px] uppercase tracking-widest hover:bg-[#3F2171] transition-all shadow-xl active:scale-95"
                 >
                   Apply
                 </button>
@@ -250,7 +250,7 @@ export default function SelectCourses() {
                   <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
                     Grand Total
                   </p>
-                  <p className="text-4xl md:text-5xl font-black text-[#2D5A27] italic tracking-tighter">
+                  <p className="text-4xl md:text-5xl font-black text-[#3F2171] italic tracking-tighter">
                     {currency === "NGN"
                       ? `₦${calculateTotal().toLocaleString()}`
                       : `£${calculateTotal()}`}
@@ -267,7 +267,7 @@ export default function SelectCourses() {
                       },
                     })
                   }
-                  className="bg-[#2D5A27] text-white px-10 md:px-14 py-6 md:py-8 rounded-[2rem] md:rounded-[2.5rem] font-black uppercase text-[11px] tracking-[0.2em] shadow-2xl hover:bg-black hover:-translate-y-1 active:scale-95 transition-all flex items-center justify-center gap-4"
+                  className="bg-[#3F2171] text-white px-10 md:px-14 py-6 md:py-8 rounded-[2rem] md:rounded-[2.5rem] font-black uppercase text-[11px] tracking-[0.2em] shadow-2xl hover:bg-black hover:-translate-y-1 active:scale-95 transition-all flex items-center justify-center gap-4"
                 >
                   Checkout <ArrowRight size={22} className="hidden sm:block" />
                 </button>

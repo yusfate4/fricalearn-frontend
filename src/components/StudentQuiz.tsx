@@ -137,13 +137,13 @@ export default function StudentQuiz({
               setShowExplanation(false);
             }}
             disabled={currentIndex === 0}
-            className="p-3 disabled:opacity-20 text-[#2D5A27]"
+            className="p-3 disabled:opacity-20 text-[#3F2171]"
           >
             <ChevronLeft />
           </button>
           <div className="text-center">
             <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Syllabus Progress</span>
-            <div className="font-black text-[#2D5A27] text-xl">
+            <div className="font-black text-[#3F2171] text-xl">
               {currentIndex + 1} <span className="text-gray-300">/</span> {questions.length}
             </div>
           </div>
@@ -153,7 +153,7 @@ export default function StudentQuiz({
               setShowExplanation(false);
             }}
             disabled={!hasAnswered || currentIndex + 1 >= questions.length}
-            className="p-3 disabled:opacity-20 text-[#2D5A27]"
+            className="p-3 disabled:opacity-20 text-[#3F2171]"
           >
             <ChevronRight />
           </button>
@@ -164,7 +164,7 @@ export default function StudentQuiz({
         {/* LEFT: QUESTION */}
         <div className={`bg-white p-6 md:p-12 rounded-[2.5rem] md:rounded-[3rem] shadow-xl border-4 border-white transition-all duration-500 ${showExplanation ? "opacity-30 blur-sm pointer-events-none lg:opacity-100 lg:blur-0 lg:pointer-events-auto" : ""}`}>
           <div className="mb-6 flex items-center gap-2">
-             <div className="h-1.5 w-10 bg-[#2D5A27] rounded-full"></div>
+             <div className="h-1.5 w-10 bg-[#3F2171] rounded-full"></div>
              <span className="text-[10px] font-black text-gray-300 uppercase italic">Weekly Quiz</span>
           </div>
           
@@ -202,7 +202,7 @@ export default function StudentQuiz({
 
         {/* RIGHT: EXPLANATION (OLUKO'S REVIEW) */}
         {showExplanation && (
-          <div className="bg-white p-6 md:p-10 rounded-[2.5rem] md:rounded-[3rem] shadow-2xl border-4 border-[#2D5A27]/10 animate-in slide-in-from-bottom-10 duration-500">
+          <div className="bg-white p-6 md:p-10 rounded-[2.5rem] md:rounded-[3rem] shadow-2xl border-4 border-[#3F2171]/10 animate-in slide-in-from-bottom-10 duration-500">
             <div className="flex items-center gap-3 text-red-500 mb-8">
               <AlertCircle size={28} />
               <span className="font-black uppercase italic text-xl tracking-tighter">Olukọ's Feedback</span>
@@ -229,7 +229,7 @@ export default function StudentQuiz({
                   finishQuiz(score);
                 }
               }}
-              className="w-full bg-[#2D5A27] text-white py-6 md:py-8 rounded-[2rem] font-black text-xl md:text-2xl flex justify-center items-center gap-4 shadow-xl shadow-green-900/20 hover:bg-black hover:-translate-y-1 transition-all duration-300"
+              className="w-full bg-[#3F2171] text-white py-6 md:py-8 rounded-[2rem] font-black text-xl md:text-2xl flex justify-center items-center gap-4 shadow-xl shadow-green-900/20 hover:bg-black hover:-translate-y-1 transition-all duration-300"
             >
               CONTINUE JOURNEY <ArrowRight size={28} />
             </button>

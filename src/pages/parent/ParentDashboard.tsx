@@ -55,7 +55,7 @@ export default function ParentDashboard() {
     return (
       <Layout>
         <div className="flex flex-col items-center justify-center h-[60vh]">
-          <Loader2 className="animate-spin text-[#2D5A27] mb-4" size={40} />
+          <Loader2 className="animate-spin text-[#3F2171] mb-4" size={40} />
           <p className="font-black text-gray-300 uppercase italic text-[10px] tracking-widest">
             Opening the Vault...
           </p>
@@ -77,7 +77,7 @@ export default function ParentDashboard() {
 
             <div className="flex flex-wrap items-center gap-3 mt-6">
               <div className="bg-white px-4 py-2 rounded-xl border-2 border-gray-50 shadow-sm flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-[#2D5A27] animate-pulse"></div>
+                <div className="w-2 h-2 rounded-full bg-[#3F2171] animate-pulse"></div>
                 <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-gray-500">
                   {data?.stats?.active_students || 0} Students Active
                 </span>
@@ -102,9 +102,9 @@ export default function ParentDashboard() {
             </Link>
             <button
               onClick={() => navigate("/onboarding/step1")} 
-              className="group flex items-center justify-center gap-4 bg-[#2D5A27] text-white px-10 py-5 rounded-2xl md:rounded-[2.5rem] font-black uppercase text-[10px] md:text-[11px] tracking-widest shadow-2xl hover:bg-black transition-all border-b-4 border-green-900 active:translate-y-1 active:border-b-0"
+              className="group flex items-center justify-center gap-4 bg-[#3F2171] text-white px-10 py-5 rounded-2xl md:rounded-[2.5rem] font-black uppercase text-[10px] md:text-[11px] tracking-widest shadow-2xl hover:bg-black transition-all border-b-4 border-[#1E1038] active:translate-y-1 active:border-b-0"
             >
-              <PlusCircle size={20} className="text-[#F4B400] group-hover:rotate-90 transition-transform" />
+              <PlusCircle size={20} className="text-[#FFFF00] group-hover:rotate-90 transition-transform" />
               Add Your Kids
             </button>
           </div>
@@ -158,7 +158,7 @@ export default function ParentDashboard() {
                         </div>
 
                         <div className="flex items-center gap-4 mb-6">
-                            <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-[#2D5A27] shadow-inner">
+                            <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-[#3F2171] shadow-inner">
                                 <User size={24} />
                             </div>
                             <h3 className="text-2xl md:text-3xl font-black text-gray-800 uppercase italic tracking-tighter truncate">
@@ -170,7 +170,7 @@ export default function ParentDashboard() {
                             {courseNames.length > 0 ? (
                               courseNames.map((courseName: string, idx: number) => (
                                 <p key={idx} className="text-gray-400 font-black text-[9px] uppercase tracking-widest flex items-center gap-2">
-                                  <span className="w-4 h-[3px] bg-[#2D5A27] rounded-full"></span>{" "}
+                                  <span className="w-4 h-[3px] bg-[#3F2171] rounded-full"></span>{" "}
                                   {courseName}
                                 </p>
                               ))
@@ -194,7 +194,7 @@ export default function ParentDashboard() {
                           }}
                           className={`mt-10 w-full py-6 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all shadow-xl ${
                             hasEnrollments
-                              ? "bg-gray-900 text-white hover:bg-[#2D5A27]"
+                              ? "bg-gray-900 text-white hover:bg-[#3F2171]"
                               : "bg-red-50 text-red-400 border-2 border-red-100 cursor-not-allowed"
                           }`}
                         >

@@ -42,7 +42,7 @@ const VerifyNotice: React.FC = () => {
     <div className="min-h-screen bg-[#FDFCF6] flex items-center justify-center p-6 relative overflow-hidden font-sans">
       
       {/* Background Decorative Elements */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-[#2D5A27] rounded-full opacity-[0.03] -mr-48 -mt-48"></div>
+      <div className="absolute top-0 right-0 w-96 h-96 bg-[#3F2171] rounded-full opacity-[0.03] -mr-48 -mt-48"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#1A1A40] rounded-full opacity-[0.03] -ml-48 -mb-48"></div>
 
       <div className="w-full max-w-xl relative">
@@ -61,7 +61,7 @@ const VerifyNotice: React.FC = () => {
           {/* Header Icon */}
           <div className="flex justify-center mb-8">
             <div className="relative">
-              <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center text-[#2D5A27] animate-pulse">
+              <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center text-[#3F2171] animate-pulse">
                 <Mail size={40} />
               </div>
               <div className="absolute -bottom-2 -right-2 bg-white p-1 rounded-full shadow-lg">
@@ -71,7 +71,7 @@ const VerifyNotice: React.FC = () => {
           </div>
 
           <h1 className="text-4xl font-black text-[#1A1A40] italic uppercase tracking-tighter mb-4 leading-tight">
-            Verify Your <br /> <span className="text-[#2D5A27]">Academy Access</span>
+            Verify Your <br /> <span className="text-[#3F2171]">Academy Access</span>
           </h1>
           
           <p className="text-gray-500 font-medium mb-10 leading-relaxed">
@@ -82,7 +82,7 @@ const VerifyNotice: React.FC = () => {
           {/* Feedback Messages */}
           {status && (
             <div className={`mb-8 p-4 rounded-2xl flex items-center justify-center gap-3 font-black text-[10px] uppercase tracking-wider animate-in fade-in slide-in-from-top-2 ${
-              status.type === 'success' ? 'bg-green-50 text-[#2D5A27] border border-green-100' : 'bg-red-50 text-red-600 border border-red-100'
+              status.type === 'success' ? 'bg-green-50 text-[#3F2171] border border-green-100' : 'bg-red-50 text-red-600 border border-red-100'
             }`}>
               {status.type === 'success' ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
               {status.msg}
@@ -93,7 +93,7 @@ const VerifyNotice: React.FC = () => {
             {/* Primary Action */}
             <button
               onClick={() => window.location.href = "https://mail.google.com"}
-              className="w-full py-5 bg-[#1A1A40] text-white rounded-[2rem] font-black uppercase tracking-widest text-xs shadow-xl hover:bg-[#2D5A27] transition-all flex items-center justify-center gap-3 group"
+              className="w-full py-5 bg-[#1A1A40] text-white rounded-[2rem] font-black uppercase tracking-widest text-xs shadow-xl hover:bg-[#3F2171] transition-all flex items-center justify-center gap-3 group"
             >
               Open Mailbox
               <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
@@ -116,7 +116,7 @@ const VerifyNotice: React.FC = () => {
 
           <div className="mt-12 pt-8 border-t border-gray-50">
             <p className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-300">
-              Need help? <a href="mailto:hello@fricalearn.com" className="text-[#2D5A27] hover:underline">Contact Support</a>
+              Need help? <a href="mailto:hello@fricalearn.com" className="text-[#3F2171] hover:underline">Contact Support</a>
             </p>
           </div>
         </div>

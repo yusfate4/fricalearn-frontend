@@ -57,7 +57,7 @@ const VerifyEmailHandler: React.FC = () => {
           {status === 'loading' && (
             <div className="animate-in fade-in duration-500">
               <div className="flex justify-center mb-8">
-                <Loader2 className="text-[#2D5A27] animate-spin" size={60} />
+                <Loader2 className="text-[#3F2171] animate-spin" size={60} />
               </div>
               <h2 className="text-2xl font-black text-[#1A1A40] uppercase italic tracking-tighter mb-4">
                 Authenticating...
@@ -72,7 +72,7 @@ const VerifyEmailHandler: React.FC = () => {
           {status === 'success' && (
             <div className="animate-in zoom-in duration-500">
               <div className="flex justify-center mb-8">
-                <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center text-[#2D5A27]">
+                <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center text-[#3F2171]">
                   <PartyPopper size={48} className="animate-bounce" />
                 </div>
               </div>
@@ -82,7 +82,7 @@ const VerifyEmailHandler: React.FC = () => {
               <p className="text-gray-600 font-medium mb-8 leading-relaxed">
                 {message}
               </p>
-              <div className="flex items-center justify-center gap-2 text-[#2D5A27] font-black text-[10px] uppercase tracking-widest">
+              <div className="flex items-center justify-center gap-2 text-[#3F2171] font-black text-[10px] uppercase tracking-widest">
                 Redirecting to Login <Loader2 size={14} className="animate-spin" />
               </div>
             </div>

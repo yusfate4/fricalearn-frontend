@@ -35,7 +35,7 @@ export default function AdminPaymentHistory() {
             </div>
             <div>
               <h1 className="text-4xl font-black text-gray-800 italic uppercase tracking-tighter">
-                Enrollment <span className="text-[#2D5A27]">History</span>
+                Enrollment <span className="text-[#3F2171]">History</span>
               </h1>
               <p className="text-gray-400 font-bold text-[10px] uppercase tracking-widest mt-1">
                 Audit log of all processed student payments
@@ -53,7 +53,7 @@ export default function AdminPaymentHistory() {
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20">
-            <Loader2 className="animate-spin text-[#2D5A27] mb-4" size={40} />
+            <Loader2 className="animate-spin text-[#3F2171] mb-4" size={40} />
             <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">Fetching Audit Logs...</p>
           </div>
         ) : history.length > 0 ? (
@@ -84,7 +84,7 @@ export default function AdminPaymentHistory() {
                           {h.course?.title || "Course #" + h.course_id}
                         </span>
                       </td>
-                      <td className="p-6 font-black text-[#2D5A27] text-lg italic">
+                      <td className="p-6 font-black text-[#3F2171] text-lg italic">
                         {h.currency} {Number(h.amount).toLocaleString()}
                       </td>
                       <td className="p-6">

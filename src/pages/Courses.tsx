@@ -134,10 +134,10 @@ const Courses = () => {
           <div>
             <h2 className="text-4xl md:text-5xl font-black text-gray-800 tracking-tighter italic uppercase leading-none">
               My{" "}
-              <span className="text-[#2D5A27]">Courses</span>
+              <span className="text-[#3F2171]">Courses</span>
             </h2>
             <div className="text-gray-400 font-bold mt-4 uppercase text-[10px] tracking-[0.3em] flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-[#2D5A27] animate-pulse"></div>
+              <div className="w-2 h-2 rounded-full bg-[#3F2171] animate-pulse"></div>
               <span>Your Active Learning Paths</span>
             </div>
           </div>
@@ -145,7 +145,7 @@ const Courses = () => {
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20">
-            <Loader2 className="animate-spin text-[#2D5A27] mb-4" size={40} />
+            <Loader2 className="animate-spin text-[#3F2171] mb-4" size={40} />
             <p className="text-[10px] font-black uppercase text-gray-300 tracking-[0.3em]">
               Gathering Materials...
             </p>
@@ -157,13 +157,13 @@ const Courses = () => {
               <div className="mb-20">
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center gap-3">
-                    <GraduationCap size={24} className="text-[#2D5A27]" />
+                    <GraduationCap size={24} className="text-[#3F2171]" />
                     <h3 className="text-3xl font-black text-gray-800 italic uppercase tracking-tighter">
                       UK Curriculum
                     </h3>
                     {/* 🎁 Trial chip — only while on trial */}
                     {trialStatus?.on_trial && (
-                      <span className="bg-[#F4B400]/15 text-[#b8860b] border border-[#F4B400]/40 px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest">
+                      <span className="bg-[#FFFF00]/15 text-[#b8860b] border border-[#FFFF00]/40 px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest">
                         🎁 Free Trial — {trialStatus.trial_days_left} day{trialStatus.trial_days_left !== 1 ? "s" : ""} left
                       </span>
                     )}
@@ -175,7 +175,7 @@ const Courses = () => {
                     <div
                       key={subject.id}
                       onClick={() => handleExternalSubjectClick(subject.id)}
-                      className="group relative bg-gradient-to-br from-[#2D5A27] to-[#1a3518] rounded-[2.5rem] overflow-hidden shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer p-8 md:p-10"
+                      className="group relative bg-gradient-to-br from-[#3F2171] to-[#2A1650] rounded-[2.5rem] overflow-hidden shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer p-8 md:p-10"
                     >
                       <div className="absolute top-0 right-0 text-[120px] opacity-10 pointer-events-none">
                         {getSubjectIcon(subject.name)}
@@ -186,7 +186,7 @@ const Courses = () => {
                           <span className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border border-white/30">
                             {subject.key_stage} • Year {subject.year_group}
                           </span>
-                          <GraduationCap className="text-[#F4B400]" size={28} />
+                          <GraduationCap className="text-[#FFFF00]" size={28} />
                         </div>
 
                         <h4 className="text-3xl md:text-4xl font-black text-white mb-4 italic uppercase tracking-tight">
@@ -204,7 +204,7 @@ const Courses = () => {
                             </p>
                             <div className="w-full h-2 bg-white/20 rounded-full overflow-hidden">
                               <div
-                                className="h-full bg-[#F4B400] transition-all duration-500"
+                                className="h-full bg-[#FFFF00] transition-all duration-500"
                                 style={{
                                   width: `${subject.pivot.progress_percentage}%`,
                                 }}
@@ -232,7 +232,7 @@ const Courses = () => {
                   African Language Courses
                 </h3>
                 {/* Languages are never gated */}
-                <span className="bg-green-50 text-[#2D5A27] border border-green-100 px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest">
+                <span className="bg-green-50 text-[#3F2171] border border-green-100 px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest">
                   Free Forever
                 </span>
               </div>
@@ -284,11 +284,11 @@ const Courses = () => {
 
                       <div className="mt-auto flex items-center justify-between border-t border-gray-50 pt-8">
                         <div className="flex items-center gap-4 text-gray-400 font-black text-[10px] uppercase tracking-widest">
-                          <Layers size={14} className="text-[#2D5A27]" />
+                          <Layers size={14} className="text-[#3F2171]" />
                           <span>{course.modules_count || 0} Modules</span>
                         </div>
 
-                        <div className="w-12 h-12 rounded-[1.2rem] bg-gray-900 group-hover:bg-[#2D5A27] flex items-center justify-center transition-all duration-500 shadow-lg">
+                        <div className="w-12 h-12 rounded-[1.2rem] bg-gray-900 group-hover:bg-[#3F2171] flex items-center justify-center transition-all duration-500 shadow-lg">
                           <ChevronRight className="text-white" size={20} />
                         </div>
                       </div>
@@ -300,7 +300,7 @@ const Courses = () => {
               <div className="text-center py-32 bg-gray-50 rounded-[4rem] border-4 border-dashed border-gray-100 max-w-2xl mx-auto">
                 <AlertCircle
                   size={40}
-                  className="text-[#2D5A27] opacity-40 mx-auto mb-8"
+                  className="text-[#3F2171] opacity-40 mx-auto mb-8"
                 />
                 <h3 className="text-3xl font-black text-gray-800 mb-4 italic uppercase tracking-tighter">
                   No courses found
@@ -311,7 +311,7 @@ const Courses = () => {
                 </p>
                 <button
                   onClick={() => navigate("/dashboard")}
-                  className="px-8 py-4 bg-gray-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-[#2D5A27] transition-all"
+                  className="px-8 py-4 bg-gray-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-[#3F2171] transition-all"
                 >
                   Back to Dashboard
                 </button>

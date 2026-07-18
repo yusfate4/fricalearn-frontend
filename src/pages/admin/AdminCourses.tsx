@@ -107,7 +107,7 @@ export default function AdminCourses() {
               Course Cover Image{" "}
               {formData.id && "(Leave blank to keep current)"}
             </label>
-            <label className="flex flex-col items-center justify-center w-full h-48 border-4 border-dashed border-gray-100 rounded-[2rem] cursor-pointer hover:border-[#2D5A27] transition-all bg-gray-50/50">
+            <label className="flex flex-col items-center justify-center w-full h-48 border-4 border-dashed border-gray-100 rounded-[2rem] cursor-pointer hover:border-[#3F2171] transition-all bg-gray-50/50">
               <input
                 type="file"
                 className="hidden"
@@ -135,7 +135,7 @@ export default function AdminCourses() {
                 type="text"
                 value={formData.title}
                 placeholder="e.g. Yoruba for Kids"
-                className="w-full p-5 bg-gray-50 rounded-2xl outline-none focus:ring-4 ring-[#2D5A27]/5 font-bold text-gray-700"
+                className="w-full p-5 bg-gray-50 rounded-2xl outline-none focus:ring-4 ring-[#3F2171]/5 font-bold text-gray-700"
                 onChange={(e) =>
                   setFormData({ ...formData, title: e.target.value })
                 }
@@ -148,7 +148,7 @@ export default function AdminCourses() {
               </label>
               <select
                 value={formData.level}
-                className="w-full p-5 bg-gray-50 rounded-2xl font-bold outline-none border-2 border-transparent focus:border-[#2D5A27]"
+                className="w-full p-5 bg-gray-50 rounded-2xl font-bold outline-none border-2 border-transparent focus:border-[#3F2171]"
                 onChange={(e) =>
                   setFormData({ ...formData, level: e.target.value })
                 }
@@ -165,7 +165,7 @@ export default function AdminCourses() {
               </label>
               <select
                 value={formData.category}
-                className="w-full p-5 bg-gray-50 rounded-2xl font-bold outline-none border-2 border-transparent focus:border-[#2D5A27]"
+                className="w-full p-5 bg-gray-50 rounded-2xl font-bold outline-none border-2 border-transparent focus:border-[#3F2171]"
                 onChange={(e) =>
                   setFormData({ ...formData, category: e.target.value })
                 }
@@ -184,7 +184,7 @@ export default function AdminCourses() {
               </label>
               <select
                 value={formData.subject}
-                className="w-full p-5 bg-gray-50 rounded-2xl font-bold outline-none border-2 border-transparent focus:border-[#2D5A27]"
+                className="w-full p-5 bg-gray-50 rounded-2xl font-bold outline-none border-2 border-transparent focus:border-[#3F2171]"
                 onChange={(e) =>
                   setFormData({ ...formData, subject: e.target.value })
                 }
@@ -262,7 +262,7 @@ export default function AdminCourses() {
           <button
             disabled={loading}
             type="submit"
-            className="w-full bg-[#2D5A27] text-white py-6 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs shadow-2xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-4 disabled:opacity-50"
+            className="w-full bg-[#3F2171] text-white py-6 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs shadow-2xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-4 disabled:opacity-50"
           >
             {loading ? (
               <Loader2 className="animate-spin" size={24} />

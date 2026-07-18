@@ -43,7 +43,7 @@ export default function Leaderboard() {
               size={64}
               className="md:w-20 md:h-20 mx-auto text-yellow-500 mb-4 drop-shadow-lg"
             />
-            <div className="absolute -top-1 -right-1 bg-[#2D5A27] text-white text-[8px] md:text-[10px] font-black px-2 py-0.5 md:px-3 md:py-1 rounded-full animate-bounce uppercase tracking-tighter">
+            <div className="absolute -top-1 -right-1 bg-[#3F2171] text-white text-[8px] md:text-[10px] font-black px-2 py-0.5 md:px-3 md:py-1 rounded-full animate-bounce uppercase tracking-tighter">
               LIVE
             </div>
           </div>
@@ -59,7 +59,7 @@ export default function Leaderboard() {
         <div className="bg-white rounded-[2rem] md:rounded-[3.5rem] shadow-2xl overflow-hidden border-2 md:border-4 border-white animate-in zoom-in duration-500">
           {loading ? (
             <div className="p-20 md:p-32 flex flex-col items-center justify-center">
-              <Loader2 className="w-10 h-10 text-[#2D5A27] animate-spin mb-4" />
+              <Loader2 className="w-10 h-10 text-[#3F2171] animate-spin mb-4" />
               <p className="font-black text-gray-300 italic uppercase tracking-widest text-[10px]">
                 Syncing Global Scores...
               </p>
@@ -104,7 +104,7 @@ export default function Leaderboard() {
                         {studentName}
                       </h3>
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="px-2 py-0.5 bg-[#2D5A27]/10 text-[#2D5A27] text-[8px] font-black rounded-md uppercase tracking-widest whitespace-nowrap">
+                        <span className="px-2 py-0.5 bg-[#3F2171]/10 text-[#3F2171] text-[8px] font-black rounded-md uppercase tracking-widest whitespace-nowrap">
                           {track}
                         </span>
                         <span className="text-[8px] text-orange-500 font-black uppercase italic tracking-widest whitespace-nowrap">
@@ -117,7 +117,7 @@ export default function Leaderboard() {
                   {/* Points Section */}
                   <div className="text-right flex-shrink-0 ml-4">
                     <div className="flex items-center justify-end gap-1 md:gap-2">
-                      <p className="text-xl md:text-4xl font-black text-[#2D5A27] italic tracking-tighter">
+                      <p className="text-xl md:text-4xl font-black text-[#3F2171] italic tracking-tighter">
                         {totalPoints.toLocaleString()}
                       </p>
                       <span className="text-[8px] md:text-[10px] font-black text-gray-300 uppercase italic">
@@ -150,7 +150,7 @@ export default function Leaderboard() {
               </p>
               <button
                 onClick={() => (window.location.href = "/courses")}
-                className="bg-[#2D5A27] text-white px-8 py-4 rounded-xl font-black uppercase text-[10px] tracking-widest hover:scale-105 transition-all shadow-xl"
+                className="bg-[#3F2171] text-white px-8 py-4 rounded-xl font-black uppercase text-[10px] tracking-widest hover:scale-105 transition-all shadow-xl"
               >
                 Go Earn Some XP
               </button>

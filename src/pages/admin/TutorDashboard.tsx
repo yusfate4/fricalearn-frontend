@@ -67,7 +67,7 @@ export default function TutorDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border-2 border-gray-50">
             <h3 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-6 flex items-center gap-2">
-              <PlusCircle size={16} className="text-[#2D5A27]" /> Rapid Launch
+              <PlusCircle size={16} className="text-[#3F2171]" /> Rapid Launch
             </h3>
             <div className="space-y-4">
               <ActionLink to="/admin/add-lesson" label="Upload New Lesson" desc="Add videos or worksheets" color="bg-orange-50 text-orange-700" />

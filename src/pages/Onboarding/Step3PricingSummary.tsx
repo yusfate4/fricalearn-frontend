@@ -96,7 +96,7 @@ export default function Step3PricingSummary() {
     return (
       <Layout>
         <div className="flex flex-col items-center justify-center h-[60vh]">
-          <Loader2 className="animate-spin text-[#2D5A27] mb-4" size={40} />
+          <Loader2 className="animate-spin text-[#3F2171] mb-4" size={40} />
           <p className="font-black text-gray-300 uppercase italic text-[10px] tracking-widest">
             Calculating Pricing...
           </p>
@@ -111,9 +111,9 @@ export default function Step3PricingSummary() {
         {/* Header */}
         <button
           onClick={() => navigate(-1)}
-          className="group flex items-center gap-2 text-gray-400 hover:text-[#2D5A27] transition-colors mb-8"
+          className="group flex items-center gap-2 text-gray-400 hover:text-[#3F2171] transition-colors mb-8"
         >
-          <div className="p-2 bg-gray-50 rounded-xl group-hover:bg-[#2D5A27]/10">
+          <div className="p-2 bg-gray-50 rounded-xl group-hover:bg-[#3F2171]/10">
             <ChevronLeft size={20} />
           </div>
           <span className="text-[10px] font-black uppercase tracking-[0.2em]">Back</span>
@@ -124,7 +124,7 @@ export default function Step3PricingSummary() {
             Step 3 of 4
           </p>
           <h1 className="text-4xl md:text-6xl font-black text-gray-800 italic uppercase tracking-tighter leading-tight mb-4">
-            Pricing <span className="text-[#2D5A27]">Summary</span>
+            Pricing <span className="text-[#3F2171]">Summary</span>
           </h1>
           <p className="text-gray-500 font-bold text-sm md:text-base max-w-2xl">
             Review your selections and total investment
@@ -141,8 +141,8 @@ export default function Step3PricingSummary() {
                 {currency === "NGN" ? "Nigerian Naira" : "British Pounds"}
               </span>
             </div>
-            <div className="inline-flex items-center gap-2 bg-[#2D5A27]/10 px-4 py-2 rounded-2xl">
-              <span className="text-[10px] font-black uppercase tracking-widest text-[#2D5A27]">
+            <div className="inline-flex items-center gap-2 bg-[#3F2171]/10 px-4 py-2 rounded-2xl">
+              <span className="text-[10px] font-black uppercase tracking-widest text-[#3F2171]">
                 {isNigerian ? "NERDC Curriculum" : "Oak National Academy"}
               </span>
             </div>
@@ -158,7 +158,7 @@ export default function Step3PricingSummary() {
               >
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
-                    <CheckCircle2 size={20} className="text-[#2D5A27] flex-shrink-0" />
+                    <CheckCircle2 size={20} className="text-[#3F2171] flex-shrink-0" />
                     <h3 className="text-lg md:text-xl font-black text-gray-800 uppercase tracking-tight">
                       {getCourseFullName(item.course)}
                     </h3>
@@ -172,8 +172,8 @@ export default function Step3PricingSummary() {
 
                   {item.is_free && (
                     <div className="flex items-center gap-2 mt-2 ml-8">
-                      <Award size={14} className="text-[#F4B400]" />
-                      <span className="text-[9px] font-black uppercase tracking-widest text-[#F4B400]">
+                      <Award size={14} className="text-[#FFFF00]" />
+                      <span className="text-[9px] font-black uppercase tracking-widest text-[#FFFF00]">
                         Full Scholarship Applied
                       </span>
                     </div>
@@ -186,7 +186,7 @@ export default function Step3PricingSummary() {
                       <p className="text-gray-400 text-sm line-through mb-1">
                         {getOriginalPrice()}
                       </p>
-                      <p className="text-2xl font-black text-[#2D5A27] italic">FREE</p>
+                      <p className="text-2xl font-black text-[#3F2171] italic">FREE</p>
                     </div>
                   ) : (
                     <p className="text-2xl font-black text-gray-800 italic">
@@ -211,7 +211,7 @@ export default function Step3PricingSummary() {
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-4xl md:text-5xl font-black text-[#2D5A27] italic">
+                <p className="text-4xl md:text-5xl font-black text-[#3F2171] italic">
                   {currency === "NGN" ? "₦" : "£"}
                   {total.toLocaleString()}
                 </p>
@@ -224,7 +224,7 @@ export default function Step3PricingSummary() {
         </div>
 
         {/* Benefits */}
-        <div className="bg-gradient-to-br from-[#2D5A27] to-[#1a3318] rounded-[2.5rem] p-8 md:p-10 text-white mb-32">
+        <div className="bg-gradient-to-br from-[#3F2171] to-[#2A1650] rounded-[2.5rem] p-8 md:p-10 text-white mb-32">
           <h3 className="text-xl md:text-2xl font-black italic uppercase tracking-tight mb-6">
             ✨ What's Included:
           </h3>
@@ -236,7 +236,7 @@ export default function Step3PricingSummary() {
               "Gamification with points, badges & rewards",
             ].map((benefit) => (
               <div key={benefit} className="flex items-center gap-3">
-                <CheckCircle2 size={20} className="text-[#F4B400] flex-shrink-0" />
+                <CheckCircle2 size={20} className="text-[#FFFF00] flex-shrink-0" />
                 <p className="text-sm font-bold">{benefit}</p>
               </div>
             ))}
@@ -248,7 +248,7 @@ export default function Step3PricingSummary() {
           <div className="max-w-4xl mx-auto">
             <button
               onClick={handleContinue}
-              className="group flex items-center justify-center gap-4 bg-[#2D5A27] text-white px-10 py-6 rounded-[2.5rem] font-black uppercase text-[11px] tracking-widest shadow-2xl hover:bg-black transition-all border-b-4 border-green-900 active:translate-y-1 active:border-b-0 w-full"
+              className="group flex items-center justify-center gap-4 bg-[#3F2171] text-white px-10 py-6 rounded-[2.5rem] font-black uppercase text-[11px] tracking-widest shadow-2xl hover:bg-black transition-all border-b-4 border-[#1E1038] active:translate-y-1 active:border-b-0 w-full"
             >
               Proceed to Payment
               <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />

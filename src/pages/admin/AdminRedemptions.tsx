@@ -79,7 +79,7 @@ export default function AdminRedemptions() {
             <p className="text-gray-500 font-bold text-sm mb-8 leading-relaxed">{modal.message}</p>
             <button 
               onClick={() => setModal({ ...modal, show: false })} 
-              className="w-full py-5 bg-gray-900 text-white rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-[#2D5A27] transition-all"
+              className="w-full py-5 bg-gray-900 text-white rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-[#3F2171] transition-all"
             >
               Close Record
             </button>
@@ -90,11 +90,11 @@ export default function AdminRedemptions() {
       <div className="max-w-7xl mx-auto p-6 md:p-12">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
           <div className="flex items-center gap-4">
-            <div className="bg-[#2D5A27] p-5 rounded-[2rem] text-white shadow-xl">
+            <div className="bg-[#3F2171] p-5 rounded-[2rem] text-white shadow-xl">
               <PackageCheck size={36} />
             </div>
             <div>
-              <h1 className="text-4xl md:text-5xl font-black text-gray-800 italic uppercase tracking-tighter">Order <span className="text-[#2D5A27]">Fulfillment</span></h1>
+              <h1 className="text-4xl md:text-5xl font-black text-gray-800 italic uppercase tracking-tighter">Order <span className="text-[#3F2171]">Fulfillment</span></h1>
               <p className="text-gray-400 font-bold text-[10px] uppercase tracking-widest mt-1">Review student maturity & reward eligibility</p>
             </div>
           </div>
@@ -102,17 +102,17 @@ export default function AdminRedemptions() {
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-32">
-            <Loader2 className="animate-spin text-[#2D5A27]" size={48} />
+            <Loader2 className="animate-spin text-[#3F2171]" size={48} />
             <p className="mt-4 font-black text-gray-300 uppercase italic text-[10px] tracking-widest">Loading Ledger...</p>
           </div>
         ) : (
           <div className="space-y-6">
             {redemptions.length > 0 ? (
               redemptions.map((r) => (
-                <div key={r.id} className="bg-white rounded-[3rem] border-2 border-gray-100 p-8 md:p-10 flex flex-col md:flex-row items-center justify-between group hover:border-[#2D5A27] transition-all duration-300 shadow-sm">
+                <div key={r.id} className="bg-white rounded-[3rem] border-2 border-gray-100 p-8 md:p-10 flex flex-col md:flex-row items-center justify-between group hover:border-[#3F2171] transition-all duration-300 shadow-sm">
                   
                   <div className="flex flex-col md:flex-row items-center gap-8 text-center md:text-left flex-1">
-                    <div className="w-24 h-24 bg-gray-50 rounded-[2rem] flex items-center justify-center text-[#2D5A27] border-2 border-white shadow-inner">
+                    <div className="w-24 h-24 bg-gray-50 rounded-[2rem] flex items-center justify-center text-[#3F2171] border-2 border-white shadow-inner">
                       <Gift size={40} />
                     </div>
                     
@@ -130,7 +130,7 @@ export default function AdminRedemptions() {
                       
                       <div className="flex flex-wrap items-center gap-6 text-gray-400 font-bold text-[10px] uppercase tracking-widest justify-center md:justify-start">
                         <span className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-xl text-gray-600">
-                          <User size={14} className="text-[#2D5A27]" /> {r.student?.name}
+                          <User size={14} className="text-[#3F2171]" /> {r.student?.name}
                         </span>
                         <span className="flex items-center gap-2">
                           <Calendar size={14} /> Requested: {new Date(r.created_at).toLocaleDateString()}
@@ -144,7 +144,7 @@ export default function AdminRedemptions() {
                       <button
                         onClick={() => handleFulfill(r.id)}
                         disabled={processingId === r.id}
-                        className="px-12 py-6 bg-gray-900 text-white rounded-[1.5rem] font-black text-[11px] uppercase tracking-widest hover:bg-[#2D5A27] transition-all shadow-xl active:scale-95 disabled:opacity-50"
+                        className="px-12 py-6 bg-gray-900 text-white rounded-[1.5rem] font-black text-[11px] uppercase tracking-widest hover:bg-[#3F2171] transition-all shadow-xl active:scale-95 disabled:opacity-50"
                       >
                         {processingId === r.id ? <Loader2 className="animate-spin" size={16} /> : "Verify & Fulfill"}
                       </button>

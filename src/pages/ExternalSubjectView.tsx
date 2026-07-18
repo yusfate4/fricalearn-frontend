@@ -56,7 +56,7 @@ export default function ExternalSubjectView() {
     <Layout>
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-[#2D5A27] border-t-transparent rounded-full animate-spin mx-auto mb-6"/>
+          <div className="w-16 h-16 border-4 border-[#3F2171] border-t-transparent rounded-full animate-spin mx-auto mb-6"/>
           <p className="font-black text-gray-400 uppercase tracking-widest text-sm">Loading Subject...</p>
         </div>
       </div>
@@ -67,7 +67,7 @@ export default function ExternalSubjectView() {
     <Layout>
       <div className="p-20 text-center">
         <h2 className="text-red-500 font-black uppercase text-xl mb-4">Subject Not Found</h2>
-        <button onClick={() => navigate("/external-subjects")} className="text-[#2D5A27] font-bold underline">
+        <button onClick={() => navigate("/external-subjects")} className="text-[#3F2171] font-bold underline">
           Return to Subjects
         </button>
       </div>
@@ -93,8 +93,8 @@ export default function ExternalSubjectView() {
 
         {/* Back */}
         <button onClick={() => navigate("/external-subjects")}
-          className="group flex items-center gap-2 text-gray-400 hover:text-[#2D5A27] mb-8 transition-all font-black uppercase text-[10px] tracking-widest">
-          <div className="p-2 rounded-xl bg-white shadow-sm group-hover:bg-[#2D5A27]/10 transition-all">
+          className="group flex items-center gap-2 text-gray-400 hover:text-[#3F2171] mb-8 transition-all font-black uppercase text-[10px] tracking-widest">
+          <div className="p-2 rounded-xl bg-white shadow-sm group-hover:bg-[#3F2171]/10 transition-all">
             <ArrowLeft size={16}/>
           </div>
           Back to My Subjects
@@ -125,7 +125,7 @@ export default function ExternalSubjectView() {
               <div className="relative w-24 h-24 mx-auto">
                 <svg className="w-24 h-24 -rotate-90">
                   <circle cx="48" cy="48" r="40" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="8"/>
-                  <circle cx="48" cy="48" r="40" fill="none" stroke="#F4B400" strokeWidth="8"
+                  <circle cx="48" cy="48" r="40" fill="none" stroke="#FFFF00" strokeWidth="8"
                     strokeDasharray={`${2 * Math.PI * 40}`}
                     strokeDashoffset={`${2 * Math.PI * 40 * (1 - overallProgress / 100)}`}
                     strokeLinecap="round" className="transition-all duration-700"/>
@@ -150,7 +150,7 @@ export default function ExternalSubjectView() {
             const allOpen = subject.topics?.every((_: any, i: number) => openTopics.has(i));
             if (allOpen) setOpenTopics(new Set());
             else setOpenTopics(new Set(subject.topics?.map((_: any, i: number) => i)));
-          }} className="text-[10px] font-black uppercase tracking-widest text-[#2D5A27] hover:text-black transition-colors">
+          }} className="text-[10px] font-black uppercase tracking-widest text-[#3F2171] hover:text-black transition-colors">
             {subject.topics?.every((_: any, i: number) => openTopics.has(i)) ? "Collapse all" : "Expand all"}
           </button>
         </div>
@@ -167,7 +167,7 @@ export default function ExternalSubjectView() {
             return (
               <div key={topic.id}
                 className={`bg-white rounded-[2rem] overflow-hidden border-2 transition-all duration-300 ${
-                  isOpen ? "border-[#2D5A27]/30 shadow-xl" : "border-gray-100 shadow-sm hover:shadow-md"
+                  isOpen ? "border-[#3F2171]/30 shadow-xl" : "border-gray-100 shadow-sm hover:shadow-md"
                 }`}>
 
                 {/* Topic header — click to expand */}
@@ -181,7 +181,7 @@ export default function ExternalSubjectView() {
 
                   <div className="flex-1 min-w-0">
                     <h3 className={`font-black text-gray-800 uppercase tracking-tight text-base leading-tight ${
-                      isOpen ? "text-[#2D5A27]" : ""
+                      isOpen ? "text-[#3F2171]" : ""
                     }`}>
                       {topic.title}
                     </h3>
@@ -192,7 +192,7 @@ export default function ExternalSubjectView() {
                       {completedCount > 0 && (
                         <>
                           <span className="text-gray-200">·</span>
-                          <span className="text-[10px] font-black uppercase tracking-widest text-[#2D5A27]">
+                          <span className="text-[10px] font-black uppercase tracking-widest text-[#3F2171]">
                             {completedCount}/{lessons.length} done
                           </span>
                         </>
@@ -202,13 +202,13 @@ export default function ExternalSubjectView() {
                     {/* Mini progress bar */}
                     {lessons.length > 0 && (
                       <div className="w-full h-1.5 bg-gray-100 rounded-full mt-2 overflow-hidden">
-                        <div className="h-full bg-[#2D5A27] rounded-full transition-all duration-500"
+                        <div className="h-full bg-[#3F2171] rounded-full transition-all duration-500"
                           style={{ width: `${topicProgress}%` }}/>
                       </div>
                     )}
                   </div>
 
-                  <ChevronDown size={20} className={`text-gray-400 shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180 text-[#2D5A27]" : ""}`}/>
+                  <ChevronDown size={20} className={`text-gray-400 shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180 text-[#3F2171]" : ""}`}/>
                 </button>
 
                 {/* Lessons list */}
@@ -232,9 +232,9 @@ export default function ExternalSubjectView() {
 
                               {/* Lesson status icon */}
                               <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all ${
-                                isCompleted ? "bg-[#2D5A27] text-white"
-                                : isStarted  ? "bg-[#F4B400]/20 text-[#F4B400] border-2 border-[#F4B400]/30"
-                                : "bg-gray-100 text-gray-400 group-hover:bg-[#2D5A27]/10 group-hover:text-[#2D5A27]"
+                                isCompleted ? "bg-[#3F2171] text-white"
+                                : isStarted  ? "bg-[#FFFF00]/20 text-[#FFFF00] border-2 border-[#FFFF00]/30"
+                                : "bg-gray-100 text-gray-400 group-hover:bg-[#3F2171]/10 group-hover:text-[#3F2171]"
                               }`}>
                                 {isCompleted
                                   ? <CheckCircle2 size={20}/>
@@ -245,7 +245,7 @@ export default function ExternalSubjectView() {
                               {/* Lesson info */}
                               <div className="flex-1 min-w-0">
                                 <p className={`font-bold text-sm leading-tight ${
-                                  isCompleted ? "text-gray-500 line-through" : "text-gray-800 group-hover:text-[#2D5A27]"
+                                  isCompleted ? "text-gray-500 line-through" : "text-gray-800 group-hover:text-[#3F2171]"
                                 } transition-colors`}>
                                   {lesson.title}
                                 </p>
@@ -256,12 +256,12 @@ export default function ExternalSubjectView() {
                                     </span>
                                   )}
                                   {lesson.has_quiz ? (
-                                    <span className="text-[9px] font-black uppercase tracking-wide text-[#2D5A27] bg-[#2D5A27]/10 px-2 py-0.5 rounded-lg">
+                                    <span className="text-[9px] font-black uppercase tracking-wide text-[#3F2171] bg-[#3F2171]/10 px-2 py-0.5 rounded-lg">
                                       Quiz ✓
                                     </span>
                                   ) : null}
                                   {isCompleted && progress?.quiz_score != null && (
-                                    <span className="text-[9px] font-black uppercase tracking-wide text-[#F4B400] bg-[#F4B400]/10 px-2 py-0.5 rounded-lg">
+                                    <span className="text-[9px] font-black uppercase tracking-wide text-[#FFFF00] bg-[#FFFF00]/10 px-2 py-0.5 rounded-lg">
                                       Score: {progress.quiz_score}%
                                     </span>
                                   )}
@@ -271,19 +271,19 @@ export default function ExternalSubjectView() {
                               {/* Status badge + arrow */}
                               <div className="flex items-center gap-3 shrink-0">
                                 {isCompleted ? (
-                                  <span className="text-[9px] font-black uppercase tracking-widest text-[#2D5A27] bg-[#2D5A27]/10 px-3 py-1.5 rounded-xl">
+                                  <span className="text-[9px] font-black uppercase tracking-widest text-[#3F2171] bg-[#3F2171]/10 px-3 py-1.5 rounded-xl">
                                     Done
                                   </span>
                                 ) : isStarted ? (
-                                  <span className="text-[9px] font-black uppercase tracking-widest text-[#F4B400] bg-[#F4B400]/10 px-3 py-1.5 rounded-xl">
+                                  <span className="text-[9px] font-black uppercase tracking-widest text-[#FFFF00] bg-[#FFFF00]/10 px-3 py-1.5 rounded-xl">
                                     Continue
                                   </span>
                                 ) : (
-                                  <span className="text-[9px] font-black uppercase tracking-widest text-gray-400 bg-gray-100 px-3 py-1.5 rounded-xl group-hover:bg-[#2D5A27] group-hover:text-white transition-all">
+                                  <span className="text-[9px] font-black uppercase tracking-widest text-gray-400 bg-gray-100 px-3 py-1.5 rounded-xl group-hover:bg-[#3F2171] group-hover:text-white transition-all">
                                     Start
                                   </span>
                                 )}
-                                <ChevronRight size={16} className="text-gray-300 group-hover:text-[#2D5A27] transition-colors"/>
+                                <ChevronRight size={16} className="text-gray-300 group-hover:text-[#3F2171] transition-colors"/>
                               </div>
                             </div>
                           );

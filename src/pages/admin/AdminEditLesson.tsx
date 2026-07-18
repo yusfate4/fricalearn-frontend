@@ -87,7 +87,7 @@ export default function AdminEditLesson() {
   if (fetching)
     return (
       <Layout>
-        <div className="p-20 text-center font-black animate-pulse text-[#2D5A27] uppercase italic tracking-widest">
+        <div className="p-20 text-center font-black animate-pulse text-[#3F2171] uppercase italic tracking-widest">
           Loading Lesson...
         </div>
       </Layout>
@@ -99,7 +99,7 @@ export default function AdminEditLesson() {
         {/* Navigation */}
         <button
           onClick={() => navigate(-1)}
-          className="group flex items-center gap-2 text-gray-400 hover:text-[#2D5A27] mb-8 font-black uppercase text-[10px] tracking-[0.2em] transition-all"
+          className="group flex items-center gap-2 text-gray-400 hover:text-[#3F2171] mb-8 font-black uppercase text-[10px] tracking-[0.2em] transition-all"
         >
           <ArrowLeft
             size={16}
@@ -126,7 +126,7 @@ export default function AdminEditLesson() {
         )}
 
         {successMessage && (
-          <div className="mb-6 p-5 bg-green-50 border-2 border-green-100 text-[#2D5A27] rounded-3xl flex items-center gap-3 font-bold animate-in zoom-in">
+          <div className="mb-6 p-5 bg-green-50 border-2 border-green-100 text-[#3F2171] rounded-3xl flex items-center gap-3 font-bold animate-in zoom-in">
             <CheckCircle size={20} /> {successMessage}
           </div>
         )}
@@ -147,7 +147,7 @@ export default function AdminEditLesson() {
                   <input
                     type="text"
                     value={title}
-                    className="w-full p-4 bg-gray-50 border-2 border-transparent focus:border-[#2D5A27] rounded-2xl font-bold outline-none transition-all"
+                    className="w-full p-4 bg-gray-50 border-2 border-transparent focus:border-[#3F2171] rounded-2xl font-bold outline-none transition-all"
                     onChange={(e) => setTitle(e.target.value)}
                     required
                   />
@@ -160,7 +160,7 @@ export default function AdminEditLesson() {
                   <input
                     type="text"
                     value={practiceWord}
-                    className="w-full p-4 bg-orange-50 border-2 border-dashed border-orange-200 focus:border-orange-400 rounded-2xl font-black text-[#2D5A27] outline-none transition-all italic"
+                    className="w-full p-4 bg-orange-50 border-2 border-dashed border-orange-200 focus:border-orange-400 rounded-2xl font-black text-[#3F2171] outline-none transition-all italic"
                     onChange={(e) => setPracticeWord(e.target.value)}
                   />
                 </div>
@@ -173,7 +173,7 @@ export default function AdminEditLesson() {
                 <textarea
                   required
                   value={content}
-                  className="w-full p-4 bg-gray-50 border-2 border-transparent focus:border-[#2D5A27] rounded-2xl h-48 font-medium outline-none transition-all resize-none"
+                  className="w-full p-4 bg-gray-50 border-2 border-transparent focus:border-[#3F2171] rounded-2xl h-48 font-medium outline-none transition-all resize-none"
                   onChange={(e) => setContent(e.target.value)}
                 />
               </div>
@@ -185,7 +185,7 @@ export default function AdminEditLesson() {
                 <input
                   type="url"
                   value={videoUrl}
-                  className="w-full p-4 bg-gray-50 border-2 border-transparent focus:border-[#2D5A27] rounded-2xl font-bold outline-none transition-all"
+                  className="w-full p-4 bg-gray-50 border-2 border-transparent focus:border-[#3F2171] rounded-2xl font-bold outline-none transition-all"
                   onChange={(e) => setVideoUrl(e.target.value)}
                 />
               </div>
@@ -193,7 +193,7 @@ export default function AdminEditLesson() {
               <button
                 disabled={loading}
                 type="submit"
-                className="w-full bg-[#2D5A27] text-white py-5 rounded-[1.5rem] font-black text-lg shadow-lg hover:shadow-green-900/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                className="w-full bg-[#3F2171] text-white py-5 rounded-[1.5rem] font-black text-lg shadow-lg hover:shadow-green-900/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <Loader2 className="animate-spin" />

@@ -67,7 +67,7 @@ export default function MyRewards() {
         <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-12">
           <div>
             <h1 className="text-4xl md:text-6xl font-black text-gray-800 italic uppercase tracking-tighter leading-none">
-              My <span className="text-[#2D5A27]">Collection</span>
+              My <span className="text-[#3F2171]">Collection</span>
             </h1>
             <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px] mt-4 flex items-center gap-2">
               <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" />
@@ -76,7 +76,7 @@ export default function MyRewards() {
           </div>
           <Link
             to="/store"
-            className="flex items-center gap-3 bg-[#F4B400] text-black px-8 py-4 rounded-[1.5rem] font-black uppercase text-[11px] tracking-widest shadow-xl hover:scale-105 transition-all active:scale-95"
+            className="flex items-center gap-3 bg-[#FFFF00] text-black px-8 py-4 rounded-[1.5rem] font-black uppercase text-[11px] tracking-widest shadow-xl hover:scale-105 transition-all active:scale-95"
           >
             Visit Shop <ArrowRight size={16} />
           </Link>
@@ -84,7 +84,7 @@ export default function MyRewards() {
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-32 opacity-20">
-            <Loader2 className="animate-spin text-[#2D5A27] mb-4" size={48} />
+            <Loader2 className="animate-spin text-[#3F2171] mb-4" size={48} />
             <p className="font-black uppercase text-[10px] tracking-widest">
               Opening your chest...
             </p>
@@ -94,13 +94,13 @@ export default function MyRewards() {
             {redemptions.map((item) => (
               <div
                 key={item.id}
-                className="group bg-white rounded-[3rem] border-2 border-gray-100 p-8 flex flex-col sm:flex-row items-center gap-8 hover:shadow-2xl hover:border-[#2D5A27]/10 transition-all duration-500 relative overflow-hidden"
+                className="group bg-white rounded-[3rem] border-2 border-gray-100 p-8 flex flex-col sm:flex-row items-center gap-8 hover:shadow-2xl hover:border-[#3F2171]/10 transition-all duration-500 relative overflow-hidden"
               >
                 {/* ICON / THUMBNAIL */}
                 <div
                   className={`w-24 h-24 rounded-[2rem] flex items-center justify-center shrink-0 shadow-inner ${
                     item.status === "fulfilled"
-                      ? "bg-green-50 text-[#2D5A27]"
+                      ? "bg-green-50 text-[#3F2171]"
                       : "bg-orange-50 text-orange-500"
                   }`}
                 >
@@ -129,12 +129,12 @@ export default function MyRewards() {
                     item.reward?.type === "digital_asset" ? (
                       <button
                         onClick={() => handleDownload(item.reward?.file_path)}
-                        className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gray-900 text-white px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-[#2D5A27] transition-all shadow-lg active:scale-95"
+                        className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gray-900 text-white px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-[#3F2171] transition-all shadow-lg active:scale-95"
                       >
                         <Download size={14} /> Download PDF
                       </button>
                     ) : (
-                      <div className="flex items-center gap-2 text-[#2D5A27] font-black text-[10px] uppercase tracking-widest bg-green-50 w-fit px-4 py-2 rounded-xl">
+                      <div className="flex items-center gap-2 text-[#3F2171] font-black text-[10px] uppercase tracking-widest bg-green-50 w-fit px-4 py-2 rounded-xl">
                         <CheckCircle2 size={14} /> Item Delivered
                       </div>
                     )
@@ -163,7 +163,7 @@ export default function MyRewards() {
                 </p>
                 <Link
                   to="/courses"
-                  className="bg-[#2D5A27] text-white px-10 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest"
+                  className="bg-[#3F2171] text-white px-10 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest"
                 >
                   Start Learning
                 </Link>

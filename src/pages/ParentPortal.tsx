@@ -34,8 +34,8 @@ export default function ParentPortal() {
 
   if (loading) return (
     <div className="min-h-screen bg-[#FFFBF5] flex flex-col items-center justify-center p-10 text-center">
-      <div className="w-16 h-16 border-4 border-[#2D5A27] border-t-transparent rounded-full animate-spin mb-4"></div>
-      <p className="font-black text-[#2D5A27] uppercase italic tracking-tighter">Connecting to the Academy...</p>
+      <div className="w-16 h-16 border-4 border-[#3F2171] border-t-transparent rounded-full animate-spin mb-4"></div>
+      <p className="font-black text-[#3F2171] uppercase italic tracking-tighter">Connecting to the Academy...</p>
     </div>
   );
 
@@ -61,8 +61,8 @@ export default function ParentPortal() {
              </div>
              <div>
                 <div className="flex items-center gap-2 justify-center md:justify-start mb-1">
-                   <ShieldCheck size={16} className="text-[#2D5A27]" />
-                   <p className="text-[10px] font-black text-[#2D5A27] uppercase tracking-[0.2em]">Verified Progress Report</p>
+                   <ShieldCheck size={16} className="text-[#3F2171]" />
+                   <p className="text-[10px] font-black text-[#3F2171] uppercase tracking-[0.2em]">Verified Progress Report</p>
                 </div>
                 <h1 className="text-4xl md:text-5xl font-black text-gray-900 uppercase italic tracking-tighter leading-none">
                    {stats.student_name}
@@ -71,7 +71,7 @@ export default function ParentPortal() {
              </div>
           </div>
           
-          <div className="bg-[#2D5A27] text-white p-6 md:p-8 rounded-[2.5rem] shadow-2xl shadow-green-900/20 flex flex-col items-center md:items-end">
+          <div className="bg-[#3F2171] text-white p-6 md:p-8 rounded-[2.5rem] shadow-2xl shadow-green-900/20 flex flex-col items-center md:items-end">
              <p className="text-[10px] font-black uppercase opacity-60 tracking-[0.2em] mb-1">Rewards Balance</p>
              <div className="flex items-center gap-3">
                 <Star className="text-yellow-400 fill-yellow-400" size={24} />
@@ -120,7 +120,7 @@ export default function ParentPortal() {
                   stats.recent_activity.map((record: any) => (
                     <div key={record.id} className="flex items-center justify-between p-6 md:p-8 bg-[#FFFBF5] rounded-[2.5rem] border-2 border-transparent hover:border-orange-100 transition-all group">
                         <div className="flex items-center gap-6">
-                            <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-[#2D5A27] shadow-sm group-hover:rotate-12 transition-transform">
+                            <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-[#3F2171] shadow-sm group-hover:rotate-12 transition-transform">
                                 <CheckCircle2 size={30} />
                             </div>
                             <div>
@@ -133,7 +133,7 @@ export default function ParentPortal() {
                             </div>
                         </div>
                         <div className="text-right">
-                            <p className="text-3xl font-black text-[#2D5A27] italic">{Math.round(record.score)}%</p>
+                            <p className="text-3xl font-black text-[#3F2171] italic">{Math.round(record.score)}%</p>
                             <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest">Score</p>
                         </div>
                     </div>
@@ -145,7 +145,7 @@ export default function ParentPortal() {
         </div>
 
         {/* --- PARENT ENCOURAGEMENT BOX --- */}
-        <div className="p-10 bg-[#2D5A27] rounded-[3.5rem] shadow-2xl shadow-green-900/20 text-center relative overflow-hidden text-white">
+        <div className="p-10 bg-[#3F2171] rounded-[3.5rem] shadow-2xl shadow-green-900/20 text-center relative overflow-hidden text-white">
             <TrendingUp className="absolute top-[-20px] right-[-20px] text-white/5" size={200} />
             <div className="relative z-10">
                 <Heart className="mx-auto text-yellow-400 mb-4 fill-yellow-400 animate-pulse" size={32} />

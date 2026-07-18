@@ -32,10 +32,10 @@ export default function ForgotPassword() {
           {!sent ? (
             <>
               <div className="bg-gray-50 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                <Mail className="text-[#2D5A27]" size={32} />
+                <Mail className="text-[#3F2171]" size={32} />
               </div>
               <h1 className="text-3xl font-black italic uppercase tracking-tighter text-gray-800 mb-2">
-                Forgot <span className="text-[#2D5A27]">Password?</span>
+                Forgot <span className="text-[#3F2171]">Password?</span>
               </h1>
               <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-8">
                 Enter your email and Oluko will send a link.
@@ -49,7 +49,7 @@ export default function ForgotPassword() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Parent Email"
-                    className="w-full p-5 bg-gray-50 rounded-2xl outline-none font-bold text-sm border-2 border-transparent focus:border-[#2D5A27] transition-all"
+                    className="w-full p-5 bg-gray-50 rounded-2xl outline-none font-bold text-sm border-2 border-transparent focus:border-[#3F2171] transition-all"
                   />
                 </div>
 
@@ -62,7 +62,7 @@ export default function ForgotPassword() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-gray-900 text-white p-5 rounded-2xl font-black uppercase italic tracking-widest hover:bg-[#2D5A27] transition-all flex items-center justify-center gap-3 shadow-lg"
+                  className="w-full bg-gray-900 text-white p-5 rounded-2xl font-black uppercase italic tracking-widest hover:bg-[#3F2171] transition-all flex items-center justify-center gap-3 shadow-lg"
                 >
                   {loading ? (
                     <Loader2 className="animate-spin" size={20} />

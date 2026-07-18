@@ -57,13 +57,13 @@ export default function ParentProgressView() {
                    {stats.student_name}'s Progress
                 </h1>
                 <div className="flex items-center gap-2 justify-center md:justify-start mt-1">
-                   <ShieldCheck size={14} className="text-[#2D5A27]" />
+                   <ShieldCheck size={14} className="text-[#3F2171]" />
                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Secure Family View</p>
                 </div>
              </div>
           </div>
           
-          <div className="bg-[#2D5A27] text-white px-8 py-4 rounded-[1.5rem] shadow-xl shadow-green-900/10">
+          <div className="bg-[#3F2171] text-white px-8 py-4 rounded-[1.5rem] shadow-xl shadow-green-900/10">
              <p className="text-[10px] font-black uppercase opacity-60 tracking-widest">Current Balance</p>
              <div className="flex items-center gap-2">
                 <p className="text-3xl font-black italic">{stats.total_coins}</p>
@@ -92,7 +92,7 @@ export default function ParentProgressView() {
                 {stats.recent_activity?.map((record: any) => (
                     <div key={record.id} className="flex items-center justify-between p-6 bg-orange-50/30 rounded-3xl border border-transparent hover:border-orange-100 transition-all group">
                         <div className="flex items-center gap-5">
-                            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-[#2D5A27] shadow-sm">
+                            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-[#3F2171] shadow-sm">
                                 <CheckCircle2 size={24} />
                             </div>
                             <div>
@@ -101,7 +101,7 @@ export default function ParentProgressView() {
                             </div>
                         </div>
                         <div className="text-right">
-                            <p className="text-xl font-black text-[#2D5A27] italic">{record.score}%</p>
+                            <p className="text-xl font-black text-[#3F2171] italic">{record.score}%</p>
                             <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest">Score</p>
                         </div>
                     </div>

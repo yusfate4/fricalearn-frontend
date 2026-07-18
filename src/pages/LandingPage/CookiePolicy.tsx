@@ -23,7 +23,7 @@ export default function CookiePolicy() {
       </LegalSection>
 
       <LegalSection number="02" title="What We Store">
-        <p><strong className="text-[#0E1C0E]">Strictly necessary (always on):</strong></p>
+        <p><strong className="text-[#2A1650]">Strictly necessary (always on):</strong></p>
         <LegalList items={[
           <><strong>Authentication token</strong> — keeps you securely logged in to your account. Removed when you log out.</>,
           <><strong>active_student_id</strong> — when a parent uses "view as student", this remembers which child's learning is being viewed. Cleared when you exit the student view.</>,

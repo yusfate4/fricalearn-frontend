@@ -86,7 +86,7 @@ export default function ManageLiveClasses() {
         {/* --- HEADER --- */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-12">
           <div className="flex items-center gap-4">
-            <div className="bg-[#2D5A27] p-4 rounded-2xl text-white shadow-lg">
+            <div className="bg-[#3F2171] p-4 rounded-2xl text-white shadow-lg">
               <Video size={32} />
             </div>
             <div>
@@ -101,7 +101,7 @@ export default function ManageLiveClasses() {
 
           <button
             onClick={() => setShowModal(true)}
-            className="w-full sm:w-auto flex items-center justify-center gap-3 bg-gray-900 text-white px-10 py-5 rounded-[2rem] font-black hover:bg-[#2D5A27] transition-all shadow-xl uppercase italic tracking-tight"
+            className="w-full sm:w-auto flex items-center justify-center gap-3 bg-gray-900 text-white px-10 py-5 rounded-[2rem] font-black hover:bg-[#3F2171] transition-all shadow-xl uppercase italic tracking-tight"
           >
             <Plus size={24} /> New Session
           </button>
@@ -110,7 +110,7 @@ export default function ManageLiveClasses() {
         {/* --- LIST --- */}
         {loading ? (
           <div className="flex justify-center py-20">
-            <Loader2 className="animate-spin text-[#2D5A27]" size={40} />
+            <Loader2 className="animate-spin text-[#3F2171]" size={40} />
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4">
@@ -118,10 +118,10 @@ export default function ManageLiveClasses() {
               classes.map((lc) => (
                 <div
                   key={lc.id}
-                  className="bg-white p-8 rounded-[2.5rem] border-2 border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-6 group hover:border-[#2D5A27] transition-all"
+                  className="bg-white p-8 rounded-[2.5rem] border-2 border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-6 group hover:border-[#3F2171] transition-all"
                 >
                   <div className="flex items-center gap-6">
-                    <div className="p-4 rounded-2xl bg-gray-50 text-gray-400 group-hover:text-[#2D5A27] transition-colors">
+                    <div className="p-4 rounded-2xl bg-gray-50 text-gray-400 group-hover:text-[#3F2171] transition-colors">
                       <Video size={28} />
                     </div>
                     <div>
@@ -147,7 +147,7 @@ export default function ManageLiveClasses() {
                   <div className="flex items-center gap-3">
                     <Link
                       to={`/live-room/${lc.id}`}
-                      className="flex items-center gap-2 px-8 py-4 bg-gray-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-[#2D5A27] transition-all"
+                      className="flex items-center gap-2 px-8 py-4 bg-gray-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-[#3F2171] transition-all"
                     >
                       <MonitorPlay size={14} /> Enter as Tutor
                     </Link>
@@ -193,7 +193,7 @@ export default function ManageLiveClasses() {
                   <input
                     required
                     type="text"
-                    className="w-full p-5 rounded-2xl bg-gray-50 border-2 border-transparent focus:border-[#2D5A27] outline-none font-bold"
+                    className="w-full p-5 rounded-2xl bg-gray-50 border-2 border-transparent focus:border-[#3F2171] outline-none font-bold"
                     value={formData.title}
                     onChange={(e) =>
                       setFormData({ ...formData, title: e.target.value })
@@ -209,7 +209,7 @@ export default function ManageLiveClasses() {
                     <input
                       required
                       type="datetime-local"
-                      className="w-full p-5 rounded-2xl bg-gray-50 border-2 border-transparent focus:border-[#2D5A27] outline-none font-bold"
+                      className="w-full p-5 rounded-2xl bg-gray-50 border-2 border-transparent focus:border-[#3F2171] outline-none font-bold"
                       value={formData.scheduled_at}
                       onChange={(e) =>
                         setFormData({
@@ -225,7 +225,7 @@ export default function ManageLiveClasses() {
                     </label>
                     <select
                       required
-                      className="w-full p-5 rounded-2xl bg-gray-50 border-2 border-transparent focus:border-[#2D5A27] outline-none font-bold appearance-none"
+                      className="w-full p-5 rounded-2xl bg-gray-50 border-2 border-transparent focus:border-[#3F2171] outline-none font-bold appearance-none"
                       value={formData.lesson_id}
                       onChange={(e) =>
                         setFormData({ ...formData, lesson_id: e.target.value })
@@ -248,7 +248,7 @@ export default function ManageLiveClasses() {
                   <input
                     required
                     type="url"
-                    className="w-full p-5 rounded-2xl bg-gray-50 border-2 border-transparent focus:border-[#2D5A27] outline-none font-bold"
+                    className="w-full p-5 rounded-2xl bg-gray-50 border-2 border-transparent focus:border-[#3F2171] outline-none font-bold"
                     value={formData.meeting_url}
                     onChange={(e) =>
                       setFormData({ ...formData, meeting_url: e.target.value })
@@ -258,7 +258,7 @@ export default function ManageLiveClasses() {
 
                 <button
                   type="submit"
-                  className="w-full py-6 bg-gray-900 text-white rounded-[2.5rem] font-black text-2xl hover:bg-[#2D5A27] shadow-2xl transition-all uppercase italic"
+                  className="w-full py-6 bg-gray-900 text-white rounded-[2.5rem] font-black text-2xl hover:bg-[#3F2171] shadow-2xl transition-all uppercase italic"
                 >
                   Launch Live Class
                 </button>

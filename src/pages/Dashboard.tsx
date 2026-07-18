@@ -73,7 +73,7 @@ export default function Dashboard() {
   if (loading) return (
     <Layout>
       <div className="flex flex-col items-center justify-center h-[60vh] px-6 text-center">
-        <Loader2 className="w-12 h-12 text-[#2D5A27] animate-spin mb-4"/>
+        <Loader2 className="w-12 h-12 text-[#3F2171] animate-spin mb-4"/>
         <p className="font-black text-gray-400 uppercase tracking-widest text-[10px] italic">
           Syncing Student Progress...
         </p>
@@ -125,14 +125,14 @@ export default function Dashboard() {
           </h1>
           <p className="text-gray-500 font-bold text-base mt-2">
             You are a{" "}
-            <span className="text-[#2D5A27] font-black underline decoration-yellow-400 decoration-4">
+            <span className="text-[#3F2171] font-black underline decoration-yellow-400 decoration-4">
               {profile?.current_level || "Beginner"}
             </span>
           </p>
         </div>
 
         {/* ── 2. START LEARNING CTA — VISIBLE FIRST ────────── */}
-        <div className="bg-gradient-to-br from-[#2D5A27] to-black rounded-[2.5rem] md:rounded-[3rem] p-8 md:p-12 text-white flex flex-col sm:flex-row items-center justify-between shadow-2xl relative overflow-hidden group animate-in fade-in duration-700">
+        <div className="bg-gradient-to-br from-[#3F2171] to-[#1E1038] rounded-[2.5rem] md:rounded-[3rem] p-8 md:p-12 text-white flex flex-col sm:flex-row items-center justify-between shadow-2xl relative overflow-hidden group animate-in fade-in duration-700">
           {/* Background trophy */}
           <div className="absolute right-0 bottom-0 opacity-10 group-hover:opacity-20 transition-opacity hidden lg:block">
             <Trophy size={160}/>
@@ -148,7 +148,7 @@ export default function Dashboard() {
           </div>
 
           <button onClick={() => navigate("/courses")}
-            className="relative z-10 shrink-0 bg-[#F4B400] text-black px-8 py-5 md:px-10 md:py-6 rounded-[2rem] font-black text-lg md:text-xl flex items-center gap-3 hover:scale-105 transition-all shadow-xl uppercase italic border-b-4 border-yellow-600 active:translate-y-1 active:border-b-0 w-full sm:w-auto justify-center">
+            className="relative z-10 shrink-0 bg-[#FFFF00] text-black px-8 py-5 md:px-10 md:py-6 rounded-[2rem] font-black text-lg md:text-xl flex items-center gap-3 hover:scale-105 transition-all shadow-xl uppercase italic border-b-4 border-yellow-600 active:translate-y-1 active:border-b-0 w-full sm:w-auto justify-center">
             <PlayCircle size={28}/> Start Learning
           </button>
         </div>
@@ -159,7 +159,7 @@ export default function Dashboard() {
           {/* XP Progress */}
           <div className="lg:col-span-2 bg-white p-6 md:p-8 rounded-[2rem] shadow-xl border-4 border-white relative overflow-hidden">
             <div className="flex items-center gap-4 mb-6">
-              <div className="bg-[#F4B400] p-4 rounded-2xl text-white shadow-xl shadow-yellow-100">
+              <div className="bg-[#FFFF00] p-4 rounded-2xl text-white shadow-xl shadow-yellow-100">
                 <Star size={28} fill="white"/>
               </div>
               <div>
@@ -173,14 +173,14 @@ export default function Dashboard() {
             <div className="space-y-3">
               <div className="flex justify-between items-end px-1">
                 <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">
-                  Rank: <span className="text-[#2D5A27] italic">{profile?.current_level || "Beginner"}</span>
+                  Rank: <span className="text-[#3F2171] italic">{profile?.current_level || "Beginner"}</span>
                 </p>
                 <p className="text-[10px] font-black text-gray-400 uppercase">
                   {Math.max(500 - currentLevelPoints, 0)} XP to Next Level
                 </p>
               </div>
               <div className="h-6 md:h-8 w-full bg-gray-100 rounded-3xl p-1 md:p-1.5 border-2 border-gray-50 overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-[#2D5A27] to-green-500 rounded-2xl transition-all duration-1000"
+                <div className="h-full bg-gradient-to-r from-[#3F2171] to-green-500 rounded-2xl transition-all duration-1000"
                   style={{ width: `${progressPercent}%` }}/>
               </div>
             </div>
@@ -189,7 +189,7 @@ export default function Dashboard() {
           {/* Right column: Points + AI Tutor timer */}
           <div className="space-y-4 md:space-y-5">
             {/* Points */}
-            <div className="bg-[#2D5A27] p-6 md:p-7 rounded-[2rem] text-white shadow-2xl relative overflow-hidden">
+            <div className="bg-[#3F2171] p-6 md:p-7 rounded-[2rem] text-white shadow-2xl relative overflow-hidden">
               <p className="text-[10px] font-black opacity-60 uppercase tracking-widest mb-1">Total Points</p>
               <h3 className="text-5xl font-black tracking-tighter italic mb-4">{totalPoints}</h3>
               <button onClick={() => navigate("/leaderboard")}
@@ -231,7 +231,7 @@ export default function Dashboard() {
                 Upcoming Live Class
               </h2>
               <button onClick={() => navigate(`/live-room/${liveClasses[0].id}`)}
-                className="hidden md:flex items-center gap-2 bg-[#2D5A27] text-white px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-black">
+                className="hidden md:flex items-center gap-2 bg-[#3F2171] text-white px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-black">
                 <Video size={14}/> Join Now
               </button>
             </div>

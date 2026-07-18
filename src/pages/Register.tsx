@@ -56,7 +56,7 @@ export default function Register() {
       {/* 🏠 BACK TO HOME BUTTON */}
       <Link
         to="/"
-        className="absolute top-6 left-6 z-50 flex items-center gap-2 text-[#2D5A27] font-black uppercase tracking-widest text-[10px] bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-gray-100 shadow-sm hover:bg-[#2D5A27] hover:text-white transition-all group"
+        className="absolute top-6 left-6 z-50 flex items-center gap-2 text-[#3F2171] font-black uppercase tracking-widest text-[10px] bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-gray-100 shadow-sm hover:bg-[#3F2171] hover:text-white transition-all group"
       >
         <ArrowLeft
           size={14}
@@ -77,12 +77,12 @@ export default function Register() {
             </h3>
             <p className="text-gray-500 font-bold text-sm leading-relaxed mb-8">
               Registration successful! Olukọ has sent a{" "}
-              <span className="text-[#2D5A27]">confirmation email</span> to your
+              <span className="text-[#3F2171]">confirmation email</span> to your
               inbox. Please login with your email and password to unlock all features.
             </p>
             <button
               onClick={closeModalAndRedirect}
-              className="w-full bg-[#2D5A27] text-white py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-black transition-all shadow-lg"
+              className="w-full bg-[#3F2171] text-white py-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-black transition-all shadow-lg"
             >
               Continue to Dashboard
             </button>
@@ -146,14 +146,14 @@ export default function Register() {
               </label>
               <div className="relative group">
                 <User
-                  className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#2D5A27] transition-colors"
+                  className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#3F2171] transition-colors"
                   size={18}
                 />
                 <input
                   required
                   type="text"
                   placeholder="Adebayo Smith"
-                  className="w-full pl-14 pr-6 py-4 rounded-[2rem] border-2 border-gray-100 outline-none focus:border-[#2D5A27] transition-all font-bold text-gray-700 bg-white placeholder:text-gray-200"
+                  className="w-full pl-14 pr-6 py-4 rounded-[2rem] border-2 border-gray-100 outline-none focus:border-[#3F2171] transition-all font-bold text-gray-700 bg-white placeholder:text-gray-200"
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }
@@ -168,14 +168,14 @@ export default function Register() {
               </label>
               <div className="relative group">
                 <Mail
-                  className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#2D5A27] transition-colors"
+                  className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#3F2171] transition-colors"
                   size={18}
                 />
                 <input
                   required
                   type="email"
                   placeholder="parent@example.com"
-                  className="w-full pl-14 pr-6 py-4 rounded-[2rem] border-2 border-gray-100 outline-none focus:border-[#2D5A27] transition-all font-bold text-gray-700 bg-white placeholder:text-gray-200"
+                  className="w-full pl-14 pr-6 py-4 rounded-[2rem] border-2 border-gray-100 outline-none focus:border-[#3F2171] transition-all font-bold text-gray-700 bg-white placeholder:text-gray-200"
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
@@ -190,14 +190,14 @@ export default function Register() {
               </label>
               <div className="relative group">
                 <Lock
-                  className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#2D5A27] transition-colors"
+                  className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#3F2171] transition-colors"
                   size={18}
                 />
                 <input
                   required
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  className="w-full pl-14 pr-14 py-4 rounded-[2rem] border-2 border-gray-100 outline-none focus:border-[#2D5A27] transition-all font-bold text-gray-700 bg-white"
+                  className="w-full pl-14 pr-14 py-4 rounded-[2rem] border-2 border-gray-100 outline-none focus:border-[#3F2171] transition-all font-bold text-gray-700 bg-white"
                   onChange={(e) =>
                     setFormData({ ...formData, password: e.target.value })
                   }
@@ -205,7 +205,7 @@ export default function Register() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-300 hover:text-[#2D5A27] transition-colors"
+                  className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-300 hover:text-[#3F2171] transition-colors"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -219,14 +219,14 @@ export default function Register() {
               </label>
               <div className="relative group">
                 <Lock
-                  className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#2D5A27] transition-colors"
+                  className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#3F2171] transition-colors"
                   size={18}
                 />
                 <input
                   required
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  className="w-full pl-14 pr-14 py-4 rounded-[2rem] border-2 border-gray-100 outline-none focus:border-[#2D5A27] transition-all font-bold text-gray-700 bg-white"
+                  className="w-full pl-14 pr-14 py-4 rounded-[2rem] border-2 border-gray-100 outline-none focus:border-[#3F2171] transition-all font-bold text-gray-700 bg-white"
                   onChange={(e) =>
                     setFormData({
                       ...formData,
@@ -241,7 +241,7 @@ export default function Register() {
             <button
               disabled={loading}
               type="submit"
-              className="w-full bg-[#2D5A27] text-white py-5 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs shadow-xl hover:bg-[#1A1A40] transition-all flex items-center justify-center gap-3 disabled:opacity-50 mt-4"
+              className="w-full bg-[#3F2171] text-white py-5 rounded-[2rem] font-black uppercase tracking-[0.2em] text-xs shadow-xl hover:bg-[#1A1A40] transition-all flex items-center justify-center gap-3 disabled:opacity-50 mt-4"
             >
               {loading ? (
                 <Loader2 className="animate-spin" size={20} />
@@ -256,7 +256,7 @@ export default function Register() {
               Already have an account?{" "}
               <Link
                 to="/login"
-                className="text-[#2D5A27] underline decoration-2 underline-offset-4 font-black italic ml-1"
+                className="text-[#3F2171] underline decoration-2 underline-offset-4 font-black italic ml-1"
               >
                 Login here
               </Link>

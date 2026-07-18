@@ -79,7 +79,7 @@ export default function AdminMasterSchedule() {
           {/* Day Selection */}
           <div className="bg-white p-8 rounded-[3rem] shadow-sm border-2 border-gray-50">
             <label className="flex items-center gap-2 text-[10px] font-black uppercase text-gray-400 mb-6 tracking-widest">
-              <Calendar size={14} className="text-[#2D5A27]" /> 1. Select Day
+              <Calendar size={14} className="text-[#3F2171]" /> 1. Select Day
             </label>
             <div className="grid grid-cols-2 gap-2">
               {days.map((day) => (
@@ -88,7 +88,7 @@ export default function AdminMasterSchedule() {
                   onClick={() => setDayOfWeek(day)}
                   className={`py-4 rounded-2xl font-black text-[10px] uppercase transition-all ${
                     dayOfWeek === day
-                      ? "bg-[#2D5A27] text-white shadow-lg scale-105"
+                      ? "bg-[#3F2171] text-white shadow-lg scale-105"
                       : "bg-gray-50 text-gray-400 hover:bg-gray-100"
                   }`}
                 >
@@ -101,14 +101,14 @@ export default function AdminMasterSchedule() {
           {/* Time Selection */}
           <div className="bg-white p-8 rounded-[3rem] shadow-sm border-2 border-gray-50 flex flex-col">
             <label className="flex items-center gap-2 text-[10px] font-black uppercase text-gray-400 mb-6 tracking-widest">
-              <Clock size={14} className="text-[#2D5A27]" /> 2. Select WAT Time
+              <Clock size={14} className="text-[#3F2171]" /> 2. Select WAT Time
             </label>
             <div className="flex-1 flex items-center justify-center">
               <input
                 type="time"
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
-                className="w-full p-8 bg-gray-50 rounded-[2rem] text-5xl font-black italic text-center outline-none focus:ring-8 ring-[#2D5A27]/5 transition-all text-[#2D5A27]"
+                className="w-full p-8 bg-gray-50 rounded-[2rem] text-5xl font-black italic text-center outline-none focus:ring-8 ring-[#3F2171]/5 transition-all text-[#3F2171]"
               />
             </div>
           </div>
@@ -137,7 +137,7 @@ export default function AdminMasterSchedule() {
         <button
           onClick={handleSave}
           disabled={saving || loading}
-          className="w-full mt-10 bg-gray-900 text-white py-8 rounded-[2.5rem] font-black uppercase tracking-[0.2em] text-xs shadow-2xl hover:bg-[#2D5A27] transition-all flex items-center justify-center gap-4 disabled:opacity-50"
+          className="w-full mt-10 bg-gray-900 text-white py-8 rounded-[2.5rem] font-black uppercase tracking-[0.2em] text-xs shadow-2xl hover:bg-[#3F2171] transition-all flex items-center justify-center gap-4 disabled:opacity-50"
         >
           {saving ? (
             <Loader2 className="animate-spin" size={24} />

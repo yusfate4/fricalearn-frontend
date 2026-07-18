@@ -214,7 +214,7 @@ export default function AdminChatList() {
   if (loading) return (
     <Layout>
       <div className="flex flex-col items-center justify-center h-[70vh]">
-        <Loader2 className="animate-spin text-[#2D5A27] mb-4" size={48} />
+        <Loader2 className="animate-spin text-[#3F2171] mb-4" size={48} />
         <p className="font-black text-gray-400 uppercase tracking-widest italic text-xs">Syncing Admin Inbox...</p>
       </div>
     </Layout>
@@ -227,7 +227,7 @@ export default function AdminChatList() {
         <div className={`${selectedChat ? "hidden md:flex" : "flex"} w-full md:w-96 bg-white rounded-[2.5rem] border-2 border-gray-100 flex-col overflow-hidden shadow-sm`}>
           <div className="p-6 border-b-2 border-gray-50 flex items-center justify-between bg-gray-50/50">
             <h2 className="text-xl font-black text-gray-800 uppercase italic">Support Desk</h2>
-            <div className="bg-[#2D5A27] text-white text-[10px] font-black px-3 py-1 rounded-full">
+            <div className="bg-[#3F2171] text-white text-[10px] font-black px-3 py-1 rounded-full">
               {conversations.reduce((acc, c) => acc + (c.unread_count || 0), 0)} PENDING
             </div>
           </div>
@@ -272,7 +272,7 @@ export default function AdminChatList() {
                   <div className="bg-gray-900 p-3 rounded-2xl text-white"><Headphones size={20} /></div>
                   <div>
                     <span className="font-black text-gray-800 block text-base md:text-lg leading-none italic uppercase tracking-tighter">{selectedChat.display_name}</span>
-                    <span className="text-[8px] md:text-[9px] font-black text-[#2D5A27] uppercase tracking-[0.2em] mt-1 block flex items-center gap-2"><ShieldCheck size={10} /> Official Parent Inquiry</span>
+                    <span className="text-[8px] md:text-[9px] font-black text-[#3F2171] uppercase tracking-[0.2em] mt-1 block flex items-center gap-2"><ShieldCheck size={10} /> Official Parent Inquiry</span>
                   </div>
                 </div>
               </div>
@@ -284,7 +284,7 @@ export default function AdminChatList() {
                   return (
                     <div key={msg.id} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
                       <div className={`max-w-[90%] md:max-w-[70%] p-5 rounded-[1.8rem] md:rounded-[2rem] font-bold text-xs md:text-sm shadow-sm ${
-                          isMe ? "bg-[#2D5A27] text-white rounded-tr-none" : "bg-white text-gray-700 rounded-tl-none border-2 border-gray-100"
+                          isMe ? "bg-[#3F2171] text-white rounded-tr-none" : "bg-white text-gray-700 rounded-tl-none border-2 border-gray-100"
                         }`}>
                         <div className="flex items-center gap-2 mb-2 opacity-40">
                           {isMe ? <LifeBuoy size={10} /> : <User size={10} />}
@@ -309,13 +309,13 @@ export default function AdminChatList() {
                 <div className="flex gap-4 mb-3">
                   {imagePreview && (
                     <div className="relative">
-                      <img src={imagePreview} className="h-16 w-16 rounded-xl object-cover border-2 border-[#2D5A27]" />
+                      <img src={imagePreview} className="h-16 w-16 rounded-xl object-cover border-2 border-[#3F2171]" />
                       <button onClick={() => { setSelectedImage(null); setImagePreview(null); }} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"><X size={12} /></button>
                     </div>
                   )}
                   {audioPreview && (
-                    <div className="relative flex items-center bg-gray-50 p-2 rounded-xl pr-10 border-2 border-[#2D5A27]">
-                      <span className="text-[9px] font-black text-[#2D5A27] uppercase tracking-widest px-2">Voice Note Ready</span>
+                    <div className="relative flex items-center bg-gray-50 p-2 rounded-xl pr-10 border-2 border-[#3F2171]">
+                      <span className="text-[9px] font-black text-[#3F2171] uppercase tracking-widest px-2">Voice Note Ready</span>
                       <button onClick={() => { setSelectedAudio(null); setAudioPreview(null); }} className="absolute right-2 text-red-500"><Trash2 size={16} /></button>
                     </div>
                   )}
@@ -330,7 +330,7 @@ export default function AdminChatList() {
                     <button type="button" onClick={startRecording} className="p-4 bg-gray-50 text-gray-400 rounded-2xl hover:text-blue-500"><Mic size={22} /></button>
                   )}
                   <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder={isRecording ? "Listening..." : "Type reply..."} className="flex-1 bg-gray-50 p-4 rounded-2xl outline-none font-bold text-sm border-2 border-transparent focus:border-gray-900" disabled={sending || isRecording} />
-                  <button type="submit" disabled={(!newMessage.trim() && !selectedImage && !selectedAudio) || sending} className="bg-gray-900 text-white p-5 rounded-full hover:bg-[#2D5A27] transition-all shadow-xl">
+                  <button type="submit" disabled={(!newMessage.trim() && !selectedImage && !selectedAudio) || sending} className="bg-gray-900 text-white p-5 rounded-full hover:bg-[#3F2171] transition-all shadow-xl">
                     {sending ? <Loader2 size={24} className="animate-spin" /> : <Send size={24} />}
                   </button>
                 </form>

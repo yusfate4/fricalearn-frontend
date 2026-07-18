@@ -200,7 +200,7 @@ export default function AddChildModal({
           className={`w-full py-5 rounded-2xl font-black text-white transition-all flex items-center justify-center gap-3 shadow-xl ${
             status === "success"
               ? "bg-green-500 shadow-green-200"
-              : "bg-[#2D5A27] hover:bg-black active:scale-95 shadow-green-900/20"
+              : "bg-[#3F2171] hover:bg-black active:scale-95 shadow-green-900/20"
           }`}
         >
           {loading ? (
@@ -238,7 +238,7 @@ function InputGroup({ label, icon, children }: any) {
         {label}
       </label>
       <div className="relative group">
-        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#2D5A27] transition-colors z-10">
+        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-[#3F2171] transition-colors z-10">
           {icon}
         </div>
         {children}

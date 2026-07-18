@@ -118,8 +118,8 @@ function App() {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-50">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-[#2D5A27] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="font-black text-2xl text-[#2D5A27] animate-pulse italic uppercase tracking-tighter">
+          <div className="w-16 h-16 border-4 border-[#3F2171] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="font-black text-2xl text-[#3F2171] animate-pulse italic uppercase tracking-tighter">
             FricaLearn...
           </p>
         </div>
@@ -129,7 +129,7 @@ function App() {
 
   return (
     <Router>
-      <div className="min-h-screen bg-gray-50 font-sans selection:bg-[#2D5A27] selection:text-white">
+      <div className="min-h-screen bg-gray-50 font-sans selection:bg-[#3F2171] selection:text-white">
         <Routes>
           {/* --- 🚀 PUBLIC ROUTES --- */}
           <Route

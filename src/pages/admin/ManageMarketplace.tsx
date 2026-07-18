@@ -153,7 +153,7 @@ export default function ManageMarketplace() {
       <div className="max-w-7xl mx-auto p-4 md:p-10">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
           <div className="flex items-center gap-5">
-            <div className="bg-[#F4B400] p-5 rounded-[2rem] text-white shadow-2xl">
+            <div className="bg-[#FFFF00] p-5 rounded-[2rem] text-white shadow-2xl">
               <Store size={36} />
             </div>
             <div>
@@ -167,7 +167,7 @@ export default function ManageMarketplace() {
           </div>
           <button
             onClick={() => openModal()}
-            className="w-full md:w-auto flex items-center justify-center gap-3 bg-gray-900 text-white px-10 py-5 rounded-[2.5rem] font-black uppercase text-xs tracking-widest hover:bg-[#F4B400] transition-colors"
+            className="w-full md:w-auto flex items-center justify-center gap-3 bg-gray-900 text-white px-10 py-5 rounded-[2.5rem] font-black uppercase text-xs tracking-widest hover:bg-[#FFFF00] transition-colors"
           >
             <Plus size={20} /> Add New Item
           </button>
@@ -182,7 +182,7 @@ export default function ManageMarketplace() {
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-32 space-y-4">
-            <Loader2 className="animate-spin text-[#2D5A27]" size={48} />
+            <Loader2 className="animate-spin text-[#3F2171]" size={48} />
             <p className="font-black text-gray-300 uppercase tracking-widest italic text-xs">
               Syncing Vault...
             </p>
@@ -192,7 +192,7 @@ export default function ManageMarketplace() {
             {items.map((item) => (
               <div
                 key={item.id}
-                className="bg-white rounded-[3rem] border-2 border-gray-100 overflow-hidden flex flex-col group hover:border-[#F4B400] hover:shadow-2xl transition-all duration-500"
+                className="bg-white rounded-[3rem] border-2 border-gray-100 overflow-hidden flex flex-col group hover:border-[#FFFF00] hover:shadow-2xl transition-all duration-500"
               >
                 <div className="h-48 bg-gray-50 relative overflow-hidden">
                   <img
@@ -226,7 +226,7 @@ export default function ManageMarketplace() {
                     {item.description}
                   </p>
                   <div className="mt-auto flex items-center justify-between pt-4 border-t border-gray-50">
-                    <div className="flex items-center gap-2 text-[#2D5A27] font-black italic">
+                    <div className="flex items-center gap-2 text-[#3F2171] font-black italic">
                       <Tag size={14} />
                       <span>{item.cost_coins} XP</span>
                     </div>
@@ -309,7 +309,7 @@ export default function ManageMarketplace() {
                       <button
                         type="button"
                         onClick={() => imageInputRef.current?.click()}
-                        className={`p-6 border-2 border-dashed rounded-2xl flex flex-col items-center justify-center transition-all ${selectedImage ? "border-[#2D5A27] bg-green-50 text-[#2D5A27]" : "border-gray-100 text-gray-300"}`}
+                        className={`p-6 border-2 border-dashed rounded-2xl flex flex-col items-center justify-center transition-all ${selectedImage ? "border-[#3F2171] bg-green-50 text-[#3F2171]" : "border-gray-100 text-gray-300"}`}
                       >
                         {selectedImage ? <CheckCircle2 size={24} /> : <UploadCloud size={24} />}
                         <span className="text-[8px] font-black uppercase mt-2">Thumbnail</span>
@@ -357,7 +357,7 @@ export default function ManageMarketplace() {
                 <button
                   disabled={submitting}
                   type="submit"
-                  className="w-full py-6 bg-gray-900 text-white rounded-[2rem] font-black text-sm uppercase tracking-widest hover:bg-[#2D5A27] shadow-xl transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+                  className="w-full py-6 bg-gray-900 text-white rounded-[2rem] font-black text-sm uppercase tracking-widest hover:bg-[#3F2171] shadow-xl transition-all flex items-center justify-center gap-3 disabled:opacity-50"
                 >
                   {submitting ? <Loader2 className="animate-spin" size={20} /> : isEditing ? "Update Listing" : "Deploy Item"}
                 </button>

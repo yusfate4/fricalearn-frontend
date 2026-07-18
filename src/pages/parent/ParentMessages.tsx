@@ -193,7 +193,7 @@ export default function ParentMessages() {
           <div className="flex items-center gap-4">
             <div className="bg-gray-900 p-3 rounded-2xl text-white shadow-lg"><Headphones size={24} /></div>
             <div>
-              <h1 className="text-2xl md:text-4xl font-black italic uppercase tracking-tighter text-gray-800">Support <span className="text-[#2D5A27]">Desk</span></h1>
+              <h1 className="text-2xl md:text-4xl font-black italic uppercase tracking-tighter text-gray-800">Support <span className="text-[#3F2171]">Desk</span></h1>
               <p className="text-[8px] md:text-[10px] font-black uppercase text-gray-400 tracking-widest">FricaLearn Official Admin Channel</p>
             </div>
           </div>
@@ -210,7 +210,7 @@ export default function ParentMessages() {
               return (
                 <div key={m.id} className={`flex ${isMe ? "justify-end" : "justify-start"} animate-in fade-in slide-in-from-bottom-1`}>
                   <div className={`max-w-[85%] flex flex-col ${isMe ? "items-end" : "items-start"}`}>
-                    <div className={`p-5 rounded-[1.8rem] shadow-sm ${isMe ? "bg-[#2D5A27] text-white rounded-tr-none" : "bg-white text-gray-800 rounded-tl-none border border-gray-100"}`}>
+                    <div className={`p-5 rounded-[1.8rem] shadow-sm ${isMe ? "bg-[#3F2171] text-white rounded-tr-none" : "bg-white text-gray-800 rounded-tl-none border border-gray-100"}`}>
                       <div className="flex items-center gap-2 mb-2 opacity-40">
                         {isMe ? <User size={10} /> : <LifeBuoy size={10} />}
                         <span className="text-[8px] font-black uppercase tracking-widest">{isMe ? "Parent" : "FricaLearn Admin"}</span>
@@ -232,7 +232,7 @@ export default function ParentMessages() {
             <div className="px-6 py-4 bg-white border-t flex gap-4">
               {imagePreview && (
                 <div className="relative">
-                  <img src={imagePreview} className="h-16 w-16 rounded-2xl object-cover border-2 border-[#2D5A27]" />
+                  <img src={imagePreview} className="h-16 w-16 rounded-2xl object-cover border-2 border-[#3F2171]" />
                   <button onClick={() => { setImagePreview(null); setSelectedImage(null); }} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"><X size={12} /></button>
                 </div>
               )}
@@ -256,7 +256,7 @@ export default function ParentMessages() {
                 <button type="button" onClick={startRecording} className="p-4 bg-gray-50 rounded-2xl text-gray-400 hover:text-blue-500 shadow-sm"><Mic size={22} /></button>
               )}
               <input value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder={isRecording ? "Recording..." : "How can we help?"} className="flex-1 p-4 md:p-6 bg-gray-50 rounded-2xl outline-none font-bold text-sm" disabled={isSending || isRecording} />
-              <button type="submit" disabled={isSending || (!newMessage.trim() && !selectedImage && !selectedAudio)} className="bg-gray-900 text-white p-5 rounded-full hover:bg-[#2D5A27] shadow-xl">
+              <button type="submit" disabled={isSending || (!newMessage.trim() && !selectedImage && !selectedAudio)} className="bg-gray-900 text-white p-5 rounded-full hover:bg-[#3F2171] shadow-xl">
                 {isSending ? <Loader2 className="animate-spin" size={24} /> : <Send size={24} />}
               </button>
             </form>

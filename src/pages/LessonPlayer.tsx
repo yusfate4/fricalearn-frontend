@@ -91,7 +91,7 @@ export default function LessonPlayer() {
   if (loading) return (
     <Layout>
       <div className="min-h-screen flex flex-col items-center justify-center p-20">
-        <Loader2 className="animate-spin text-[#2D5A27] mb-6" size={48} />
+        <Loader2 className="animate-spin text-[#3F2171] mb-6" size={48} />
         <p className="font-black text-gray-400 italic uppercase tracking-widest text-sm">
           Olukọ is preparing your lesson...
         </p>
@@ -113,9 +113,9 @@ export default function LessonPlayer() {
         {/* Navigation */}
         <button
           onClick={() => navigate(-1)}
-          className="group flex items-center text-gray-400 mb-8 hover:text-[#2D5A27] font-black uppercase tracking-widest text-[10px] transition-all"
+          className="group flex items-center text-gray-400 mb-8 hover:text-[#3F2171] font-black uppercase tracking-widest text-[10px] transition-all"
         >
-          <div className="p-2 rounded-xl bg-white shadow-sm mr-3 group-hover:bg-[#2D5A27]/10 transition-all">
+          <div className="p-2 rounded-xl bg-white shadow-sm mr-3 group-hover:bg-[#3F2171]/10 transition-all">
             <ArrowLeft size={16} />
           </div>
           Back to library
@@ -141,9 +141,9 @@ export default function LessonPlayer() {
 
             {/* 📝 Olukọ's Notes Section */}
             <div className="bg-white p-10 md:p-16 rounded-[3rem] shadow-sm border-2 border-gray-50 mb-12 relative overflow-hidden group">
-              <div className="absolute top-0 left-0 w-2.5 h-full bg-[#2D5A27] group-hover:w-4 transition-all duration-500"></div>
+              <div className="absolute top-0 left-0 w-2.5 h-full bg-[#3F2171] group-hover:w-4 transition-all duration-500"></div>
               <div className="flex items-center gap-3 mb-6">
-                <Sparkles size={20} className="text-[#F4B400]" />
+                <Sparkles size={20} className="text-[#FFFF00]" />
                 <h2 className="text-2xl font-black text-gray-800 italic uppercase tracking-tight">
                   Olukọ's Notes
                 </h2>
@@ -175,7 +175,7 @@ export default function LessonPlayer() {
                         />
                       )}
                       {content.content_type === "document" && (
-                        <div className="h-full flex flex-col justify-between bg-white p-8 rounded-[2.5rem] border-2 border-gray-100 hover:border-[#2D5A27] transition-all shadow-sm group">
+                        <div className="h-full flex flex-col justify-between bg-white p-8 rounded-[2.5rem] border-2 border-gray-100 hover:border-[#3F2171] transition-all shadow-sm group">
                           <div className="flex items-center gap-5 mb-6">
                             <div className="bg-red-50 p-5 rounded-2xl text-red-500 group-hover:scale-110 transition-transform">
                               <FileText size={36} />
@@ -193,7 +193,7 @@ export default function LessonPlayer() {
                             href={content.file_url}
                             target="_blank"
                             rel="noreferrer"
-                            className="block text-center bg-gray-900 text-white py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-lg hover:bg-[#2D5A27] transition-all"
+                            className="block text-center bg-gray-900 text-white py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-lg hover:bg-[#3F2171] transition-all"
                           >
                             Download PDF
                           </a>
@@ -212,9 +212,9 @@ export default function LessonPlayer() {
                   window.scrollTo({ top: 0, behavior: "smooth" });
                   setShowQuiz(true);
                 }}
-                className="flex items-center gap-5 bg-[#2D5A27] text-white px-12 py-7 rounded-[2.5rem] font-black text-2xl hover:bg-black transition-all shadow-2xl hover:-translate-y-2 active:scale-95 group"
+                className="flex items-center gap-5 bg-[#3F2171] text-white px-12 py-7 rounded-[2.5rem] font-black text-2xl hover:bg-black transition-all shadow-2xl hover:-translate-y-2 active:scale-95 group"
               >
-                <HelpCircle size={28} className="text-[#F4B400] group-hover:rotate-12 transition-transform" />
+                <HelpCircle size={28} className="text-[#FFFF00] group-hover:rotate-12 transition-transform" />
                 Unlock Your Knowledge
               </button>
             </div>
@@ -233,7 +233,7 @@ export default function LessonPlayer() {
                 setQuizFailed(false);
                 setShowQuiz(false); // 💡 Return to notes for review
               }}
-              className="bg-gray-900 text-white px-14 py-7 rounded-[2rem] font-black text-xl shadow-xl uppercase italic tracking-widest hover:bg-[#2D5A27] transition-all"
+              className="bg-gray-900 text-white px-14 py-7 rounded-[2rem] font-black text-xl shadow-xl uppercase italic tracking-widest hover:bg-[#3F2171] transition-all"
             >
               Review Lesson
             </button>
