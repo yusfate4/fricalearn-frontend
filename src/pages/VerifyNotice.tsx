@@ -26,7 +26,7 @@ const VerifyNotice: React.FC = () => {
       await api.post("/auth/resend-verification", { email });
       setStatus({ 
         type: 'success', 
-        msg: "Oluko has sent a fresh link! Please check your inbox or spam folder." 
+        msg: "We've sent a fresh link! Please check your inbox or spam folder." 
       });
     } catch (err: any) {
       setStatus({ 

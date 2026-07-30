@@ -28,7 +28,7 @@ const VerifyEmailHandler: React.FC = () => {
     await api.get(`/email/verify/${id}/${hash}?expires=${expires}&signature=${signature}`);
     
     setStatus('success');
-        setMessage("Ọpẹ́! Your email has been successfully verified.");
+        setMessage("Good news! Your email has been successfully verified.");
         
         // Auto-redirect to login after 3 seconds of "Success" glory
         setTimeout(() => {

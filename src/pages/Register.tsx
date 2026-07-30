@@ -73,11 +73,10 @@ export default function Register() {
               <CheckCircle2 size={48} className="text-green-600" />
             </div>
             <h3 className="text-3xl font-black italic uppercase tracking-tighter text-gray-800 mb-2">
-              Ẹ kú iṣẹ́!
+              Good News!
             </h3>
             <p className="text-gray-500 font-bold text-sm leading-relaxed mb-8">
-              Registration successful! Olukọ has sent a{" "}
-              <span className="text-[#3F2171]">confirmation email</span> to your
+              Registration successful! A confirmation email has been sent to your
               inbox. Please login with your email and password to unlock all features.
             </p>
             <button
