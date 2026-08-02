@@ -118,7 +118,7 @@ export default function ParentDashboard() {
               Start Your Journey
             </h3>
             <p className="text-gray-400 font-bold max-w-sm mx-auto mb-10 leading-relaxed text-xs md:text-sm italic">
-              No students found. Add a family member to begin their heritage learning path.
+              No students found. Add a kid to begin their learning path.
             </p>
           </div>
         ) : (
