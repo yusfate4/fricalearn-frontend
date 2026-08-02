@@ -15,7 +15,7 @@ interface BankAccount {
 
 /**
  * Step 4 — FREEMIUM: trial-first enrolment.
- * Default path: child name + age → Start Free 14-Day Trial (no payment).
+ * Default path: child name + age → Start Free 1-Month Trial (no payment).
  * Optional collapsible path: pay now by bank transfer + receipt.
  */
 export default function Step4PaymentUpload() {
@@ -89,7 +89,7 @@ export default function Step4PaymentUpload() {
         type: "success",
         msg: withPayment
           ? "🎉 Payment received! Your child is enrolled with full access. Redirecting..."
-          : "🎉 Free trial started! Your child has 14 days of full access. Redirecting...",
+          : "🎉 Free trial started! Your child has 30 days of full access. Redirecting...",
       });
       setTimeout(() => navigate("/parent/dashboard"), 2500);
     } catch (err: any) {
@@ -124,7 +124,7 @@ export default function Step4PaymentUpload() {
           </h1>
           <p className="text-gray-500 font-bold text-sm md:text-base max-w-2xl">
             {hasPaidCourses
-              ? "14 days of Maths & English completely free — no payment needed today. Language courses are free forever."
+              ? "30 days of Maths & English completely free — no payment needed today. Language courses are free forever."
               : "Your language course is completely free — no payment needed. Just add your child's details below."}
           </p>
         </div>
@@ -138,7 +138,7 @@ export default function Step4PaymentUpload() {
                 <Gift size={26} className="text-[#2A1650]"/>
               </div>
               <div>
-                <p className="text-sm font-black uppercase tracking-wide mb-1">🎁 14-Day Free Trial Included</p>
+                <p className="text-sm font-black uppercase tracking-wide mb-1">🎁 1-Month Free Trial Included</p>
                 <p className="text-xs font-bold opacity-80 leading-relaxed">
                   Full access to every lesson, quiz, and the AI Tutor. No card, no payment, no commitment —
                   you'll only be asked to pay after the trial if you want to continue.
@@ -195,7 +195,7 @@ export default function Step4PaymentUpload() {
               <><Loader2 className="animate-spin" size={24}/>Setting up trial...</>
             ) : (
               <><Sparkles size={24} className="text-[#FFFF00]"/>
-                {hasPaidCourses ? "Start Free 14-Day Trial" : "Complete Free Enrolment"}</>
+                {hasPaidCourses ? "Start Free 1-Month Trial" : "Complete Free Enrolment"}</>
             )}
           </button>
 

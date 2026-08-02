@@ -24,7 +24,7 @@ const Hero: React.FC = () => {
                 New
               </span>
               <span className="text-[#2A1650] text-[11px] font-black uppercase tracking-widest">
-                14-Day Free Trial — No Payment Needed
+                1-Month Free Trial — No Payment Needed
               </span>
             </div>
 
@@ -36,7 +36,7 @@ const Hero: React.FC = () => {
 
             <p className="text-white/60 font-medium text-base md:text-lg leading-relaxed max-w-xl mb-4">
               Try <strong className="text-white">Mathematics and English</strong> — UK and Nigerian
-              curriculum aligned — <strong className="text-[#FFFF00]">free for 14 days</strong>.
+              curriculum aligned — <strong className="text-[#FFFF00]">free for 30 days</strong>.
               And Yoruba, Igbo &amp; Hausa language courses? <strong className="text-white">Free forever.</strong>
             </p>
 
@@ -100,7 +100,7 @@ const Hero: React.FC = () => {
               <p className="text-[9px] font-black uppercase tracking-widest text-gray-400">Lessons Available</p>
             </div>
             <div className="absolute -bottom-6 -right-4 bg-white rounded-3xl px-7 py-5 shadow-2xl animate-in slide-in-from-right duration-700">
-              <p className="text-3xl font-black text-[#FFFF00] italic">14 Days</p>
+              <p className="text-3xl font-black text-[#FFFF00] italic">30 Days</p>
               <p className="text-[9px] font-black uppercase tracking-widest text-gray-400">Free Trial</p>
             </div>
           </div>

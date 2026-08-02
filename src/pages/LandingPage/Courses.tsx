@@ -74,7 +74,7 @@ const Courses: React.FC = () => {
             Try First. <span className="text-[#3F2171]">Pay Later.</span>
           </h2>
           <p className="text-gray-500 font-medium max-w-2xl mx-auto">
-            Every family gets <strong className="text-[#2A1650]">14 days of Maths &amp; English completely free</strong> —
+            Every family gets <strong className="text-[#2A1650]">30 days of Maths &amp; English completely free</strong> —
             no card, no payment, no commitment. Language courses are free forever.
           </p>
         </div>
