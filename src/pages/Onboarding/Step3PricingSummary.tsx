@@ -248,7 +248,7 @@ export default function Step3PricingSummary() {
           <div className="max-w-4xl mx-auto">
             <button
               onClick={handleContinue}
-              className="group flex items-center justify-center gap-4 bg-[#3F2171] text-white px-10 py-6 rounded-[2.5rem] font-black uppercase text-[11px] tracking-widest shadow-2xl hover:bg-black transition-all border-b-4 border-[#1E1038] active:translate-y-1 active:border-b-0 w-full"
+              className="group flex items-center justify-center gap-4 bg-[#3F2171] text-white px-8 py-6 rounded-[2.5rem] font-black uppercase text-[11px] tracking-widest shadow-2xl hover:bg-black transition-all border-b-4 border-[#1E1038] active:translate-y-1 active:border-b-0 w-full"
             >
               Proceed to Start Your Free Trial
               <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
