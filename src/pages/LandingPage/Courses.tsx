@@ -10,7 +10,7 @@ const Courses: React.FC = () => {
       flag: "🇬🇧",
       title: "UK National Curriculum",
       subtitle: "Year 1 – Year 11 (Ages 5–16)",
-      trial: "14-Day Free Trial",
+      trial: "30-Day Free Trial",
       price: "£13.33",
       priceNote: "/mo per subject after trial",
       features: [
@@ -27,7 +27,7 @@ const Courses: React.FC = () => {
       flag: "🇳🇬",
       title: "Nigerian Curriculum",
       subtitle: "Primary 1–6 & JSS 1–3 (Ages 6–15)",
-      trial: "14-Day Free Trial",
+      trial: "30-Day Free Trial",
       price: "₦20,000",
       priceNote: "/mo per subject after trial",
       features: [
