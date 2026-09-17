@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import Layout from "../components/Layout";
+import LessonDiagram from "../components/LessonDiagram";
 import {
   ArrowLeft, Loader2, CheckCircle2, XCircle, Award,
   BookOpen, Target, Lightbulb, AlertTriangle,
@@ -250,6 +251,11 @@ export default function ExternalLessonViewer() {
             </div>
           </div>
         )}
+
+        <LessonDiagram
+  lessonTitle={lesson.title}
+  outcome={lesson.learning_outcome ?? ""}
+/>
 
         {/* ── LESSON TRANSCRIPT ── Main content ─────────────── */}
         {paragraphs.length > 0 ? (

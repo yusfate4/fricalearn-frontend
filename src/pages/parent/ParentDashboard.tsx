@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Layout from "../../components/Layout";
 import api from "../../api/axios";
+import SubscriptionStatus from "../components/SubscriptionStatus";
+import PaywallModal from "../components/PaywallModal";
 import {
   PlusCircle,
   GraduationCap,
@@ -75,6 +77,7 @@ export default function ParentDashboard() {
               Welcome, {data?.parent_name?.split(" ")[0] || "Parent"}!
             </h1>
 
+
             <div className="flex flex-wrap items-center gap-3 mt-6">
               <div className="bg-white px-4 py-2 rounded-xl border-2 border-gray-50 shadow-sm flex items-center gap-3">
                 <div className="w-2 h-2 rounded-full bg-[#3F2171] animate-pulse"></div>
@@ -92,7 +95,11 @@ export default function ParentDashboard() {
               )}
             </div>
           </div>
+const [showPaywall, setShowPaywall] = useState(false);
 
+<SubscriptionStatus onUpgradeClick={() => setShowPaywall(true)} />
+<PaywallModal open={showPaywall} onClose={() => setShowPaywall(false)} onUnlocked={() => setShowPaywall(false)} />
+  
           <div className="flex flex-col sm:flex-row w-full md:w-auto gap-4">
             <Link 
               to="/parent/messages"
@@ -156,7 +163,7 @@ export default function ParentDashboard() {
                         <div className="absolute top-0 right-0 p-8 opacity-[0.05] group-hover:scale-110 transition-transform">
                           <GraduationCap size={100} />
                         </div>
-
+Welco
                         <div className="flex items-center gap-4 mb-6">
                             <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-[#3F2171] shadow-inner">
                                 <User size={24} />

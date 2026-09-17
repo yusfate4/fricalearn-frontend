@@ -76,8 +76,8 @@ export default function Register() {
               Good News!
             </h3>
             <p className="text-gray-500 font-bold text-sm leading-relaxed mb-8">
-              Registration successful! A confirmation email has been sent to your
-              inbox. Please login with your email and password to unlock all features.
+              Registration successful! A verification email has been sent to your
+              inbox. Please verify your email address. Then, login with your email and password to unlock all features.
             </p>
             <button
               onClick={closeModalAndRedirect}
