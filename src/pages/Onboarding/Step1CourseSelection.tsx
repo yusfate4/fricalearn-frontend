@@ -9,7 +9,8 @@ interface Course {
   id: string; name: string; description: string;
   price_ngn: number; price_gbp: number; type: "paid" | "free";
   grades?: number[]; grade_labels?: string[];
-  scholarship?: boolean; original_price_ngn?: number; original_price_gbp?: number;
+  scholarship?: boolean; trial?: boolean; trial_label?: string;
+  original_price_ngn?: number; original_price_gbp?: number;
   curriculum?: string; source?: string; icon: string;
 }
 
@@ -174,6 +175,14 @@ export default function Step1CourseSelection() {
                       </p>
                       <p className="text-3xl font-black text-[#3F2171] italic">FREE</p>
                       <p className="text-[8px] font-black uppercase tracking-widest text-[#B1B6C9] mt-2">Full Scholarship Applied</p>
+                    </div>
+                  ) : course.trial ? (
+                    <div>
+                      <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest mb-1">First Month</p>
+                      <p className="text-3xl font-black text-[#1A7A4A] italic">FREE</p>
+                      <p className="text-[8px] font-black uppercase tracking-widest text-gray-400 mt-1">
+                        Then from {currency === "NGN" ? "₦30,000" : "£15"} / 3 months
+                      </p>
                     </div>
                   ) : (
                     <div>

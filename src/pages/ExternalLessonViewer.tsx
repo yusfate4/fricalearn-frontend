@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import Layout from "../components/Layout";
-import LessonDiagram from "../components/LessonDiagram";
 import {
   ArrowLeft, Loader2, CheckCircle2, XCircle, Award,
   BookOpen, Target, Lightbulb, AlertTriangle,
@@ -54,21 +53,46 @@ export default function ExternalLessonViewer() {
   const [lesson, setLesson]               = useState<any>(null);
   const [loading, setLoading]             = useState(true);
 
-  // ── Text-to-Speech state ───────────────────────────────────
-  const [isSpeaking, setIsSpeaking]       = useState(false);
-  const [ttsSupported]                    = useState(() => typeof window !== "undefined" && "speechSynthesis" in window);
+  // ── Text-to-Speech ──────────────────────────────────────────
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [ttsSupported]              = useState(() =>
+    typeof window !== "undefined" && "speechSynthesis" in window
+  );
 
   const speakText = useCallback((text: string) => {
     if (!ttsSupported) return;
     window.speechSynthesis.cancel();
-    const utterance      = new SpeechSynthesisUtterance(text);
-    utterance.rate       = 0.9;
-    utterance.pitch      = 1;
-    utterance.lang       = "en-GB";
-    utterance.onstart    = () => setIsSpeaking(true);
-    utterance.onend      = () => setIsSpeaking(false);
-    utterance.onerror    = () => setIsSpeaking(false);
-    window.speechSynthesis.speak(utterance);
+
+    const speak = () => {
+      const utterance   = new SpeechSynthesisUtterance(text);
+      utterance.rate    = 0.88;
+      utterance.pitch   = 1;
+      utterance.volume  = 1;
+
+      // Prefer an English voice; fall back to first available
+      const voices = window.speechSynthesis.getVoices();
+      const en = voices.find(v => v.lang.startsWith("en")) || voices[0];
+      if (en) utterance.voice = en;
+
+      utterance.onstart = () => setIsSpeaking(true);
+      utterance.onend   = () => setIsSpeaking(false);
+      utterance.onerror = (e) => {
+        console.warn("TTS error:", e.error);
+        setIsSpeaking(false);
+      };
+      window.speechSynthesis.speak(utterance);
+    };
+
+    // Chrome loads voices asynchronously — wait if not ready yet
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length > 0) {
+      speak();
+    } else {
+      window.speechSynthesis.onvoiceschanged = () => {
+        window.speechSynthesis.onvoiceschanged = null;
+        speak();
+      };
+    }
   }, [ttsSupported]);
 
   const stopSpeaking = useCallback(() => {
@@ -76,8 +100,8 @@ export default function ExternalLessonViewer() {
     setIsSpeaking(false);
   }, []);
 
-  // Stop TTS when navigating away
-  useEffect(() => () => { window.speechSynthesis.cancel(); }, []);
+  // Stop TTS on unmount / navigation
+  useEffect(() => () => { window.speechSynthesis?.cancel(); }, []);
 
   const [showQuiz, setShowQuiz]           = useState(false);
   const [currentQ, setCurrentQ]           = useState(0);
@@ -251,11 +275,6 @@ export default function ExternalLessonViewer() {
             </div>
           </div>
         )}
-
-        <LessonDiagram
-  lessonTitle={lesson.title}
-  outcome={lesson.learning_outcome ?? ""}
-/>
 
         {/* ── LESSON TRANSCRIPT ── Main content ─────────────── */}
         {paragraphs.length > 0 ? (
