@@ -1,244 +1,203 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Layout from "../../components/Layout";
-import api from "../../api/axios";
-import {
-  ArrowRight,
-  ChevronLeft,
-  Award,
-  Loader2,
-  CheckCircle2,
-} from "lucide-react";
+import { ArrowRight, ChevronLeft, CheckCircle2, Star, Gift } from "lucide-react";
 
-interface PricingBreakdown {
-  course: string;
-  name: string;
-  amount: number;
-  is_free: boolean;
-  currency: string;
+interface Tier {
+  months: number;
+  label: string;
+  priceNGN: number;
+  priceGBP: number;
+  savingsPct: number | null;
+  popular: boolean;
+  days: number;
+  perMonthNGN: number;
 }
+
+// Paid tiers only — 1 month is the FREE TRIAL, not a paid option
+const TIERS: Tier[] = [
+  {
+    months: 3,  label: "3 Months",  priceNGN: 30000, priceGBP: 15,
+    savingsPct: null, popular: false, days: 90,  perMonthNGN: 10000,
+  },
+  {
+    months: 6,  label: "6 Months",  priceNGN: 50000, priceGBP: 25,
+    savingsPct: 17,   popular: false, days: 180, perMonthNGN: 8333,
+  },
+  {
+    months: 12, label: "12 Months", priceNGN: 80000, priceGBP: 40,
+    savingsPct: 33,   popular: true,  days: 365, perMonthNGN: 6667,
+  },
+];
 
 export default function Step3PricingSummary() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { selectedCourses, currency, mathsGrade, englishGrade } =
+  const { selectedCourses, currency, curriculumRegion, mathsGrade, englishGrade } =
     location.state || {};
 
-  const [breakdown, setBreakdown] = useState<PricingBreakdown[]>([]);
-  const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const isNGN = currency === "NGN";
+  const [selected, setSelected] = useState<Tier>(TIERS[2]); // 12 months default
 
-  useEffect(() => {
-    calculatePricing();
-  }, []);
+  const hasPaid  = selectedCourses?.some((c: string) => c === "maths" || c === "english");
+  const freeOnly = !hasPaid;
 
-  const calculatePricing = async () => {
-    try {
-      const res = await api.post("/onboarding/calculate-pricing", {
-        selected_courses: selectedCourses,
-        currency,
-      });
-
-      setBreakdown(res.data.breakdown);
-      setTotal(res.data.total);
-    } catch (err) {
-      console.error("Failed to calculate pricing", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const fmt     = (n: number) => isNGN ? `₦${n.toLocaleString()}` : `£${n}`;
+  const price   = (t: Tier)   => isNGN ? t.priceNGN : t.priceGBP;
+  const perMonth = (t: Tier)  => isNGN
+    ? `₦${t.perMonthNGN.toLocaleString()}/mo`
+    : `£${(t.priceGBP / t.months).toFixed(2)}/mo`;
 
   const handleContinue = () => {
     navigate("/onboarding/step4", {
       state: {
-        selectedCourses,
-        currency,
-        mathsGrade,
-        englishGrade,
-        total,
+        selectedCourses, currency, curriculumRegion,
+        mathsGrade, englishGrade,
+        total: price(selected),
+        subscriptionMonths: selected.months,
+        subscriptionDays: selected.days,
+        tierLabel: selected.label,
       },
     });
   };
 
-  const getCourseFullName = (courseId: string) => {
-    const names: Record<string, string> = {
-      maths: "Mathematics (UK Curriculum)",
-      english: "English (UK Curriculum)",
-      yoruba: "Yoruba Language",
-      hausa: "Hausa Language",
-      igbo: "Igbo Language",
-    };
-    return names[courseId] || courseId;
-  };
-
-  const getGradeForCourse = (courseId: string) => {
-    if (courseId === "maths" && mathsGrade) return `Year ${mathsGrade}`;
-    if (courseId === "english" && englishGrade) return `Year ${englishGrade}`;
-    return null;
-  };
-
-  if (loading) {
-    return (
-      <Layout>
-        <div className="flex flex-col items-center justify-center h-[60vh]">
-          <Loader2 className="animate-spin text-[#2D5A27] mb-4" size={40} />
-          <p className="font-black text-gray-300 uppercase italic text-[10px] tracking-widest">
-            Calculating Pricing...
-          </p>
-        </div>
-      </Layout>
-    );
-  }
-
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto px-6 py-10 md:px-12 md:py-16 animate-in fade-in duration-700 pb-32">
-        {/* Header */}
-        <button
-          onClick={() => navigate(-1)}
-          className="group flex items-center gap-2 text-gray-400 hover:text-[#2D5A27] transition-colors mb-8"
-        >
-          <div className="p-2 bg-gray-50 rounded-xl group-hover:bg-[#2D5A27]/10">
-            <ChevronLeft size={20} />
-          </div>
-          <span className="text-[10px] font-black uppercase tracking-[0.2em]">
-            Back
-          </span>
+      <div className="max-w-3xl mx-auto px-6 py-10 md:px-12 md:py-16 pb-40">
+        {/* Back */}
+        <button onClick={() => navigate(-1)}
+          className="group flex items-center gap-2 text-gray-400 hover:text-[#3F2171] transition-colors mb-8">
+          <div className="p-2 bg-gray-50 rounded-xl group-hover:bg-[#3F2171]/10"><ChevronLeft size={20}/></div>
+          <span className="text-[10px] font-black uppercase tracking-[0.2em]">Back</span>
         </button>
 
-        <div className="mb-12">
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-4">
-            Step 3 of 4
-          </p>
-          <h1 className="text-4xl md:text-6xl font-black text-gray-800 italic uppercase tracking-tighter leading-tight mb-4">
-            Pricing <span className="text-[#2D5A27]">Summary</span>
+        <div className="mb-8">
+          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-4">Step 3 of 4</p>
+          <h1 className="text-4xl md:text-5xl font-black text-gray-800 italic uppercase tracking-tighter leading-tight mb-3">
+            Choose Your <span className="text-[#3F2171]">Plan</span>
           </h1>
-          <p className="text-gray-500 font-bold text-sm md:text-base max-w-2xl">
-            Review your selections and total investment
+          <p className="text-gray-500 font-bold text-sm max-w-xl">
+            After your free 1-month trial, continue with any plan below.
+            Longer plans cost less per month — and save you more.
           </p>
         </div>
 
-        {/* Pricing Card */}
-        <div className="bg-white rounded-[2.5rem] md:rounded-[3rem] p-8 md:p-12 shadow-xl border-4 border-white mb-8">
-          {/* Currency Badge */}
-          <div className="inline-flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-2xl mb-8">
-            <span className="text-2xl">
-              {currency === "NGN" ? "🇳🇬" : "🇬🇧"}
-            </span>
-            <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">
-              Pricing in {currency === "NGN" ? "Nigerian Naira" : "British Pounds"}
-            </span>
-          </div>
-
-          {/* Course List */}
-          <div className="space-y-6 mb-8">
-            {breakdown.map((item, index) => (
-              <div
-                key={index}
-                className="flex items-start justify-between pb-6 border-b border-gray-100 last:border-b-0 animate-in slide-in-from-left duration-500"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <CheckCircle2
-                      size={20}
-                      className="text-[#2D5A27] flex-shrink-0"
-                    />
-                    <h3 className="text-lg md:text-xl font-black text-gray-800 uppercase tracking-tight">
-                      {getCourseFullName(item.course)}
-                    </h3>
-                  </div>
-
-                  {getGradeForCourse(item.course) && (
-                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-8">
-                      {getGradeForCourse(item.course)}
-                    </p>
-                  )}
-
-                  {item.is_free && (
-                    <div className="flex items-center gap-2 mt-2 ml-8">
-                      <Award size={14} className="text-[#F4B400]" />
-                      <span className="text-[9px] font-black uppercase tracking-widest text-[#F4B400]">
-                        Full Scholarship Applied
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="text-right ml-4">
-                  {item.is_free ? (
-                    <div>
-                      <p className="text-gray-400 text-sm line-through mb-1">
-                        {currency === "NGN" ? "₦" : "£"}20,000
-                      </p>
-                      <p className="text-2xl font-black text-[#2D5A27] italic">
-                        FREE
-                      </p>
-                    </div>
-                  ) : (
-                    <p className="text-2xl font-black text-gray-800 italic">
-                      {currency === "NGN" ? "₦" : "£"}
-                      {item.amount.toLocaleString()}
-                    </p>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Total */}
-          <div className="pt-8 border-t-4 border-gray-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">
-                  Total Monthly Investment
-                </p>
-                <p className="text-sm font-bold text-gray-500">
-                  Billed monthly • Cancel anytime
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="text-4xl md:text-5xl font-black text-[#2D5A27] italic">
-                  {currency === "NGN" ? "₦" : "£"}
-                  {total.toLocaleString()}
-                </p>
-                <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 mt-2">
-                  Per Month
-                </p>
-              </div>
+        {/* Free trial banner */}
+        {hasPaid && (
+          <div className="bg-[#3F2171]/10 border-2 border-[#3F2171]/20 rounded-[1.5rem] p-5 mb-8 flex items-center gap-4">
+            <div className="w-12 h-12 bg-[#3F2171] rounded-2xl flex items-center justify-center shrink-0">
+              <Gift size={22} className="text-[#FFFF00]"/>
+            </div>
+            <div>
+              <p className="font-black text-[#3F2171] uppercase tracking-tight text-sm">🎁 First Month is Free</p>
+              <p className="text-gray-500 font-bold text-xs mt-0.5">
+                No payment today. Your chosen plan starts automatically after the 1-month free trial ends.
+              </p>
             </div>
           </div>
-        </div>
+        )}
 
-        {/* Benefits Highlight */}
-        <div className="bg-gradient-to-br from-[#3F2171] to-[#2A1650] rounded-[2.5rem] p-8 md:p-10 text-white mb-10">
-          <h3 className="text-xl md:text-2xl font-black italic uppercase tracking-tight mb-6">
-            ✨ What's Included:
-          </h3>
-          <div className="space-y-3">
+        {freeOnly ? (
+          <div className="bg-[#3F2171]/10 rounded-[2rem] p-8 text-center mb-8">
+            <p className="text-3xl font-black text-[#3F2171] italic mb-2">FREE</p>
+            <p className="text-gray-600 font-bold text-sm">Your language course is completely free — no plan needed.</p>
+          </div>
+        ) : (
+          <>
+            {/* Tier cards */}
+            <div className="space-y-4 mb-8">
+              {TIERS.map((tier) => {
+                const isSelected = selected.months === tier.months;
+                return (
+                  <button key={tier.months} onClick={() => setSelected(tier)}
+                    className={`w-full text-left rounded-[2rem] border-2 p-6 transition-all duration-200 relative ${
+                      isSelected
+                        ? "border-[#3F2171] bg-[#3F2171]/5 shadow-lg"
+                        : "border-gray-100 bg-white hover:border-[#3F2171]/40"
+                    }`}>
+
+                    {tier.popular && (
+                      <span className="absolute -top-4 left-6 bg-[#3F2171] text-white text-[9px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full flex items-center gap-1">
+                        <Star size={10} fill="white"/> Best Value
+                      </span>
+                    )}
+
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-4">
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                          isSelected ? "border-[#3F2171] bg-[#3F2171]" : "border-gray-300"
+                        }`}>
+                          {isSelected && <div className="w-2 h-2 rounded-full bg-white"/>}
+                        </div>
+                        <div>
+                          <p className="font-black text-lg text-gray-800 uppercase italic tracking-tight">
+                            {tier.label}
+                          </p>
+                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">
+                            {perMonth(tier)} · {tier.days} days · Maths + English
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="text-right shrink-0">
+                        <p className="text-2xl font-black text-gray-800 italic">{fmt(price(tier))}</p>
+                        {tier.savingsPct && (
+                          <span className="inline-block bg-[#FFFF00] text-[#2A1650] text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full mt-1">
+                            Save {tier.savingsPct}%
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Savings note */}
+            <p className="text-center text-[11px] font-bold text-gray-400 mb-6">
+              Savings compared to paying the 3-month rate repeatedly · Both Maths &amp; English included
+            </p>
+          </>
+        )}
+
+        {/* What's included */}
+        <div className="bg-gradient-to-br from-[#3F2171] to-[#2A1650] rounded-[2.5rem] p-8 mb-6">
+          <h3 className="text-base font-black italic uppercase tracking-tight text-white mb-4">✨ Every plan includes:</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {[
-              "Unlimited access to all lessons & quizzes",
-              "Weekly progress reports delivered to your email",
-              "AI Tutor available 24/7 for all 5 subjects",
-              "Gamification with points, badges & rewards",
-            ].map((benefit) => (
-              <div key={benefit} className="flex items-center gap-3">
-                <CheckCircle2 size={20} className="text-[#FFFF00] flex-shrink-0" />
-                <p className="text-sm font-bold">{benefit}</p>
+              "Maths & English — all lessons and quizzes",
+              "AI Tutor available 24/7 (60 min/day)",
+              "Monthly progress report to parent",
+              "Weekly feedback emails",
+              "Gamification — points, levels, rewards",
+              "African heritage languages free forever",
+            ].map((b) => (
+              <div key={b} className="flex items-start gap-2">
+                <CheckCircle2 size={14} className="text-[#FFFF00] shrink-0 mt-0.5"/>
+                <p className="text-white/80 font-bold text-xs">{b}</p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Continue Button — inline & centred (avoids sidebar overlap) */}
-        <div className="flex justify-center pb-16">
-          <button
-            onClick={handleContinue}
-            className="group flex items-center justify-center gap-4 bg-[#3F2171] text-white px-12 py-6 rounded-[2.5rem] font-black uppercase text-[11px] tracking-widest shadow-2xl hover:bg-black transition-all border-b-4 border-[#1E1038] active:translate-y-1 active:border-b-0 w-full max-w-lg"
-          >
-            Proceed to Start Your Free Trial
-            <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-          </button>
+        {/* Fixed footer CTA */}
+        <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t-2 border-gray-100 p-5 z-[60]">
+          <div className="max-w-3xl mx-auto flex items-center justify-between gap-6">
+            {!freeOnly && (
+              <div className="min-w-0">
+                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Selected Plan</p>
+                <p className="font-black text-gray-800 text-sm truncate">
+                  {selected.label} — {fmt(price(selected))}
+                  {selected.savingsPct ? ` (${selected.savingsPct}% off)` : ""}
+                </p>
+              </div>
+            )}
+            <button onClick={handleContinue}
+              className="shrink-0 group flex items-center justify-center gap-3 bg-[#3F2171] text-white px-8 py-5 rounded-[2.5rem] font-black uppercase text-[11px] tracking-widest shadow-2xl hover:bg-black transition-all border-b-4 border-[#1E1038] active:translate-y-1 active:border-b-0">
+              Continue — Start Free Trial
+              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform"/>
+            </button>
+          </div>
         </div>
       </div>
     </Layout>
