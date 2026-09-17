@@ -45,13 +45,13 @@ export default function ParentDashboard() {
     }
   };
 
-  const enterClassroom = (studentId: number, courseId: number) => {
-    // 🚀 Session Handshake: Impersonate the student to access their lessons
+  const enterClassroom = (studentId: number, courseId?: number) => {
+    // Set student session then go to student dashboard
     localStorage.setItem("is_impersonating", "true");
     localStorage.setItem("active_student_id", studentId.toString());
-    localStorage.setItem("active_course_id", courseId.toString());
+    if (courseId) localStorage.setItem("active_course_id", courseId.toString());
     window.dispatchEvent(new Event("storage"));
-    navigate(`/course-detail/${courseId}`);
+    navigate("/dashboard");
   };
 
   if (loading) {
@@ -70,10 +70,6 @@ export default function ParentDashboard() {
   return (
     <Layout>
       <div className="max-w-7xl mx-auto px-6 py-10 md:px-12 md:py-16 animate-in fade-in duration-700">
-        {/* Subscription status — shows trial countdown, premium expiry, or expired state */}
-        <div className="mb-8">
-          <SubscriptionStatus onUpgradeClick={() => setShowPaywall(true)} />
-        </div>
         <PaywallModal
           open={showPaywall}
           onClose={() => setShowPaywall(false)}
@@ -84,7 +80,7 @@ export default function ParentDashboard() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 md:mb-20">
           <div className="w-full md:w-auto">
             <h1 className="text-3xl sm:text-4xl md:text-6xl font-black text-gray-800 italic uppercase tracking-tighter leading-tight">
-              Welcome, {data?.parent_name?.split(" ")[0] || "Parent"}!
+              Ẹ n lẹ́, {data?.parent_name?.split(" ")[0] || "Parent"}!
             </h1>
 
             <div className="flex flex-wrap items-center gap-3 mt-6">
@@ -171,25 +167,41 @@ export default function ParentDashboard() {
                         </div>
 
                         <div className="space-y-3">
-                            <p className="text-gray-400 font-black text-[9px] uppercase tracking-widest flex items-center gap-2">
-                              <span className="w-4 h-[3px] bg-[#2D5A27] rounded-full"></span>{" "}
-                              {child.current_track || "General Heritage Path"}
+                          {/* Trial status badge */}
+                          {child.trial_ends_at && (
+                            <div className="inline-flex items-center gap-1.5 bg-[#3F2171]/10 px-3 py-1.5 rounded-xl">
+                              <div className="w-1.5 h-1.5 rounded-full bg-[#3F2171] animate-pulse"/>
+                              <span className="text-[9px] font-black uppercase tracking-widest text-[#3F2171]">
+                                {new Date(child.trial_ends_at) > new Date()
+                                  ? `Free Trial · ${Math.ceil((new Date(child.trial_ends_at).getTime() - Date.now()) / 86400000)} days left`
+                                  : "Trial Ended"}
+                              </span>
+                            </div>
+                          )}
+                          {/* Enrolled courses */}
+                          {child.selected_courses && (
+                            <p className="text-gray-500 font-bold text-xs">
+                              {(() => {
+                                try {
+                                  const courses = typeof child.selected_courses === 'string'
+                                    ? JSON.parse(child.selected_courses)
+                                    : child.selected_courses;
+                                  return courses.map((id: string) =>
+                                    id === 'maths' ? 'Mathematics' :
+                                    id === 'english' ? 'English' :
+                                    id.charAt(0).toUpperCase() + id.slice(1)
+                                  ).join(' · ');
+                                } catch { return child.current_track || 'General Heritage Path'; }
+                              })()}
                             </p>
+                          )}
                         </div>
 
                         <button
-                          onClick={() => enrollment && enterClassroom(child.id, enrollment.course_id)}
-                          className={`mt-10 w-full py-6 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all shadow-xl ${
-                            enrollment
-                              ? "bg-gray-900 text-white hover:bg-[#2D5A27]"
-                              : "bg-red-50 text-red-400 border-2 border-red-100 cursor-not-allowed"
-                          }`}
+                          onClick={() => enterClassroom(child.id, enrollment?.course_id)}
+                          className="mt-10 w-full py-6 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all shadow-xl bg-[#3F2171] text-white hover:bg-black"
                         >
-                          {enrollment ? (
-                            <>Monitor Progress <ArrowRight size={18} /></>
-                          ) : (
-                            "Activation Pending"
-                          )}
+                          Monitor Progress <ArrowRight size={18} />
                         </button>
                       </div>
                     );
