@@ -84,7 +84,7 @@ export default function ParentDashboard() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 md:mb-20">
           <div className="w-full md:w-auto">
             <h1 className="text-3xl sm:text-4xl md:text-6xl font-black text-gray-800 italic uppercase tracking-tighter leading-tight">
-              Ẹ n lẹ́, {data?.parent_name?.split(" ")[0] || "Parent"}!
+              Welcome, {data?.parent_name?.split(" ")[0] || "Parent"}!
             </h1>
 
             <div className="flex flex-wrap items-center gap-3 mt-6">
