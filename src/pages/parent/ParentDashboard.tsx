@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Layout from "../../components/Layout";
 import api from "../../api/axios";
-import SubscriptionStatus from "../components/SubscriptionStatus";
-import PaywallModal from "../components/PaywallModal";
+import SubscriptionStatus from "../../components/SubscriptionStatus";
+import PaywallModal from "../../components/PaywallModal";
 import {
   PlusCircle,
   GraduationCap,
