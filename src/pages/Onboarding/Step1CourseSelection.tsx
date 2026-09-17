@@ -115,8 +115,8 @@ export default function Step1CourseSelection() {
 
         {/* Language notice */}
         {selectedLanguage && (
-          <div className="mb-6 px-6 py-4 bg-[#FFFF00]/10 border-2 border-[#FFFF00]/30 rounded-2xl flex items-center gap-3">
-            <Award size={18} className="text-[#FFFF00]" />
+          <div className="mb-6 px-6 py-4 bg-[#3F2171]/10 border-2 border-[#3F2171]/30 rounded-2xl flex items-center gap-3">
+            <Award size={18} className="text-[#3F2171]" />
             <p className="text-sm font-black text-gray-700 uppercase tracking-wide">
               1 free language selected: <span className="text-[#3F2171]">{selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)}</span>
               <span className="text-gray-400 font-normal text-xs ml-2">(Select another to switch)</span>
