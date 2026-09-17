@@ -139,7 +139,7 @@ export default function Step1CourseSelection() {
 
                 {/* Language — radio indicator */}
                 {isLanguage && (
-                  <div className="absolute top-6 right-6 bg-[#FFFF00] text-white px-4 py-2 rounded-2xl flex items-center gap-2 shadow-lg">
+                  <div className="absolute top-6 right-6 bg-[#3F2171] text-white px-4 py-2 rounded-2xl flex items-center gap-2 shadow-lg">
                     <Award size={14}/>
                     <span className="text-[8px] font-black uppercase tracking-widest">Free · Pick 1</span>
                   </div>
@@ -173,7 +173,7 @@ export default function Step1CourseSelection() {
                         {currency === "NGN" ? "₦" : "£"}{originalPrice?.toLocaleString()}
                       </p>
                       <p className="text-3xl font-black text-[#3F2171] italic">FREE</p>
-                      <p className="text-[8px] font-black uppercase tracking-widest text-[#FFFF00] mt-2">Full Scholarship Applied</p>
+                      <p className="text-[8px] font-black uppercase tracking-widest text-[#B1B6C9] mt-2">Full Scholarship Applied</p>
                     </div>
                   ) : (
                     <div>
