@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Layout from "../../components/Layout";
 import api from "../../api/axios";
-import SubscriptionStatus from "../../components/SubscriptionStatus";
-import PaywallModal from "../../components/PaywallModal";
 import {
   PlusCircle,
   GraduationCap,
@@ -15,11 +13,14 @@ import {
   ShieldCheck
 } from "lucide-react";
 import EnrollmentModal from "../../components/Parent/EnrollmentModal";
+import SubscriptionStatus from "../../components/SubscriptionStatus";
+import PaywallModal from "../../components/PaywallModal";
 
 export default function ParentDashboard() {
   const [isEnrollModalOpen, setIsEnrollModalOpen] = useState(false);
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [showPaywall, setShowPaywall] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -57,7 +58,7 @@ export default function ParentDashboard() {
     return (
       <Layout>
         <div className="flex flex-col items-center justify-center h-[60vh]">
-          <Loader2 className="animate-spin text-[#3F2171] mb-4" size={40} />
+          <Loader2 className="animate-spin text-[#2D5A27] mb-4" size={40} />
           <p className="font-black text-gray-300 uppercase italic text-[10px] tracking-widest">
             Opening the Vault...
           </p>
@@ -69,20 +70,28 @@ export default function ParentDashboard() {
   return (
     <Layout>
       <div className="max-w-7xl mx-auto px-6 py-10 md:px-12 md:py-16 animate-in fade-in duration-700">
+        {/* Subscription status — shows trial countdown, premium expiry, or expired state */}
+        <div className="mb-8">
+          <SubscriptionStatus onUpgradeClick={() => setShowPaywall(true)} />
+        </div>
+        <PaywallModal
+          open={showPaywall}
+          onClose={() => setShowPaywall(false)}
+          onUnlocked={() => { setShowPaywall(false); window.location.reload(); }}
+        />
         
         {/* --- 🏠 DASHBOARD HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 md:mb-20">
           <div className="w-full md:w-auto">
             <h1 className="text-3xl sm:text-4xl md:text-6xl font-black text-gray-800 italic uppercase tracking-tighter leading-tight">
-              Welcome, {data?.parent_name?.split(" ")[0] || "Parent"}!
+              Ẹ n lẹ́, {data?.parent_name?.split(" ")[0] || "Parent"}!
             </h1>
-
 
             <div className="flex flex-wrap items-center gap-3 mt-6">
               <div className="bg-white px-4 py-2 rounded-xl border-2 border-gray-50 shadow-sm flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-[#3F2171] animate-pulse"></div>
+                <div className="w-2 h-2 rounded-full bg-[#2D5A27] animate-pulse"></div>
                 <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-gray-500">
-                  {data?.stats?.active_students || 0} Students Active
+                  {data?.stats?.active_courses || 0} Students Active
                 </span>
               </div>
               {data?.stats?.pending_count > 0 && (
@@ -95,11 +104,7 @@ export default function ParentDashboard() {
               )}
             </div>
           </div>
-const [showPaywall, setShowPaywall] = useState(false);
 
-<SubscriptionStatus onUpgradeClick={() => setShowPaywall(true)} />
-<PaywallModal open={showPaywall} onClose={() => setShowPaywall(false)} onUnlocked={() => setShowPaywall(false)} />
-  
           <div className="flex flex-col sm:flex-row w-full md:w-auto gap-4">
             <Link 
               to="/parent/messages"
@@ -109,9 +114,9 @@ const [showPaywall, setShowPaywall] = useState(false);
             </Link>
             <button
               onClick={() => navigate("/onboarding/step1")} 
-              className="group flex items-center justify-center gap-4 bg-[#3F2171] text-white px-10 py-5 rounded-2xl md:rounded-[2.5rem] font-black uppercase text-[10px] md:text-[11px] tracking-widest shadow-2xl hover:bg-black transition-all border-b-4 border-[#1E1038] active:translate-y-1 active:border-b-0"
+              className="group flex items-center justify-center gap-4 bg-[#2D5A27] text-white px-10 py-5 rounded-2xl md:rounded-[2.5rem] font-black uppercase text-[10px] md:text-[11px] tracking-widest shadow-2xl hover:bg-black transition-all border-b-4 border-green-900 active:translate-y-1 active:border-b-0"
             >
-              <PlusCircle size={20} className="text-[#FFFF00] group-hover:rotate-90 transition-transform" />
+              <PlusCircle size={20} className="text-[#F4B400] group-hover:rotate-90 transition-transform" />
               Add Your Kids
             </button>
           </div>
@@ -125,7 +130,7 @@ const [showPaywall, setShowPaywall] = useState(false);
               Start Your Journey
             </h3>
             <p className="text-gray-400 font-bold max-w-sm mx-auto mb-10 leading-relaxed text-xs md:text-sm italic">
-              No students found. Add a kid to begin their learning path.
+              No students found. Add a family member to begin their heritage learning path.
             </p>
           </div>
         ) : (
@@ -143,17 +148,9 @@ const [showPaywall, setShowPaywall] = useState(false);
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
                   {data.children.map((child: any) => {
-                    // Get ALL enrollments for this child
-                    const childEnrollments = data.active_enrollments?.filter(
+                    const enrollment = data.active_enrollments?.find(
                       (e: any) => Number(e.student_id) === Number(child.id)
-                    ) || [];
-                    
-                    const hasEnrollments = childEnrollments.length > 0;
-
-                    // Get course names for display
-                    const courseNames = childEnrollments
-                      .map((e: any) => e.course?.title || e.external_subject?.name || "Course")
-                      .filter(Boolean);
+                    );
 
                     return (
                       <div
@@ -163,9 +160,9 @@ const [showPaywall, setShowPaywall] = useState(false);
                         <div className="absolute top-0 right-0 p-8 opacity-[0.05] group-hover:scale-110 transition-transform">
                           <GraduationCap size={100} />
                         </div>
-Welco
+
                         <div className="flex items-center gap-4 mb-6">
-                            <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-[#3F2171] shadow-inner">
+                            <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-[#2D5A27] shadow-inner">
                                 <User size={24} />
                             </div>
                             <h3 className="text-2xl md:text-3xl font-black text-gray-800 uppercase italic tracking-tighter truncate">
@@ -173,39 +170,22 @@ Welco
                             </h3>
                         </div>
 
-                        <div className="space-y-2 mb-4">
-                            {courseNames.length > 0 ? (
-                              courseNames.map((courseName: string, idx: number) => (
-                                <p key={idx} className="text-gray-400 font-black text-[9px] uppercase tracking-widest flex items-center gap-2">
-                                  <span className="w-4 h-[3px] bg-[#3F2171] rounded-full"></span>{" "}
-                                  {courseName}
-                                </p>
-                              ))
-                            ) : (
-                              <p className="text-gray-300 font-black text-[9px] uppercase tracking-widest flex items-center gap-2">
-                                <span className="w-4 h-[3px] bg-gray-200 rounded-full"></span>{" "}
-                                No Active Courses
-                              </p>
-                            )}
+                        <div className="space-y-3">
+                            <p className="text-gray-400 font-black text-[9px] uppercase tracking-widest flex items-center gap-2">
+                              <span className="w-4 h-[3px] bg-[#2D5A27] rounded-full"></span>{" "}
+                              {child.current_track || "General Heritage Path"}
+                            </p>
                         </div>
 
                         <button
-                          onClick={() => {
-                            if (hasEnrollments) {
-                              // Go to student dashboard instead of single course
-                              localStorage.setItem("is_impersonating", "true");
-                              localStorage.setItem("active_student_id", child.id.toString());
-                              window.dispatchEvent(new Event("storage"));
-                              navigate("/dashboard");
-                            }
-                          }}
+                          onClick={() => enrollment && enterClassroom(child.id, enrollment.course_id)}
                           className={`mt-10 w-full py-6 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all shadow-xl ${
-                            hasEnrollments
-                              ? "bg-gray-900 text-white hover:bg-[#3F2171]"
+                            enrollment
+                              ? "bg-gray-900 text-white hover:bg-[#2D5A27]"
                               : "bg-red-50 text-red-400 border-2 border-red-100 cursor-not-allowed"
                           }`}
                         >
-                          {hasEnrollments ? (
+                          {enrollment ? (
                             <>Monitor Progress <ArrowRight size={18} /></>
                           ) : (
                             "Activation Pending"
