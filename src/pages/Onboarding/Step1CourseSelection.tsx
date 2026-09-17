@@ -177,9 +177,10 @@ export default function Step1CourseSelection() {
                     </div>
                   ) : (
                     <div>
-                      <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest mb-1">Monthly</p>
-                      <p className="text-3xl font-black text-[#3F2171] italic">
-                        {currency === "NGN" ? "₦" : "£"}{price?.toLocaleString()}
+                      <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest mb-1">First Month</p>
+                      <p className="text-3xl font-black text-[#1A7A4A] italic">FREE</p>
+                      <p className="text-[8px] font-black uppercase tracking-widest text-gray-400 mt-1">
+                        Then from {currency === "NGN" ? "₦30,000" : "£15"} / 3 months
                       </p>
                     </div>
                   )}
@@ -207,6 +208,7 @@ export default function Step1CourseSelection() {
                 <p className="text-sm font-bold text-gray-600">
                   {selectedCourses.map(id => courses.find(c => c.id === id)?.name.split(" ")[0]).join(", ")}
                 </p>
+                <p className="text-[9px] font-bold text-[#1A7A4A] mt-0.5">🎁 1-month free trial · No payment today</p>
               </div>
               <button onClick={handleContinue}
                 className="group flex items-center justify-center gap-4 bg-[#3F2171] text-white px-10 py-6 rounded-[2.5rem] font-black uppercase text-[11px] tracking-widest shadow-2xl hover:bg-black transition-all border-b-4 border-[#1E1038] active:translate-y-1 active:border-b-0 w-full md:w-auto">
