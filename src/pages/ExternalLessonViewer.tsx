@@ -78,7 +78,10 @@ export default function ExternalLessonViewer() {
       utterance.onstart = () => setIsSpeaking(true);
       utterance.onend   = () => setIsSpeaking(false);
       utterance.onerror = (e) => {
-        console.warn("TTS error:", e.error);
+        // 'interrupted' is expected when stop is clicked or page changes — not a real error
+        if (e.error !== 'interrupted' && e.error !== 'cancelled') {
+          console.warn("TTS error:", e.error);
+        }
         setIsSpeaking(false);
       };
       window.speechSynthesis.speak(utterance);
