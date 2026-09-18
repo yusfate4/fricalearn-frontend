@@ -51,6 +51,7 @@ export default function ExternalLessonViewer() {
   const { user } = useAuth();
 
   const [lesson, setLesson]               = useState<any>(null);
+  const [fetchError, setFetchError]        = useState<string | null>(null);
   const [loading, setLoading]             = useState(true);
 
   // ── Text-to-Speech ──────────────────────────────────────────
@@ -137,7 +138,12 @@ export default function ExternalLessonViewer() {
       const res = await api.get(ep);
       setLesson(res.data.lesson);
       if (res.data.progress?.status === "completed") { setShowQuiz(true); setQuizSubmitted(true); }
-    } catch (err) { console.error(err); }
+    } catch (err: any) {
+      console.error('Lesson fetch error:', err);
+      const status = err?.response?.status;
+      const msg    = err?.response?.data?.message || err?.message || 'Unknown error';
+      setFetchError(`Error ${status || ''}: ${msg}`);
+    }
     finally { setLoading(false); }
   };
 
@@ -216,7 +222,13 @@ export default function ExternalLessonViewer() {
   );
 
   if (!lesson) return (
-    <Layout><div className="p-20 text-center text-red-500 font-black uppercase text-2xl">Lesson not found.</div></Layout>
+    <Layout>
+      <div className="p-20 text-center">
+        <p className="text-red-500 font-black uppercase text-2xl mb-4">Lesson not found.</p>
+        {fetchError && <p className="text-gray-500 text-sm font-mono bg-gray-100 rounded p-4 max-w-xl mx-auto">{fetchError}</p>}
+        <button onClick={() => window.history.back()} className="mt-6 bg-[#3F2171] text-white px-6 py-3 rounded-xl font-black text-sm">Go Back</button>
+      </div>
+    </Layout>
   );
 
   const questions = parseQuiz(lesson.quiz_data);
