@@ -33,14 +33,17 @@ const ExternalSubjects = () => {
 
   useEffect(() => {
     fetchSubjects();
-  }, []);
+  }, [user]);
 
   const fetchSubjects = async () => {
     setLoading(true);
     try {
-      // Pass active_student_id so backend returns THAT student's subjects, not the parent's
+      // Always pass active_student_id so the backend returns THAT student's subjects
+      // When a parent is impersonating, auth()->id() is the parent — we must override
       const sid = localStorage.getItem("active_student_id");
-      const endpoint = sid ? `/external/subjects?student_id=${sid}` : "/external/subjects";
+      const endpoint = sid
+        ? `/external/subjects?student_id=${sid}`
+        : "/external/subjects";
       const res = await api.get(endpoint);
       setSubjects(res.data.subjects || []);
     } catch (err) {

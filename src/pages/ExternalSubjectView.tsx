@@ -54,7 +54,7 @@ export default function ExternalSubjectView() {
             Subject Not Found
           </h2>
           <button
-            onClick={() => navigate("/external-subjects")}
+            onClick={() => navigate("/courses")}
             className="text-[#2D5A27] font-bold underline"
           >
             Return to Subjects
