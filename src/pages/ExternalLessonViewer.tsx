@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import Layout from "../components/Layout";
 import {
   ArrowLeft, Loader2, CheckCircle2, XCircle, Award,
-  BookOpen, Target, Lightbulb, AlertTriangle,
-  ChevronRight, ChevronLeft, Volume2, VolumeX, Square,
+  Target, Lightbulb, AlertTriangle, ChevronRight, 
+  ChevronLeft, Presentation
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { useAuth } from "../hooks/useAuth";
@@ -15,9 +15,9 @@ interface Question {
   correct_answer?: string; correct?: string;
   correct_index?: number; explanation?: string | null;
 }
-interface Keyword     { keyword: string; description: string; }
+interface Keyword { keyword: string; description: string; }
 interface Misconception { misconception: string; response: string; }
-interface LessonMeta  {
+interface LessonMeta {
   outcome?: string | null;
   key_points?: string[];
   keywords?: Keyword[];
@@ -51,61 +51,8 @@ export default function ExternalLessonViewer() {
   const { user } = useAuth();
 
   const [lesson, setLesson]               = useState<any>(null);
-  const [fetchError, setFetchError]        = useState<string | null>(null);
+  const [fetchError, setFetchError]       = useState<string | null>(null);
   const [loading, setLoading]             = useState(true);
-
-  // ── Text-to-Speech ──────────────────────────────────────────
-  const [isSpeaking, setIsSpeaking] = useState(false);
-  const [ttsSupported]              = useState(() =>
-    typeof window !== "undefined" && "speechSynthesis" in window
-  );
-
-  const speakText = useCallback((text: string) => {
-    if (!ttsSupported) return;
-    window.speechSynthesis.cancel();
-
-    const speak = () => {
-      const utterance   = new SpeechSynthesisUtterance(text);
-      utterance.rate    = 0.88;
-      utterance.pitch   = 1;
-      utterance.volume  = 1;
-
-      // Prefer an English voice; fall back to first available
-      const voices = window.speechSynthesis.getVoices();
-      const en = voices.find(v => v.lang.startsWith("en")) || voices[0];
-      if (en) utterance.voice = en;
-
-      utterance.onstart = () => setIsSpeaking(true);
-      utterance.onend   = () => setIsSpeaking(false);
-      utterance.onerror = (e) => {
-        // 'interrupted' is expected when stop is clicked or page changes — not a real error
-        if (e.error !== 'interrupted' && e.error !== 'cancelled') {
-          console.warn("TTS error:", e.error);
-        }
-        setIsSpeaking(false);
-      };
-      window.speechSynthesis.speak(utterance);
-    };
-
-    // Chrome loads voices asynchronously — wait if not ready yet
-    const voices = window.speechSynthesis.getVoices();
-    if (voices.length > 0) {
-      speak();
-    } else {
-      window.speechSynthesis.onvoiceschanged = () => {
-        window.speechSynthesis.onvoiceschanged = null;
-        speak();
-      };
-    }
-  }, [ttsSupported]);
-
-  const stopSpeaking = useCallback(() => {
-    window.speechSynthesis.cancel();
-    setIsSpeaking(false);
-  }, []);
-
-  // Stop TTS on unmount / navigation
-  useEffect(() => () => { window.speechSynthesis?.cancel(); }, []);
 
   const [showQuiz, setShowQuiz]           = useState(false);
   const [currentQ, setCurrentQ]           = useState(0);
@@ -115,7 +62,6 @@ export default function ExternalLessonViewer() {
   const [quizResults, setQuizResults]     = useState<any>(null);
   const [studentName, setStudentName]     = useState("Explorer");
   const [submitting, setSubmitting]       = useState(false);
-  const [expanded, setExpanded]           = useState(false);
 
   useEffect(() => { fetchLesson(); }, [id]);
 
@@ -165,14 +111,6 @@ export default function ExternalLessonViewer() {
 
   const correctAnswer = (q: Question) => q.correct_answer ?? q.correct ?? "";
 
-  // ── Format transcript into readable paragraphs ────────────
-  const formatTranscript = (text: string): string[] => {
-    return text
-      .split(/\n+/)
-      .map(p => p.trim())
-      .filter(p => p.length > 15); // skip very short lines
-  };
-
   // ── Quiz handlers ─────────────────────────────────────────
   const handleSelect = (answer: string) => {
     if (feedback?.shown || quizSubmitted) return;
@@ -218,7 +156,7 @@ export default function ExternalLessonViewer() {
         <Loader2 className="animate-spin text-[#2D5A27] mb-6" size={48} />
         <p className="font-black text-gray-400 italic uppercase tracking-widest text-sm">Loading lesson...</p>
         <p className="text-gray-300 text-xs mt-3 font-medium max-w-xs">
-          First open fetches content from Oak National Academy — may take a few seconds
+          Preparing secure video & slides — may take a few seconds
         </p>
       </div>
     </Layout>
@@ -236,10 +174,6 @@ export default function ExternalLessonViewer() {
 
   const questions = parseQuiz(lesson.quiz_data);
   const meta      = parseMeta(lesson.worksheet_url);
-  const transcript = lesson.description && lesson.description !== "fetched" && lesson.description.length > 50
-    ? lesson.description
-    : null;
-  const paragraphs = transcript ? formatTranscript(transcript) : [];
 
   // ── Parse Video URL ───────────────────────────────────────
   let finalVideoUrl = null;
@@ -277,9 +211,9 @@ export default function ExternalLessonViewer() {
           {lesson.title}
         </h1>
 
-        {/* ── NEW VIDEO PLAYER ── */}
+        {/* ── VIDEO PLAYER ── */}
         {finalVideoUrl && (
-          <div className="bg-black rounded-[2.5rem] overflow-hidden shadow-2xl relative group w-full">
+          <div className="bg-black rounded-[2.5rem] overflow-hidden shadow-2xl relative group w-full border-4 border-gray-100">
             {finalVideoUrl.includes("youtube.com") || finalVideoUrl.includes("youtu.be") || finalVideoUrl.includes("embed") ? (
               <iframe
                 src={finalVideoUrl}
@@ -303,7 +237,7 @@ export default function ExternalLessonViewer() {
 
         {/* Learning Outcome */}
         {meta.outcome && (
-          <div className="bg-[#2D5A27] rounded-[2.5rem] p-8 text-white relative overflow-hidden">
+          <div className="bg-[#2D5A27] rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-md">
             <div className="absolute top-0 right-0 w-40 h-40 rounded-full opacity-10"
               style={{ background: "radial-gradient(circle,#fff,transparent)", transform: "translate(30%,-30%)" }}/>
             <div className="flex items-center gap-3 mb-3">
@@ -332,57 +266,48 @@ export default function ExternalLessonViewer() {
           </div>
         )}
 
-        {/* ── LESSON TRANSCRIPT ── Main content ─────────────── */}
-        {paragraphs.length > 0 ? (
+        {/* ── NEW: INTERACTIVE SLIDE DECK VIEWER ── */}
+        {lesson.slide_url && (
           <div className="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-sm border-2 border-gray-50">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="p-3 bg-[#2D5A27]/10 rounded-2xl"><BookOpen size={22} className="text-[#2D5A27]"/></div>
-              <div>
-                <div className="flex items-center justify-between gap-3">
-                  <h2 className="text-xl font-black text-gray-800 uppercase tracking-tight italic">Read the Lesson</h2>
-                  {ttsSupported && paragraphs.length > 0 && (
-                    <button
-                      onClick={() => isSpeaking ? stopSpeaking() : speakText(paragraphs.join(" "))}
-                      title={isSpeaking ? "Stop reading" : "Read lesson aloud"}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all border-2 ${
-                        isSpeaking
-                          ? "bg-red-50 border-red-200 text-red-600 hover:bg-red-100"
-                          : "bg-[#3F2171]/10 border-[#3F2171]/20 text-[#3F2171] hover:bg-[#3F2171]/20"
-                      }`}
-                    >
-                      {isSpeaking
-                        ? <><Square size={12} fill="currentColor"/> Stop</>
-                        : <><Volume2 size={14}/> Listen</>
-                      }
-                    </button>
-                  )}
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-[#3F2171]/10 rounded-2xl"><Presentation size={22} className="text-[#3F2171]"/></div>
+                <div>
+                  <h2 className="text-xl font-black text-gray-800 uppercase tracking-tight italic">Lesson Slides</h2>
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-0.5">
+                    Click through at your own pace
+                  </p>
                 </div>
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-0.5">
-                  Oak National Academy · {paragraphs.length} sections
-                </p>
               </div>
+              <a 
+                href={lesson.slide_url} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hidden md:flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all"
+              >
+                Open Fullscreen
+              </a>
             </div>
 
-            <div className={`space-y-5 text-gray-700 leading-relaxed font-medium text-base overflow-hidden transition-all duration-500 ${
-              expanded ? "max-h-none" : "max-h-96"
-            }`}>
-              {paragraphs.map((para, i) => (
-                <p key={i} className={i === 0 ? "font-bold text-gray-800" : ""}>{para}</p>
-              ))}
+            <div className="w-full bg-gray-100 rounded-2xl overflow-hidden border-2 border-gray-200">
+              <iframe
+                src={lesson.slide_url}
+                className="w-full h-[300px] md:h-[500px]"
+                frameBorder="0"
+                allowFullScreen
+                title="Lesson Presentation"
+              ></iframe>
             </div>
-
-            {paragraphs.length > 6 && (
-              <button onClick={() => setExpanded(!expanded)}
-                className="mt-6 flex items-center gap-2 text-[#2D5A27] font-black uppercase text-xs tracking-widest hover:text-black transition-colors">
-                {expanded ? "Show less ↑" : `Read more (${paragraphs.length - 6} more sections) ↓`}
-              </button>
-            )}
-          </div>
-        ) : (
-          /* No transcript yet */
-          <div className="bg-gray-50 rounded-[2.5rem] p-10 border-2 border-dashed border-gray-200 text-center">
-            <BookOpen size={40} className="text-gray-300 mx-auto mb-4"/>
-            <p className="text-gray-400 font-bold">Lesson content is being prepared — check back soon!</p>
+            
+            {/* Mobile-only fullscreen button to save space */}
+            <a 
+              href={lesson.slide_url} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="md:hidden mt-4 flex items-center justify-center w-full gap-2 px-4 py-3 bg-gray-100 text-gray-600 rounded-xl font-black text-[10px] uppercase tracking-widest"
+            >
+              Open Fullscreen
+            </a>
           </div>
         )}
 
@@ -429,18 +354,18 @@ export default function ExternalLessonViewer() {
         {/* Quiz CTA */}
         {questions.length > 0 ? (
           <div className="text-center pt-4">
-            <p className="text-gray-400 font-bold text-sm mb-6">Read the lesson above, then test your understanding:</p>
+            <p className="text-gray-400 font-bold text-sm mb-6">Finished the video and slides? Test your knowledge!</p>
             <button onClick={() => { setCurrentQ(0); setFeedback(null); setShowQuiz(true); }}
               className="group inline-flex items-center gap-4 bg-[#2D5A27] text-white px-14 py-7 rounded-[2.5rem] font-black uppercase text-sm tracking-widest shadow-2xl hover:bg-black transition-all border-b-4 border-green-900 active:translate-y-1 active:border-b-0">
               Take the Quiz ({questions.length} questions)
               <Award size={20} className="group-hover:rotate-12 transition-transform"/>
             </button>
           </div>
-        ) : paragraphs.length > 0 ? (
+        ) : (
           <div className="text-center p-6 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
             <p className="text-gray-400 font-bold text-sm">Quiz coming soon — move to the next lesson!</p>
           </div>
-        ) : null}
+        )}
       </div>
     </Layout>
   );
@@ -472,27 +397,6 @@ export default function ExternalLessonViewer() {
               </div>
             </div>
 
-            {/* 🏆 Topic evaluation — shows when the whole topic is now complete */}
-            {quizResults?.topic_evaluation && (
-              <div className="bg-gradient-to-br from-[#F4B400] to-yellow-500 rounded-[2rem] p-8 mb-8 text-left shadow-lg animate-in zoom-in duration-500">
-                <p className="text-[10px] font-black uppercase tracking-widest text-[#0E1C0E]/60 mb-2">🏆 Topic Complete!</p>
-                <h3 className="text-2xl font-black text-[#0E1C0E] italic uppercase tracking-tight mb-2">
-                  {quizResults.topic_evaluation.topic_title}
-                </h3>
-                <p className="font-bold text-[#0E1C0E]">
-                  Topic average: {quizResults.topic_evaluation.average_score}% — {quizResults.topic_evaluation.grade_label}
-                </p>
-                <p className="text-xs font-bold text-[#0E1C0E]/60 mt-1">
-                  {quizResults.topic_evaluation.lessons_completed}/{quizResults.topic_evaluation.total_lessons} lessons completed
-                </p>
-                {quizResults.topic_evaluation.weak_lessons?.length > 0 && (
-                  <p className="text-sm font-medium text-[#0E1C0E]/70 mt-3">
-                    💡 Worth revisiting: {quizResults.topic_evaluation.weak_lessons.join(", ")}
-                  </p>
-                )}
-              </div>
-            )}
-
             {/* Answer review */}
             <div className="space-y-4 mb-8">
               <h3 className="text-lg font-black text-gray-700 uppercase tracking-tight">Review Your Answers</h3>
@@ -503,7 +407,7 @@ export default function ExternalLessonViewer() {
                 return (
                   <div key={i} className={`p-5 rounded-2xl border-2 ${ok ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"}`}>
                     <p className="font-black text-gray-800 mb-2 text-sm">{i + 1}. {q.question}</p>
-                    <p className={`font-bold text-sm ${ok ? "textgreen-700" : "text-red-600"}`}>
+                    <p className={`font-bold text-sm ${ok ? "text-green-700" : "text-red-600"}`}>
                       Your answer: {ans || "Not answered"} {ok ? "✓" : "✗"}
                     </p>
                     {!ok && <p className="font-bold text-sm text-green-700 mt-1">✓ Correct: {right}</p>}
@@ -522,7 +426,7 @@ export default function ExternalLessonViewer() {
             ) : (
               <div className="text-center space-y-4">
                 <h3 className="text-3xl font-black text-gray-800 italic uppercase tracking-tighter">Keep Practising! 💪</h3>
-                <p className="text-gray-500 font-bold text-sm">Re-read the lesson then try again.</p>
+                <p className="text-gray-500 font-bold text-sm">Review the slides and try again.</p>
                 <button onClick={resetQuiz} className="w-full bg-gray-900 text-white py-7 rounded-[2rem] font-black text-xl uppercase tracking-widest hover:bg-[#2D5A27] transition-all shadow-xl">
                   Try Again
                 </button>
@@ -623,7 +527,7 @@ export default function ExternalLessonViewer() {
                     <p className="text-amber-600 text-xs font-medium mt-2 leading-relaxed">{q.explanation}</p>
                   )}
                   <p className="text-amber-500 text-xs font-medium mt-2 italic">
-                    Recorded as missed — re-read this section of the lesson and try again next time!
+                    Recorded as missed — review the slides and try again next time!
                   </p>
                 </div>
               )}
