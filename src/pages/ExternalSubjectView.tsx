@@ -39,7 +39,7 @@ export default function ExternalSubjectView() {
     return (
       <Layout>
         <div className="min-h-screen flex items-center justify-center">
-          <div className="p-20 text-center font-black text-[#2D5A27] animate-pulse italic uppercase tracking-tighter text-xl md:text-2xl">
+          <div className="p-20 text-center font-black text-[#3F2171] animate-pulse italic uppercase tracking-tighter text-xl md:text-2xl">
             Loading Subject...
           </div>
         </div>
@@ -55,7 +55,7 @@ export default function ExternalSubjectView() {
           </h2>
           <button
             onClick={() => navigate("/courses")}
-            className="text-[#2D5A27] font-bold underline"
+            className="text-[#3F2171] font-bold underline"
           >
             Return to Subjects
           </button>
@@ -76,9 +76,9 @@ export default function ExternalSubjectView() {
         {/* Back Navigation */}
         <button
           onClick={() => navigate("/courses")}
-          className="group flex items-center gap-2 text-gray-400 hover:text-[#2D5A27] mb-8 transition-all font-black uppercase text-[10px] tracking-widest"
+          className="group flex items-center gap-2 text-gray-400 hover:text-[#3F2171] mb-8 transition-all font-black uppercase text-[10px] tracking-widest"
         >
-          <div className="p-2 rounded-xl bg-white shadow-sm group-hover:bg-[#2D5A27]/10 transition-all">
+          <div className="p-2 rounded-xl bg-white shadow-sm group-hover:bg-[#3F2171]/10 transition-all">
             <ArrowLeft size={16} />
           </div>
           Back to Library
@@ -98,7 +98,7 @@ export default function ExternalSubjectView() {
 
             <div className="w-full md:w-3/5 lg:w-2/3 p-8 md:p-12 flex flex-col justify-center text-center md:text-left">
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-6">
-                <span className="bg-[#2D5A27]/10 text-[#2D5A27] px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest">
+                <span className="bg-[#3F2171]/10 text-[#3F2171] px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest">
                   {subject.key_stage}
                 </span>
                 <span className="text-[10px] font-black text-gray-300 uppercase italic tracking-widest border-l pl-3 border-gray-200">
@@ -121,7 +121,7 @@ export default function ExternalSubjectView() {
             <h2 className="text-3xl md:text-4xl font-black text-gray-800 mb-2 italic uppercase tracking-tighter">
               Learning Topics
             </h2>
-            <div className="h-1.5 w-16 bg-[#2D5A27] rounded-full mx-auto md:mx-0"></div>
+            <div className="h-1.5 w-16 bg-[#3F2171] rounded-full mx-auto md:mx-0"></div>
           </div>
         </div>
 
@@ -132,7 +132,7 @@ export default function ExternalSubjectView() {
               <div className="bg-white rounded-[2.5rem] shadow-xl border border-gray-50 overflow-hidden">
                 <div className="bg-gray-50 px-8 py-6 border-b border-gray-100">
                   <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest italic flex items-center gap-3">
-                    <span className="bg-[#2D5A27] text-white w-6 h-6 rounded-lg flex items-center justify-center text-[10px] not-italic">
+                    <span className="bg-[#3F2171] text-white w-6 h-6 rounded-lg flex items-center justify-center text-[10px] not-italic">
                       {topicIdx + 1}
                     </span>
                     {topic.title}
@@ -150,14 +150,14 @@ export default function ExternalSubjectView() {
                     return (
                       <div
                         key={lesson.id}
-                        className="p-6 md:p-10 flex flex-col lg:flex-row items-center justify-between transition-all gap-8 hover:bg-green-50/20"
+                        className="p-6 md:p-10 flex flex-col lg:flex-row items-center justify-between transition-all gap-8 hover:bg-[#3F2171]/5"
                       >
                         <div className="flex items-center gap-6 md:gap-10 w-full">
                           <div
                             className={`w-14 h-14 md:w-20 md:h-20 shrink-0 rounded-[1.5rem] flex items-center justify-center border-2 shadow-sm transition-all ${
                               isCompleted
-                                ? "bg-green-50 border-green-200 text-green-500"
-                                : "bg-white border-gray-100 text-[#2D5A27]"
+                                ? "bg-[#3F2171]/10 border-[#3F2171]/20 text-[#3F2171]"
+                                : "bg-white border-gray-100 text-[#3F2171]"
                             }`}
                           >
                             {isCompleted ? (
@@ -172,12 +172,14 @@ export default function ExternalSubjectView() {
                               {lesson.title}
                             </h4>
                             <p className="text-gray-400 text-sm mb-2">
-                              {lesson.description}
+                              {lesson.description
+                                ? `${Math.ceil(lesson.description.length / 5)} word lesson · Click to read`
+                                : "Click to start this lesson"}
                             </p>
                             <div className="flex flex-wrap items-center gap-4">
                               <span
                                 className={`text-[10px] font-black uppercase italic ${
-                                  isCompleted ? "text-gray-400" : "text-green-600"
+                                  isCompleted ? "text-gray-400" : "text-[#3F2171]"
                                 }`}
                               >
                                 {isCompleted
@@ -197,7 +199,7 @@ export default function ExternalSubjectView() {
                           onClick={() =>
                             navigate(`/external-lessons/${lesson.id}`)
                           }
-                          className="w-full lg:w-auto px-10 py-5 rounded-[1.5rem] font-black text-xs uppercase tracking-[0.2em] transition-all shadow-xl flex items-center justify-center gap-3 bg-[#2D5A27] text-white hover:bg-black active:scale-95 hover:-translate-y-1"
+                          className="w-full lg:w-auto px-10 py-5 rounded-[1.5rem] font-black text-xs uppercase tracking-[0.2em] transition-all shadow-xl flex items-center justify-center gap-3 bg-[#3F2171] text-white hover:bg-black active:scale-95 hover:-translate-y-1"
                         >
                           {isCompleted ? "Review" : "Start Now"}
                           <ChevronRight size={16} />
