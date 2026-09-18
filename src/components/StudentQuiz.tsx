@@ -205,7 +205,7 @@ export default function StudentQuiz({
           <div className="bg-white p-6 md:p-10 rounded-[2.5rem] md:rounded-[3rem] shadow-2xl border-4 border-[#3F2171]/10 animate-in slide-in-from-bottom-10 duration-500">
             <div className="flex items-center gap-3 text-red-500 mb-8">
               <AlertCircle size={28} />
-              <span className="font-black uppercase italic text-xl tracking-tighter">Olukọ's Feedback</span>
+              <span className="font-black uppercase italic text-xl tracking-tighter">Tutor's Feedback</span>
             </div>
 
             {currentQuestion.explanation_video_url && (
@@ -216,7 +216,7 @@ export default function StudentQuiz({
 
             <div className="bg-gray-50 p-6 md:p-8 rounded-3xl mb-10 border-2 border-dashed border-gray-200">
               <p className="font-bold italic text-gray-700 leading-relaxed text-base md:text-lg">
-                "{currentQuestion.explanation_text || "Ẹ kú iṣẹ́! Study the correct path and try the next one."}"
+                "{currentQuestion.explanation_text || "Welldone! Study the correct path and try the next one."}"
               </p>
             </div>
 

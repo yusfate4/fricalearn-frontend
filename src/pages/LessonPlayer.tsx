@@ -93,7 +93,7 @@ export default function LessonPlayer() {
       <div className="min-h-screen flex flex-col items-center justify-center p-20">
         <Loader2 className="animate-spin text-[#3F2171] mb-6" size={48} />
         <p className="font-black text-gray-400 italic uppercase tracking-widest text-sm">
-          Olukọ is preparing your lesson...
+          Tutor is preparing your lesson...
         </p>
       </div>
     </Layout>
@@ -139,13 +139,13 @@ export default function LessonPlayer() {
               </div>
             )}
 
-            {/* 📝 Olukọ's Notes Section */}
+            {/* 📝 Tutor's Notes Section */}
             <div className="bg-white p-10 md:p-16 rounded-[3rem] shadow-sm border-2 border-gray-50 mb-12 relative overflow-hidden group">
               <div className="absolute top-0 left-0 w-2.5 h-full bg-[#3F2171] group-hover:w-4 transition-all duration-500"></div>
               <div className="flex items-center gap-3 mb-6">
                 <Sparkles size={20} className="text-[#FFFF00]" />
                 <h2 className="text-2xl font-black text-gray-800 italic uppercase tracking-tight">
-                  Olukọ's Notes
+                  Tutor's Notes
                 </h2>
               </div>
               <div className="text-gray-600 text-lg md:text-xl leading-relaxed whitespace-pre-line font-medium italic">
@@ -226,7 +226,7 @@ export default function LessonPlayer() {
               Ó tọ́ díẹ̀, {studentName}!
             </h2>
             <p className="text-gray-400 font-bold mb-10 text-xl leading-relaxed">
-              Every master was once a student. <br/> Review Olukọ's notes and try one more time!
+              Every master was once a student. <br/> Review Tutor's notes and try one more time!
             </p>
             <button
               onClick={() => {

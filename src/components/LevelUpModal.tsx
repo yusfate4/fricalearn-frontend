@@ -35,7 +35,7 @@ export default function LevelUpModal({
     if (lvl < 5) return "Akẹ́kọ̀ọ́ (Student)";
     if (lvl < 10) return "Jagunjagun (Warrior)";
     if (lvl < 20) return "Agbà (Elder)";
-    return "Olukọ (Master Teacher)";
+    return "Tutor (Master Teacher)";
   };
 
   const triggerConfetti = () => {
