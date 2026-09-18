@@ -4,6 +4,7 @@ import {
   PlayCircle,
   ArrowLeft,
   ChevronRight,
+  ChevronDown,
   CheckCircle2,
 } from "lucide-react";
 import api from "../api/axios";
@@ -14,6 +15,9 @@ export default function ExternalSubjectView() {
   const navigate = useNavigate();
   const [subject, setSubject] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  
+  // State to track which topic is currently open
+  const [expandedTopic, setExpandedTopic] = useState<number | null>(null);
 
   useEffect(() => {
     fetchSubject();
@@ -125,92 +129,118 @@ export default function ExternalSubjectView() {
           </div>
         </div>
 
-        {/* TOPICS & LESSONS */}
-        <div className="space-y-10">
-          {subject.topics?.map((topic: any, topicIdx: number) => (
-            <div key={topic.id} className="relative">
-              <div className="bg-white rounded-[2.5rem] shadow-xl border border-gray-50 overflow-hidden">
-                <div className="bg-gray-50 px-8 py-6 border-b border-gray-100">
-                  <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest italic flex items-center gap-3">
-                    <span className="bg-[#3F2171] text-white w-6 h-6 rounded-lg flex items-center justify-center text-[10px] not-italic">
-                      {topicIdx + 1}
-                    </span>
-                    {topic.title}
-                  </h3>
-                  <p className="text-gray-400 text-xs mt-2 ml-9">
-                    {topic.description}
-                  </p>
-                </div>
+        {/* TOPICS & LESSONS ACCORDION */}
+        <div className="space-y-6">
+          {subject.topics?.map((topic: any, topicIdx: number) => {
+            const isExpanded = expandedTopic === topic.id;
 
-                <div className="divide-y divide-gray-50">
-                  {topic.lessons?.map((lesson: any) => {
-                    const userProgress = lesson.user_progress?.[0];
-                    const isCompleted = userProgress?.status === "completed";
+            return (
+              <div key={topic.id} className="relative">
+                <div className="bg-white rounded-[2.5rem] shadow-xl border border-gray-50 overflow-hidden transition-all duration-300">
+                  
+                  {/* TOPIC HEADER BUTTON */}
+                  <button
+                    onClick={() => setExpandedTopic(isExpanded ? null : topic.id)}
+                    className="w-full text-left px-8 py-8 md:px-10 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex-1 pr-6">
+                      <h3 className="text-base md:text-xl font-black text-gray-700 uppercase tracking-tight italic flex items-center gap-4">
+                        <span className="bg-[#3F2171] text-white w-8 h-8 rounded-xl flex items-center justify-center text-xs not-italic shadow-md shrink-0">
+                          {topicIdx + 1}
+                        </span>
+                        {topic.title}
+                      </h3>
+                      {topic.description && (
+                        <p className="text-gray-400 text-sm mt-3 ml-12">
+                          {topic.description}
+                        </p>
+                      )}
+                    </div>
+                    <div
+                      className={`p-3 rounded-full transition-all duration-300 shrink-0 ${
+                        isExpanded
+                          ? "bg-[#3F2171] text-white rotate-180 shadow-md"
+                          : "bg-gray-100 text-gray-400"
+                      }`}
+                    >
+                      <ChevronDown size={24} />
+                    </div>
+                  </button>
 
-                    return (
-                      <div
-                        key={lesson.id}
-                        className="p-6 md:p-10 flex flex-col lg:flex-row items-center justify-between transition-all gap-8 hover:bg-[#3F2171]/5"
-                      >
-                        <div className="flex items-center gap-6 md:gap-10 w-full">
+                  {/* LESSONS LIST (Only shows when clicked) */}
+                  {isExpanded && (
+                    <div className="divide-y divide-gray-100 border-t-2 border-gray-50 bg-gray-50/30 animate-in slide-in-from-top-4 duration-300">
+                      {topic.lessons?.map((lesson: any) => {
+                        const userProgress = lesson.user_progress?.[0];
+                        const isCompleted = userProgress?.status === "completed";
+
+                        return (
                           <div
-                            className={`w-14 h-14 md:w-20 md:h-20 shrink-0 rounded-[1.5rem] flex items-center justify-center border-2 shadow-sm transition-all ${
-                              isCompleted
-                                ? "bg-[#3F2171]/10 border-[#3F2171]/20 text-[#3F2171]"
-                                : "bg-white border-gray-100 text-[#3F2171]"
-                            }`}
+                            key={lesson.id}
+                            className="p-6 md:p-10 flex flex-col lg:flex-row items-center justify-between transition-all gap-8 hover:bg-white"
                           >
-                            {isCompleted ? (
-                              <CheckCircle2 size={32} />
-                            ) : (
-                              <PlayCircle size={36} />
-                            )}
-                          </div>
-
-                          <div className="flex-1 text-left">
-                            <h4 className="font-black text-gray-800 text-lg md:text-2xl uppercase italic leading-tight mb-2 tracking-tight">
-                              {lesson.title}
-                            </h4>
-                            <p className="text-gray-400 text-sm mb-2">
-                              {lesson.description
-                                ? `${Math.ceil(lesson.description.length / 5)} word lesson · Click to read`
-                                : "Click to start this lesson"}
-                            </p>
-                            <div className="flex flex-wrap items-center gap-4">
-                              <span
-                                className={`text-[10px] font-black uppercase italic ${
-                                  isCompleted ? "text-gray-400" : "text-[#3F2171]"
+                            <div className="flex items-center gap-6 md:gap-10 w-full">
+                              <div
+                                className={`w-14 h-14 md:w-20 md:h-20 shrink-0 rounded-[1.5rem] flex items-center justify-center border-2 shadow-sm transition-all ${
+                                  isCompleted
+                                    ? "bg-[#3F2171]/10 border-[#3F2171]/20 text-[#3F2171]"
+                                    : "bg-white border-gray-100 text-[#3F2171]"
                                 }`}
                               >
-                                {isCompleted
-                                  ? `Completed • Score: ${userProgress.quiz_score}%`
-                                  : "Available"}
-                              </span>
-                              {lesson.duration_minutes && (
-                                <span className="text-[10px] font-black text-gray-400 uppercase border-l pl-4 border-gray-200">
-                                  {lesson.duration_minutes} min
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
+                                {isCompleted ? (
+                                  <CheckCircle2 size={32} />
+                                ) : (
+                                  <PlayCircle size={36} />
+                                )}
+                              </div>
 
-                        <button
-                          onClick={() =>
-                            navigate(`/external-lessons/${lesson.id}`)
-                          }
-                          className="w-full lg:w-auto px-10 py-5 rounded-[1.5rem] font-black text-xs uppercase tracking-[0.2em] transition-all shadow-xl flex items-center justify-center gap-3 bg-[#3F2171] text-white hover:bg-black active:scale-95 hover:-translate-y-1"
-                        >
-                          {isCompleted ? "Review" : "Start Now"}
-                          <ChevronRight size={16} />
-                        </button>
-                      </div>
-                    );
-                  })}
+                              <div className="flex-1 text-left">
+                                <h4 className="font-black text-gray-800 text-lg md:text-2xl uppercase italic leading-tight mb-2 tracking-tight">
+                                  {lesson.title}
+                                </h4>
+                                <div className="flex flex-wrap items-center gap-4 mt-3">
+                                  <span
+                                    className={`text-[10px] font-black uppercase italic ${
+                                      isCompleted ? "text-gray-400" : "text-[#3F2171]"
+                                    }`}
+                                  >
+                                    {isCompleted
+                                      ? `Completed • Score: ${userProgress.quiz_score}%`
+                                      : "Available"}
+                                  </span>
+                                  {lesson.duration_minutes && (
+                                    <span className="text-[10px] font-black text-gray-400 uppercase border-l pl-4 border-gray-200">
+                                      {lesson.duration_minutes} min
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+
+                            <button
+                              onClick={() =>
+                                navigate(`/external-lessons/${lesson.id}`)
+                              }
+                              className="w-full lg:w-auto px-10 py-5 rounded-[1.5rem] font-black text-xs uppercase tracking-[0.2em] transition-all shadow-xl flex items-center justify-center gap-3 bg-[#3F2171] text-white hover:bg-black active:scale-95 hover:-translate-y-1"
+                            >
+                              {isCompleted ? "Review" : "Start Now"}
+                              <ChevronRight size={16} />
+                            </button>
+                          </div>
+                        );
+                      })}
+                      
+                      {(!topic.lessons || topic.lessons.length === 0) && (
+                         <div className="p-10 text-center text-gray-400 font-bold text-sm uppercase tracking-widest">
+                           Lessons coming soon
+                         </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </Layout>
