@@ -24,7 +24,7 @@ const steps = [
     num: "03",
     icon: "🚀",
     title: "Child starts learning today",
-    desc: "4,788 curriculum-aligned lessons, instant quizzes, the Olukọ AI Tutor, and a leaderboard — all accessible from day one. Progress tracked automatically.",
+    desc: "4,788 curriculum-aligned lessons, instant quizzes, the AI Tutor, and a leaderboard — all accessible from day one. Progress tracked automatically.",
     color: "bg-[#2A1650]",
     textColor: "text-white",
     subColor: "text-white/60",

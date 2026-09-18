@@ -44,7 +44,7 @@ const Courses: React.FC = () => {
   const features = [
     "Maths — 4,000+ lessons, KS1 to KS4",
     "English — 700+ lessons, KS1 to KS4",
-    "Olukọ AI Tutor — all subjects, 24/7",
+    "AI Tutor — all subjects, 24/7",
     "Quizzes with instant explanations",
     "Monthly progress report to parent",
     "Weekly activity email summary",
