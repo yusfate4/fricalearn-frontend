@@ -241,8 +241,25 @@ export default function ExternalLessonViewer() {
     : null;
   const paragraphs = transcript ? formatTranscript(transcript) : [];
 
+  // ── Parse Video URL ───────────────────────────────────────
+  let finalVideoUrl = null;
+  if (lesson.video_url) {
+    if (lesson.video_url.startsWith('http')) {
+      finalVideoUrl = lesson.video_url;
+    } else if (lesson.video_url.startsWith('{')) {
+      try {
+        const videoAssets = JSON.parse(lesson.video_url);
+        finalVideoUrl = videoAssets.videoUrl 
+                     || videoAssets?.videoObject?.contentUrl 
+                     || videoAssets?.videoObject?.embedUrl;
+      } catch (e) {
+        console.error("Failed to parse video assets", e);
+      }
+    }
+  }
+
   // ─────────────────────────────────────────────────────────
-  // LESSON VIEW (no video, no external links)
+  // LESSON VIEW
   // ─────────────────────────────────────────────────────────
   if (!showQuiz) return (
     <Layout>
@@ -259,6 +276,30 @@ export default function ExternalLessonViewer() {
         <h1 className="text-4xl md:text-5xl font-black text-gray-800 tracking-tighter italic uppercase leading-none">
           {lesson.title}
         </h1>
+
+        {/* ── NEW VIDEO PLAYER ── */}
+        {finalVideoUrl && (
+          <div className="bg-black rounded-[2.5rem] overflow-hidden shadow-2xl relative group w-full">
+            {finalVideoUrl.includes("youtube.com") || finalVideoUrl.includes("youtu.be") || finalVideoUrl.includes("embed") ? (
+              <iframe
+                src={finalVideoUrl}
+                className="w-full min-h-[300px] md:min-h-[500px]"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                allowFullScreen
+              />
+            ) : (
+              <video 
+                controls 
+                className="w-full min-h-[300px] md:min-h-[500px] object-cover"
+                preload="metadata"
+                controlsList="nodownload"
+              >
+                <source src={finalVideoUrl} />
+                Your browser does not support the video tag.
+              </video>
+            )}
+          </div>
+        )}
 
         {/* Learning Outcome */}
         {meta.outcome && (
@@ -462,7 +503,7 @@ export default function ExternalLessonViewer() {
                 return (
                   <div key={i} className={`p-5 rounded-2xl border-2 ${ok ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"}`}>
                     <p className="font-black text-gray-800 mb-2 text-sm">{i + 1}. {q.question}</p>
-                    <p className={`font-bold text-sm ${ok ? "text-green-700" : "text-red-600"}`}>
+                    <p className={`font-bold text-sm ${ok ? "textgreen-700" : "text-red-600"}`}>
                       Your answer: {ans || "Not answered"} {ok ? "✓" : "✗"}
                     </p>
                     {!ok && <p className="font-bold text-sm text-green-700 mt-1">✓ Correct: {right}</p>}
