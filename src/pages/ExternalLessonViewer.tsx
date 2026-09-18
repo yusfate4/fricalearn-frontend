@@ -5,7 +5,7 @@ import Layout from "../components/Layout";
 import {
   ArrowLeft, Loader2, CheckCircle2, XCircle, Award,
   Target, Lightbulb, AlertTriangle, ChevronRight, 
-  ChevronLeft, Presentation
+  ChevronLeft, Presentation, FileText, Download
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import { useAuth } from "../hooks/useAuth";
@@ -22,6 +22,8 @@ interface LessonMeta {
   key_points?: string[];
   keywords?: Keyword[];
   misconceptions?: Misconception[];
+  worksheet_pdf?: string | null;
+  worksheet_answers_pdf?: string | null;
 }
 
 // ── Web Audio clapping sound ──────────────────────────────────
@@ -156,7 +158,7 @@ export default function ExternalLessonViewer() {
         <Loader2 className="animate-spin text-[#2D5A27] mb-6" size={48} />
         <p className="font-black text-gray-400 italic uppercase tracking-widest text-sm">Loading lesson...</p>
         <p className="text-gray-300 text-xs mt-3 font-medium max-w-xs">
-          Preparing secure video & slides — may take a few seconds
+          Preparing secure video, slides & worksheets — may take a few seconds
         </p>
       </div>
     </Layout>
@@ -266,7 +268,49 @@ export default function ExternalLessonViewer() {
           </div>
         )}
 
-        {/* ── NEW: INTERACTIVE SLIDE DECK VIEWER ── */}
+        {/* ── PRINTABLE WORKSHEETS ── */}
+        {(meta.worksheet_pdf || meta.worksheet_answers_pdf) && (
+          <div className="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-sm border-2 border-gray-50 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-5">
+              <div className="p-4 bg-blue-50 text-blue-600 rounded-2xl">
+                <FileText size={28} />
+              </div>
+              <div>
+                <h2 className="text-xl font-black text-gray-800 uppercase tracking-tight italic">
+                  Printable Worksheets
+                </h2>
+                <p className="text-sm font-medium text-gray-500 mt-1">
+                  Download physical copies for offline practice
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+              {meta.worksheet_pdf && (
+                <a 
+                  href={meta.worksheet_pdf} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="flex items-center justify-center gap-2 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-[1.5rem] font-black text-xs uppercase tracking-widest transition-all shadow-md hover:shadow-xl hover:-translate-y-1"
+                >
+                  <Download size={16} /> Worksheet
+                </a>
+              )}
+              {meta.worksheet_answers_pdf && (
+                <a 
+                  href={meta.worksheet_answers_pdf} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="flex items-center justify-center gap-2 px-8 py-4 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-[1.5rem] font-black text-xs uppercase tracking-widest transition-all"
+                >
+                  <Download size={16} /> Answers
+                </a>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ── SLIDE DECK VIEWER ── */}
         {lesson.slide_url && (
           <div className="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-sm border-2 border-gray-50">
             <div className="flex items-center justify-between mb-8">
@@ -299,7 +343,6 @@ export default function ExternalLessonViewer() {
               ></iframe>
             </div>
             
-            {/* Mobile-only fullscreen button to save space */}
             <a 
               href={lesson.slide_url} 
               target="_blank" 
