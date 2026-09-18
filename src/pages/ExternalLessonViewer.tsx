@@ -378,7 +378,7 @@ export default function ExternalLessonViewer() {
         )}
 
         {meta.outcome && (
-          <div className="bg-[#2D5A27] rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-md">
+          <div className="bg-[#3F2171] rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-md">
             <div className="flex items-center gap-3 mb-3">
               <Target size={22} className="text-[#F4B400]"/>
               <p className="font-black text-[10px] uppercase tracking-widest text-white/70">Learning Goal</p>
@@ -448,7 +448,7 @@ export default function ExternalLessonViewer() {
           <div className="text-center pt-4">
             <p className="text-gray-400 font-bold text-sm mb-6">Finished the video and slides? Prove your mastery:</p>
             <button onClick={() => { setActiveQuizType("exit"); setCurrentQ(0); setUserAnswers({}); setFeedback(null); setQuizSubmitted(false); }}
-              className="group inline-flex items-center gap-4 bg-[#2D5A27] text-white px-14 py-7 rounded-[2.5rem] font-black uppercase text-sm tracking-widest shadow-2xl hover:bg-black transition-all border-b-4 border-green-900 active:translate-y-1 active:border-b-0">
+              className="group inline-flex items-center gap-4 bg-[#3F2171] text-white px-14 py-7 rounded-[2.5rem] font-black uppercase text-sm tracking-widest shadow-2xl hover:bg-black transition-all border-b-4 border-green-900 active:translate-y-1 active:border-b-0">
               Take Exit Quiz ({quizzes.exit.length} questions)
               <Award size={20} className="group-hover:rotate-12 transition-transform"/>
             </button>
