@@ -58,7 +58,7 @@ export default function ParentDashboard() {
     return (
       <Layout>
         <div className="flex flex-col items-center justify-center h-[60vh]">
-          <Loader2 className="animate-spin text-[#2D5A27] mb-4" size={40} />
+          <Loader2 className="animate-spin text-[#3F2171] mb-4" size={40} />
           <p className="font-black text-gray-300 uppercase italic text-[10px] tracking-widest">
             Opening the Vault...
           </p>
@@ -85,7 +85,7 @@ export default function ParentDashboard() {
 
             <div className="flex flex-wrap items-center gap-3 mt-6">
               <div className="bg-white px-4 py-2 rounded-xl border-2 border-gray-50 shadow-sm flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-[#2D5A27] animate-pulse"></div>
+                <div className="w-2 h-2 rounded-full bg-[#3F2171] animate-pulse"></div>
                 <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-gray-500">
                   {data?.stats?.active_courses || 0} Students Active
                 </span>
@@ -110,7 +110,7 @@ export default function ParentDashboard() {
             </Link>
             <button
               onClick={() => navigate("/onboarding/step1")} 
-              className="group flex items-center justify-center gap-4 bg-[#2D5A27] text-white px-10 py-5 rounded-2xl md:rounded-[2.5rem] font-black uppercase text-[10px] md:text-[11px] tracking-widest shadow-2xl hover:bg-black transition-all border-b-4 border-green-900 active:translate-y-1 active:border-b-0"
+              className="group flex items-center justify-center gap-4 bg-[#3F2171] text-white px-10 py-5 rounded-2xl md:rounded-[2.5rem] font-black uppercase text-[10px] md:text-[11px] tracking-widest shadow-2xl hover:bg-black transition-all border-b-4 border-green-900 active:translate-y-1 active:border-b-0"
             >
               <PlusCircle size={20} className="text-[#F4B400] group-hover:rotate-90 transition-transform" />
               Add Your Kids
@@ -158,7 +158,7 @@ export default function ParentDashboard() {
                         </div>
 
                         <div className="flex items-center gap-4 mb-6">
-                            <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-[#2D5A27] shadow-inner">
+                            <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-[#3F2171] shadow-inner">
                                 <User size={24} />
                             </div>
                             <h3 className="text-2xl md:text-3xl font-black text-gray-800 uppercase italic tracking-tighter truncate">
