@@ -55,7 +55,6 @@ export default function ExternalLessonViewer() {
   const [fetchError, setFetchError]       = useState<string | null>(null);
   const [loading, setLoading]             = useState(true);
 
-  // Quiz states ('none' | 'starter' | 'exit')
   const [activeQuizType, setActiveQuizType] = useState<"none" | "starter" | "exit">("none");
   const [currentQ, setCurrentQ]           = useState(0);
   const [userAnswers, setUserAnswers]     = useState<Record<string, string>>({});
@@ -109,7 +108,6 @@ export default function ExternalLessonViewer() {
     if (typeof raw === "string") {
       try { parsed = JSON.parse(raw); } catch { return { starter: [], exit: [] }; }
     }
-    // Handle legacy flat arrays or new structured object
     if (Array.isArray(parsed)) {
       return { starter: [], exit: parsed };
     }
@@ -155,7 +153,6 @@ export default function ExternalLessonViewer() {
         setQuizSubmitted(true);
         if (res.data.passed) confetti({ particleCount: 200, spread: 80, origin: { y: 0.6 } });
       } else {
-        // Starter quiz submitted locally for instant feedback
         setQuizSubmitted(true);
       }
     } catch (e) { console.error(e); }
@@ -350,7 +347,7 @@ export default function ExternalLessonViewer() {
           {lesson.title}
         </h1>
 
-        {/* ── STARTER QUIZ BANNER (GAMIFICATION) ── */}
+        {/* STARTER QUIZ BANNER */}
         {quizzes.starter.length > 0 && (
           <div className="bg-gradient-to-r from-[#3F2171] to-[#5b329c] rounded-[2.5rem] p-8 text-white shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-5 text-left">
@@ -443,7 +440,47 @@ export default function ExternalLessonViewer() {
           </div>
         )}
 
-        {/* ── EXIT QUIZ CTA ── */}
+        {/* ── KEY POINTS TO REMEMBER (RESTORED) ── */}
+        {meta.key_points && meta.key_points.length > 0 && (
+          <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border-2 border-gray-50">
+            <div className="flex items-center gap-3 mb-6">
+              <CheckCircle2 size={22} className="text-[#3F2171]"/>
+              <h2 className="text-lg font-black text-gray-800 uppercase tracking-tight italic">Key Points to Remember</h2>
+            </div>
+            <ul className="space-y-4">
+              {meta.key_points.map((point, i) => (
+                <li key={i} className="flex items-start gap-4 p-4 bg-green-50 rounded-2xl">
+                  <span className="w-7 h-7 bg-[#3F2171] text-white rounded-xl flex items-center justify-center font-black text-xs shrink-0">{i + 1}</span>
+                  <span className="text-gray-700 font-medium text-sm leading-relaxed">{point}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* ── COMMON MISTAKES TO AVOID (RESTORED) ── */}
+        {meta.misconceptions && meta.misconceptions.length > 0 && (
+          <div className="bg-amber-50 rounded-[2.5rem] p-8 border-2 border-amber-100">
+            <div className="flex items-center gap-3 mb-6">
+              <AlertTriangle size={22} className="text-amber-500"/>
+              <h2 className="text-lg font-black text-gray-800 uppercase tracking-tight italic">Common Mistakes to Avoid</h2>
+            </div>
+            <div className="space-y-5">
+              {meta.misconceptions.map((m, i) => (
+                <div key={i} className="bg-white rounded-2xl p-5">
+                  <p className="font-black text-red-600 text-sm mb-2 flex items-start gap-2">
+                    <span className="shrink-0">✗</span> {m.misconception}
+                  </p>
+                  <p className="text-green-700 font-medium text-sm flex items-start gap-2">
+                    <span className="shrink-0">✓</span> {m.response}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* EXIT QUIZ CTA */}
         {quizzes.exit.length > 0 ? (
           <div className="text-center pt-4">
             <p className="text-gray-400 font-bold text-sm mb-6">Finished the video and slides? Prove your mastery:</p>
