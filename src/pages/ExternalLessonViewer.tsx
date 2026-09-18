@@ -132,7 +132,7 @@ export default function ExternalLessonViewer() {
     setFeedback({ shown: true, isCorrect: isRight });
     if (isRight) {
       playClap();
-      confetti({ particleCount: 60, spread: 50, origin: { y: 0.7 }, colors: ["#2D5A27","#F4B400","#fff"] });
+      confetti({ particleCount: 60, spread: 50, origin: { y: 0.7 }, colors: ["#3F2171","#F4B400","#fff"] });
     }
   };
 
@@ -170,7 +170,7 @@ export default function ExternalLessonViewer() {
   if (loading) return (
     <Layout>
       <div className="min-h-screen flex flex-col items-center justify-center p-20 text-center">
-        <Loader2 className="animate-spin text-[#2D5A27] mb-6" size={48} />
+        <Loader2 className="animate-spin text-[#3F2171] mb-6" size={48} />
         <p className="font-black text-gray-400 italic uppercase tracking-widest text-sm">Loading lesson...</p>
       </div>
     </Layout>
@@ -231,7 +231,7 @@ export default function ExternalLessonViewer() {
               <p className="text-gray-500 font-bold mb-8">
                 {activeQuizType === "starter" ? "Great job warming up your brain! Now dive into the video lesson." : "Awesome work completing this lesson module!"}
               </p>
-              <button onClick={resetQuiz} className="bg-[#2D5A27] text-white px-10 py-5 rounded-[2rem] font-black uppercase text-sm tracking-widest hover:bg-black transition-all shadow-xl">
+              <button onClick={resetQuiz} className="bg-[#3F2171] text-white px-10 py-5 rounded-[2rem] font-black uppercase text-sm tracking-widest hover:bg-black transition-all shadow-xl">
                 Return to Lesson
               </button>
             </div>
@@ -243,8 +243,8 @@ export default function ExternalLessonViewer() {
     return (
       <Layout>
         <div className="max-w-3xl mx-auto px-4 py-8 md:p-10 pb-32">
-          <button onClick={() => setActiveQuizType("none")} className="group flex items-center text-gray-400 hover:text-[#2D5A27] font-black uppercase tracking-widest text-[10px] mb-8 transition-all">
-            <div className="p-2 rounded-xl bg-white shadow-sm mr-3 group-hover:bg-[#2D5A27]/10"><ArrowLeft size={16}/></div>
+          <button onClick={() => setActiveQuizType("none")} className="group flex items-center text-gray-400 hover:text-[#3F2171] font-black uppercase tracking-widest text-[10px] mb-8 transition-all">
+            <div className="p-2 rounded-xl bg-white shadow-sm mr-3 group-hover:bg-[#3F2171]/10"><ArrowLeft size={16}/></div>
             Back to lesson
           </button>
 
@@ -253,15 +253,15 @@ export default function ExternalLessonViewer() {
               <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">
                 {activeQuizType === "starter" ? "Starter Quiz" : "Exit Quiz"} • Question {currentQ + 1} of {activeQuestions.length}
               </p>
-              <p className="text-[10px] font-black uppercase tracking-widest text-[#2D5A27]">{Object.keys(userAnswers).length} answered</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-[#3F2171]">{Object.keys(userAnswers).length} answered</p>
             </div>
             <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
-              <div className="h-full bg-[#2D5A27] rounded-full transition-all duration-500" style={{ width: `${progress}%` }}/>
+              <div className="h-full bg-[#3F2171] rounded-full transition-all duration-500" style={{ width: `${progress}%` }}/>
             </div>
           </div>
 
           <div className="bg-white rounded-[3rem] shadow-xl border-4 border-gray-50 overflow-hidden mb-6">
-            <div className="bg-gradient-to-r from-[#2D5A27] to-[#1a3518] p-8 md:p-10">
+            <div className="bg-gradient-to-r from-[#3F2171] to-[#1a3518] p-8 md:p-10">
               <h2 className="text-2xl md:text-3xl font-black text-white leading-tight">{q?.question}</h2>
             </div>
 
@@ -277,12 +277,12 @@ export default function ExternalLessonViewer() {
                         ? isCorrectOpt ? "bg-green-50 border-green-400 text-green-800 scale-[1.01]"
                           : isWrong ? "bg-red-50 border-red-300 text-red-700"
                           : "bg-gray-50 border-gray-200 text-gray-400 opacity-50"
-                        : isSelected ? "bg-[#2D5A27] border-[#2D5A27] text-white shadow-lg scale-[1.01]"
-                        : "bg-white border-gray-200 text-gray-700 hover:border-[#2D5A27] hover:bg-[#2D5A27]/5"
+                        : isSelected ? "bg-[#3F2171] border-[#3F2171] text-white shadow-lg scale-[1.01]"
+                        : "bg-white border-gray-200 text-gray-700 hover:border-[#3F2171] hover:bg-[#3F2171]/5"
                     }`}>
                     <span className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm shrink-0 ${
                       feedbackOn ? isCorrectOpt ? "bg-green-500 text-white" : isWrong ? "bg-red-500 text-white" : "bg-gray-200 text-gray-400"
-                      : isSelected ? "bg-white text-[#2D5A27]" : "bg-gray-100 text-gray-500"
+                      : isSelected ? "bg-white text-[#3F2171]" : "bg-gray-100 text-gray-500"
                     }`}>
                       {feedbackOn && isCorrectOpt ? "✓" : feedbackOn && isWrong ? "✗" : String.fromCharCode(65 + i)}
                     </span>
@@ -313,13 +313,13 @@ export default function ExternalLessonViewer() {
             {feedbackOn ? (
               isLast ? (
                 <button onClick={handleSubmit} disabled={submitting}
-                  className="flex-1 flex items-center justify-center gap-3 bg-[#2D5A27] text-white px-8 py-5 rounded-2xl font-black uppercase text-sm tracking-widest hover:bg-black transition-all shadow-xl">
+                  className="flex-1 flex items-center justify-center gap-3 bg-[#3F2171] text-white px-8 py-5 rounded-2xl font-black uppercase text-sm tracking-widest hover:bg-black transition-all shadow-xl">
                   {submitting ? <Loader2 size={20} className="animate-spin"/> : <Award size={20}/>}
                   Submit Quiz
                 </button>
               ) : (
                 <button onClick={handleNext}
-                  className="flex-1 flex items-center justify-center gap-3 bg-[#2D5A27] text-white px-8 py-5 rounded-2xl font-black uppercase text-sm tracking-widest hover:bg-black transition-all shadow-xl">
+                  className="flex-1 flex items-center justify-center gap-3 bg-[#3F2171] text-white px-8 py-5 rounded-2xl font-black uppercase text-sm tracking-widest hover:bg-black transition-all shadow-xl">
                   Next Question <ChevronRight size={18}/>
                 </button>
               )
@@ -341,8 +341,8 @@ export default function ExternalLessonViewer() {
     <Layout>
       <div className="max-w-4xl mx-auto px-4 py-8 md:p-10 pb-32 space-y-8">
         <button onClick={() => navigate(-1)}
-          className="group flex items-center text-gray-400 hover:text-[#2D5A27] font-black uppercase tracking-widest text-[10px] transition-all">
-          <div className="p-2 rounded-xl bg-white shadow-sm mr-3 group-hover:bg-[#2D5A27]/10"><ArrowLeft size={16}/></div>
+          className="group flex items-center text-gray-400 hover:text-[#3F2171] font-black uppercase tracking-widest text-[10px] transition-all">
+          <div className="p-2 rounded-xl bg-white shadow-sm mr-3 group-hover:bg-[#3F2171]/10"><ArrowLeft size={16}/></div>
           Back to subject
         </button>
 
@@ -397,7 +397,7 @@ export default function ExternalLessonViewer() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {meta.keywords.map((kw, i) => (
                 <div key={i} className="p-5 bg-[#F4B400]/10 rounded-2xl border border-[#F4B400]/20">
-                  <p className="font-black text-[#2D5A27] uppercase tracking-wide text-sm mb-1">{kw.keyword}</p>
+                  <p className="font-black text-[#3F2171] uppercase tracking-wide text-sm mb-1">{kw.keyword}</p>
                   <p className="text-gray-600 text-sm font-medium leading-relaxed">{kw.description}</p>
                 </div>
               ))}
