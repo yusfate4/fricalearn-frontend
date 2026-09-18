@@ -12,7 +12,7 @@ const AI_LIMIT = 60; // ✅ Reduced to 60 minutes
 export default function OluChat() {
   const { user } = useAuth();
   const studentName      = user?.name || "Explorer";
-  const learningLanguage = user?.student_profile?.learning_language || "Yoruba";
+  const learningLanguage = user?.student_profile?.learning_language || "Learning";
 
   const [minutesUsed, setMinutesUsed]     = useState(user?.student_profile?.daily_ai_minutes || 0);
   const [isLimitReached, setIsLimitReached] = useState(false);
