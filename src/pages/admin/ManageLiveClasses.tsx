@@ -1,272 +1,255 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom"; 
+import React, { useEffect, useState } from "react";
 import api from "../../api/axios";
-import Layout from "../../components/Layout";
+import { AdminShell } from "../../components/admin/AdminShell";
 import {
-  Plus,
-  Video,
-  Calendar,
-  Clock,
-  X,
-  Loader2,
-  Trash2,
-  MonitorPlay,
+  Video, Plus, Trash2, Loader2, Calendar, Clock,
+  Zap, RefreshCw, CheckCircle2, AlertCircle,
 } from "lucide-react";
 
+const SATURDAY_SLOTS = [
+  { label: "7:00 AM",  hour: 7,  minute: 0,  tag: "Morning Class"  },
+  { label: "1:00 PM",  hour: 13, minute: 0,  tag: "Afternoon Class" },
+];
+
+function nextSaturday(hour: number, minute: number): string {
+  const now = new Date();
+  const sat = new Date(now);
+  sat.setDate(now.getDate() + ((6 - now.getDay() + 7) % 7 || 7));
+  sat.setHours(hour, minute, 0, 0);
+  // Convert WAT (UTC+1) to UTC for storage
+  return new Date(sat.getTime() - 60 * 60 * 1000).toISOString().slice(0, 16);
+}
+
 export default function ManageLiveClasses() {
-  const [classes, setClasses] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
-  const [lessons, setLessons] = useState<any[]>([]);
+  const [classes, setClasses]   = useState<any[]>([]);
+  const [loading, setLoading]   = useState(true);
+  const [scheduling, setScheduling] = useState<number | null>(null);
+  const [deleting, setDeleting] = useState<number | null>(null);
+  const [showManual, setShowManual] = useState(false);
+  const [success, setSuccess]   = useState<string | null>(null);
 
-  const [formData, setFormData] = useState({
-    title: "",
-    lesson_id: "",
-    scheduled_at: "",
-    duration_minutes: 45,
-    meeting_url: "https://meet.jit.si/FricaLearn",
-    max_attendees: 20,
+  // Manual form state
+  const [form, setForm] = useState({
+    title: "", description: "", scheduled_at: "", duration_minutes: 60, is_paid: false, price: "",
   });
+  const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
+  const fetch = async () => {
     setLoading(true);
     try {
-      // 🚀 THE FIX: Added /admin prefix to live-classes to match backend
-      const [classRes, lessonRes] = await Promise.all([
-        api.get("/admin/live-classes"),
-        api.get("/admin/lessons"),
-      ]);
-      setClasses(Array.isArray(classRes.data) ? classRes.data : []);
-      setLessons(Array.isArray(lessonRes.data) ? lessonRes.data : []);
-    } catch (err) {
-      console.error("Failed to load admin data", err);
-    } finally {
-      setLoading(false);
-    }
+      const res = await api.get("/admin/live-classes");
+      setClasses(Array.isArray(res.data) ? res.data : []);
+    } catch(e) { console.error(e); }
+    finally { setLoading(false); }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  useEffect(() => { fetch(); }, []);
+
+  const scheduleAuto = async (slot: typeof SATURDAY_SLOTS[0]) => {
+    setScheduling(slot.hour);
     try {
-      const res = await api.post("/admin/live-classes", formData);
-      // Backend returns the new class object
-      setClasses([res.data, ...classes]);
-      setShowModal(false);
-      setFormData({
-        title: "",
-        lesson_id: "",
-        scheduled_at: "",
-        duration_minutes: 45,
-        meeting_url: "https://meet.jit.si/FricaLearn",
-        max_attendees: 20,
+      const scheduled_at = nextSaturday(slot.hour, slot.minute);
+      await api.post("/admin/live-classes", {
+        title: `FricaLearn ${slot.tag}`,
+        description: "Weekly group learning session — Yoruba, Maths and English practice with your tutor.",
+        scheduled_at,
+        duration_minutes: 90,
+        is_paid: false,
       });
-    } catch (err) {
-      console.error("Schedule Error:", err);
-      alert("Error scheduling class. Check if all fields are filled.");
-    }
+      setSuccess(`Scheduled: ${slot.tag} for next Saturday at ${slot.label} (Nigeria time)`);
+      setTimeout(() => setSuccess(null), 4000);
+      fetch();
+    } catch(e: any) {
+      console.error(e);
+    } finally { setScheduling(null); }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!window.confirm("Are you sure you want to delete this session?")) return;
+  const submitManual = async () => {
+    if (!form.title || !form.scheduled_at) return;
+    setSubmitting(true);
+    try {
+      await api.post("/admin/live-classes", {
+        ...form,
+        price: form.is_paid ? Number(form.price) : null,
+      });
+      setShowManual(false);
+      setForm({ title: "", description: "", scheduled_at: "", duration_minutes: 60, is_paid: false, price: "" });
+      setSuccess("Live class scheduled successfully!");
+      setTimeout(() => setSuccess(null), 3000);
+      fetch();
+    } catch(e) { console.error(e); }
+    finally { setSubmitting(false); }
+  };
+
+  const deleteClass = async (id: number) => {
+    if (!confirm("Delete this live class?")) return;
+    setDeleting(id);
     try {
       await api.delete(`/admin/live-classes/${id}`);
-      setClasses(classes.filter((c) => c.id !== id));
-    } catch (err) {
-      alert("Failed to delete class.");
-    }
+      setClasses(prev => prev.filter(c => c.id !== id));
+    } catch(e) { console.error(e); }
+    finally { setDeleting(null); }
   };
 
+  const upcoming = classes.filter(c => new Date(c.scheduled_at) >= new Date()).sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime());
+  const past     = classes.filter(c => new Date(c.scheduled_at) < new Date()).sort((a, b) => new Date(b.scheduled_at).getTime() - new Date(a.scheduled_at).getTime());
+
   return (
-    <Layout>
-      <div className="max-w-6xl mx-auto p-4 md:p-10">
-        {/* --- HEADER --- */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-12">
-          <div className="flex items-center gap-4">
-            <div className="bg-[#3F2171] p-4 rounded-2xl text-white shadow-lg">
-              <Video size={32} />
-            </div>
+    <AdminShell title="Live Classes">
+      <div className="space-y-5">
+
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-black text-gray-800 uppercase italic tracking-tighter">Live Classes</h1>
+            <p className="text-gray-400 font-bold text-[10px] uppercase tracking-widest mt-1">
+              {upcoming.length} upcoming · {past.length} past
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={fetch} className="p-2.5 rounded-xl bg-white border-2 border-gray-100 hover:border-[#3F2171]/30 transition-all">
+              <RefreshCw size={16} className="text-gray-400"/>
+            </button>
+            <button onClick={() => setShowManual(!showManual)}
+              className="flex items-center gap-2 bg-[#3F2171] text-white px-4 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-black transition-all">
+              <Plus size={14}/> Manual
+            </button>
+          </div>
+        </div>
+
+        {/* Success toast */}
+        {success && (
+          <div className="flex items-center gap-3 bg-green-50 border-2 border-green-200 rounded-2xl px-5 py-4">
+            <CheckCircle2 size={18} className="text-green-500 shrink-0"/>
+            <p className="font-black text-green-700 text-sm">{success}</p>
+          </div>
+        )}
+
+        {/* Auto-schedule panel */}
+        <div className="bg-[#2A1650] rounded-2xl p-6">
+          <div className="flex items-start gap-3 mb-5">
+            <Zap size={20} className="text-[#FFFF00] shrink-0 mt-0.5"/>
             <div>
-              <h1 className="text-4xl font-black text-gray-800 italic uppercase tracking-tighter">
-                Live Sessions
-              </h1>
-              <p className="text-gray-500 font-bold uppercase text-xs tracking-widest">
-                Schedule and manage your tribe meetings
+              <h3 className="font-black text-white text-sm uppercase tracking-tight">Auto-Schedule Saturday Classes</h3>
+              <p className="text-white/50 text-[10px] font-bold mt-1">
+                Click to schedule a class for the next Saturday at each time slot (Nigeria Time, WAT UTC+1)
               </p>
             </div>
           </div>
-
-          <button
-            onClick={() => setShowModal(true)}
-            className="w-full sm:w-auto flex items-center justify-center gap-3 bg-gray-900 text-white px-10 py-5 rounded-[2rem] font-black hover:bg-[#3F2171] transition-all shadow-xl uppercase italic tracking-tight"
-          >
-            <Plus size={24} /> New Session
-          </button>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {SATURDAY_SLOTS.map(slot => (
+              <button key={slot.hour} onClick={() => scheduleAuto(slot)} disabled={scheduling !== null}
+                className="flex items-center gap-4 bg-white/10 hover:bg-white/20 transition-all p-4 rounded-2xl text-left border border-white/10 disabled:opacity-50">
+                <div className="w-12 h-12 bg-[#FFFF00] rounded-xl flex items-center justify-center shrink-0">
+                  {scheduling === slot.hour
+                    ? <Loader2 size={20} className="text-[#2A1650] animate-spin"/>
+                    : <Clock size={20} className="text-[#2A1650]"/>}
+                </div>
+                <div>
+                  <p className="font-black text-white text-sm">{slot.tag}</p>
+                  <p className="text-white/60 text-[10px] font-bold">Every Saturday · {slot.label} Nigeria time</p>
+                  <p className="text-[#FFFF00] text-[9px] font-black uppercase tracking-widest mt-0.5">Next: {new Date(nextSaturday(slot.hour, slot.minute)+"Z").toLocaleDateString("en-GB",{day:"numeric",month:"short"})}</p>
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* --- LIST --- */}
-        {loading ? (
-          <div className="flex justify-center py-20">
-            <Loader2 className="animate-spin text-[#3F2171]" size={40} />
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 gap-4">
-            {classes.length > 0 ? (
-              classes.map((lc) => (
-                <div
-                  key={lc.id}
-                  className="bg-white p-8 rounded-[2.5rem] border-2 border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-6 group hover:border-[#3F2171] transition-all"
-                >
-                  <div className="flex items-center gap-6">
-                    <div className="p-4 rounded-2xl bg-gray-50 text-gray-400 group-hover:text-[#3F2171] transition-colors">
-                      <Video size={28} />
-                    </div>
-                    <div>
-                      <h4 className="text-2xl font-black text-gray-800 uppercase italic tracking-tighter">
-                        {lc.title}
-                      </h4>
-                      <div className="flex flex-wrap gap-4 mt-1 text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                        <span className="flex items-center gap-1">
-                          <Calendar size={12} />{" "}
-                          {new Date(lc.scheduled_at).toLocaleDateString()}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Clock size={12} />{" "}
-                          {new Date(lc.scheduled_at).toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <Link
-                      to={`/live-room/${lc.id}`}
-                      className="flex items-center gap-2 px-8 py-4 bg-gray-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-[#3F2171] transition-all"
-                    >
-                      <MonitorPlay size={14} /> Enter as Tutor
-                    </Link>
-                    <button
-                      onClick={() => handleDelete(lc.id)}
-                      className="p-4 text-red-200 hover:text-red-500 transition-colors"
-                    >
-                      <Trash2 size={20} />
-                    </button>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="py-20 text-center border-4 border-dashed border-gray-100 rounded-[3rem]">
-                <p className="text-gray-300 font-black italic uppercase tracking-widest text-xl">
-                  No Sessions Scheduled
-                </p>
+        {/* Manual form */}
+        {showManual && (
+          <div className="bg-white border-2 border-gray-100 rounded-2xl p-6">
+            <h3 className="font-black text-gray-800 text-sm uppercase tracking-tight mb-4">Schedule Manual / Paid Class</h3>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Title</label>
+                <input value={form.title} onChange={e => setForm({...form, title: e.target.value})}
+                  placeholder="e.g. Premium Yoruba Intensive"
+                  className="w-full px-3 py-2.5 border-2 border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#3F2171]"/>
               </div>
-            )}
-          </div>
-        )}
-
-        {/* --- MODAL --- */}
-        {showModal && (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-            <div className="bg-white w-full max-w-xl rounded-[3rem] p-10 md:p-14 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-              <button
-                onClick={() => setShowModal(false)}
-                className="absolute top-8 right-8 text-gray-400 hover:text-gray-600"
-              >
-                <X size={28} />
+              <div>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Date & Time (Nigeria)</label>
+                <input type="datetime-local" value={form.scheduled_at} onChange={e => setForm({...form, scheduled_at: e.target.value})}
+                  className="w-full px-3 py-2.5 border-2 border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#3F2171]"/>
+              </div>
+              <div>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Duration (minutes)</label>
+                <input type="number" value={form.duration_minutes} onChange={e => setForm({...form, duration_minutes: Number(e.target.value)})}
+                  className="w-full px-3 py-2.5 border-2 border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#3F2171]"/>
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <div onClick={() => setForm({...form, is_paid: !form.is_paid})}
+                    className={`w-10 h-5 rounded-full transition-all relative ${form.is_paid ? "bg-[#3F2171]" : "bg-gray-200"}`}>
+                    <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all ${form.is_paid ? "left-5" : "left-0.5"}`}/>
+                  </div>
+                  <span className="font-black text-gray-700 text-sm">Paid class</span>
+                </label>
+                {form.is_paid && (
+                  <input type="number" value={form.price} onChange={e => setForm({...form, price: e.target.value})}
+                    placeholder="Price (₦)"
+                    className="w-full px-3 py-2.5 border-2 border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#3F2171]"/>
+                )}
+              </div>
+              <div className="sm:col-span-2">
+                <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Description (optional)</label>
+                <textarea value={form.description} onChange={e => setForm({...form, description: e.target.value})} rows={2}
+                  className="w-full px-3 py-2.5 border-2 border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#3F2171] resize-none"/>
+              </div>
+            </div>
+            <div className="flex gap-3 mt-4">
+              <button onClick={submitManual} disabled={!form.title || !form.scheduled_at || submitting}
+                className="flex items-center gap-2 bg-[#3F2171] text-white px-5 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-black disabled:opacity-50 transition-all">
+                {submitting ? <Loader2 size={14} className="animate-spin"/> : <Plus size={14}/>} Schedule Class
               </button>
-
-              <h2 className="text-4xl font-black text-gray-800 mb-10 italic uppercase tracking-tighter">
-                New Live Session
-              </h2>
-
-              <form onSubmit={handleSubmit} className="space-y-8">
-                <div>
-                  <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 px-1">
-                    Class Title
-                  </label>
-                  <input
-                    required
-                    type="text"
-                    className="w-full p-5 rounded-2xl bg-gray-50 border-2 border-transparent focus:border-[#3F2171] outline-none font-bold"
-                    value={formData.title}
-                    onChange={(e) =>
-                      setFormData({ ...formData, title: e.target.value })
-                    }
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 px-1">
-                      Date & Time
-                    </label>
-                    <input
-                      required
-                      type="datetime-local"
-                      className="w-full p-5 rounded-2xl bg-gray-50 border-2 border-transparent focus:border-[#3F2171] outline-none font-bold"
-                      value={formData.scheduled_at}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          scheduled_at: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 px-1">
-                      Linked Lesson
-                    </label>
-                    <select
-                      required
-                      className="w-full p-5 rounded-2xl bg-gray-50 border-2 border-transparent focus:border-[#3F2171] outline-none font-bold appearance-none"
-                      value={formData.lesson_id}
-                      onChange={(e) =>
-                        setFormData({ ...formData, lesson_id: e.target.value })
-                      }
-                    >
-                      <option value="">Select Topic...</option>
-                      {lessons.length > 0 && lessons.map((l) => (
-                        <option key={l.id} value={l.id}>
-                          {l.title}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 px-1">
-                    Meeting URL
-                  </label>
-                  <input
-                    required
-                    type="url"
-                    className="w-full p-5 rounded-2xl bg-gray-50 border-2 border-transparent focus:border-[#3F2171] outline-none font-bold"
-                    value={formData.meeting_url}
-                    onChange={(e) =>
-                      setFormData({ ...formData, meeting_url: e.target.value })
-                    }
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full py-6 bg-gray-900 text-white rounded-[2.5rem] font-black text-2xl hover:bg-[#3F2171] shadow-2xl transition-all uppercase italic"
-                >
-                  Launch Live Class
-                </button>
-              </form>
+              <button onClick={() => setShowManual(false)} className="px-5 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest bg-gray-100 text-gray-600 hover:bg-gray-200">Cancel</button>
             </div>
           </div>
         )}
+
+        {/* Upcoming classes */}
+        <div className="bg-white rounded-2xl border-2 border-gray-100 overflow-hidden">
+          <div className="px-5 py-4 border-b border-gray-100">
+            <h3 className="font-black text-gray-800 text-sm uppercase tracking-tight">Upcoming Classes ({upcoming.length})</h3>
+          </div>
+          {loading ? (
+            <div className="flex items-center justify-center py-16"><Loader2 className="animate-spin text-[#3F2171]" size={28}/></div>
+          ) : upcoming.length === 0 ? (
+            <div className="text-center py-16">
+              <Calendar size={36} className="text-gray-200 mx-auto mb-4"/>
+              <p className="font-black text-gray-400 uppercase italic text-sm">No upcoming classes</p>
+              <p className="text-gray-300 font-bold text-[10px] mt-2">Use the auto-schedule buttons above to add Saturday classes</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-50">
+              {upcoming.map(c => {
+                const dt = new Date(c.scheduled_at);
+                return (
+                  <div key={c.id} className="px-5 py-4 flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-[#3F2171]/10 rounded-2xl flex flex-col items-center justify-center shrink-0">
+                        <span className="text-[#3F2171] font-black text-xs">{dt.toLocaleDateString("en-GB",{day:"numeric"})}</span>
+                        <span className="text-[#3F2171] font-bold text-[9px] uppercase">{dt.toLocaleDateString("en-GB",{month:"short"})}</span>
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <p className="font-black text-gray-700">{c.title}</p>
+                          {c.is_paid && <span className="bg-[#FFFF00] text-[#2A1650] text-[8px] font-black uppercase px-1.5 py-0.5 rounded-full">Paid</span>}
+                        </div>
+                        <p className="text-[10px] text-gray-400 font-bold">
+                          {dt.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})} · {c.duration_minutes || 60} mins
+                        </p>
+                      </div>
+                    </div>
+                    <button onClick={() => deleteClass(c.id)} disabled={deleting === c.id}
+                      className="p-2.5 rounded-xl bg-red-50 text-red-400 hover:bg-red-500 hover:text-white transition-all disabled:opacity-40">
+                      {deleting === c.id ? <Loader2 size={14} className="animate-spin"/> : <Trash2 size={14}/>}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
-    </Layout>
+    </AdminShell>
   );
 }

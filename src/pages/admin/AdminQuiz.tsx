@@ -1,325 +1,213 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import api from "../../api/axios";
-import Layout from "../../components/Layout";
+import { AdminShell } from "../../components/admin/AdminShell";
 import {
-  HelpCircle,
-  Save,
-  Loader2,
-  CheckCircle,
-  Video,
-  MessageCircle,
-  ChevronLeft,
-  Sparkles, // 👈 Added for AI
+  HelpCircle, Plus, Pencil, Trash2, Search,
+  ChevronLeft, ChevronRight, Loader2, Check, X, Save,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
-export default function AdminQuiz() {
-  const navigate = useNavigate();
-  const [courses, setCourses] = useState([]);
-  const [lessons, setLessons] = useState([]);
-  const [selectedCourse, setSelectedCourse] = useState("");
-  const [selectedLesson, setSelectedLesson] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [generatingAI, setGeneratingAI] = useState(false); // 👈 New AI state
-  const [success, setSuccess] = useState(false);
+type Question = {
+  id: number; lesson_id: number; question_text: string;
+  option_a: string; option_b: string; option_c: string;
+  correct_answer: string; explanation_text?: string;
+  lesson?: { title: string };
+};
 
-  const [questionData, setQuestionData] = useState({
-    question_text: "",
-    option_a: "",
-    option_b: "",
-    option_c: "",
-    correct_answer: "a",
-    explanation_video_url: "",
-    explanation_text: "",
-  });
+function EditModal({ q, onSave, onClose }: { q: Question; onSave: (updated: Question) => void; onClose: () => void }) {
+  const [form, setForm] = useState<Question>({ ...q });
+  const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    api.get("/admin/courses").then((res) => {
-      const data = Array.isArray(res.data) ? res.data : res.data.data || [];
-      setCourses(data);
-    });
-  }, []);
-
-  useEffect(() => {
-    if (selectedCourse) {
-      api
-        .get(`/courses/${selectedCourse}`)
-        .then((res) => {
-          const courseData = res.data;
-          const allLessons =
-            courseData.modules?.flatMap((m: any) => m.lessons || []) || [];
-          setLessons(allLessons);
-        })
-        .catch(() => setLessons([]));
-    } else {
-      setLessons([]);
-    }
-  }, [selectedCourse]);
-
-  /**
-   * 🤖 AI MAGIC: Generate Question from Lesson
-   */
-  const handleAIGenerate = async () => {
-    if (!selectedLesson) return alert("Please select a lesson first!");
-
-    setGeneratingAI(true);
+  const save = async () => {
+    setSaving(true);
     try {
-      const res = await api.post("/admin/ai/generate-quiz", {
-        lesson_id: selectedLesson,
-        count: 1, // We'll generate one high-quality question at a time for this form
-      });
-
-      if (res.data.success && res.data.data.length > 0) {
-        const aiQ = res.data.data[0];
-
-        // Auto-fill the form with AI data
-        setQuestionData({
-          question_text: aiQ.question_text,
-          option_a: aiQ.options[0]?.option_text || "",
-          option_b: aiQ.options[1]?.option_text || "",
-          option_c: aiQ.options[2]?.option_text || "",
-          correct_answer: aiQ.options[0]?.is_correct
-            ? "a"
-            : aiQ.options[1]?.is_correct
-              ? "b"
-              : "c",
-          explanation_video_url: "",
-          explanation_text: aiQ.explanation,
-        });
-      }
-    } catch (err) {
-      console.error("AI Generation failed", err);
-      alert("AI was unable to generate a question. Check your OpenAI key.");
-    } finally {
-      setGeneratingAI(false);
-    }
+      const res = await api.put(`/admin/questions/${q.id}`, form);
+      onSave(res.data.question);
+    } catch(e) { console.error(e); }
+    finally { setSaving(false); }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      await api.post("/admin/questions", {
-        ...questionData,
-        lesson_id: selectedLesson,
-      });
-      setSuccess(true);
-      setQuestionData({
-        question_text: "",
-        option_a: "",
-        option_b: "",
-        option_c: "",
-        correct_answer: "a",
-        explanation_video_url: "",
-        explanation_text: "",
-      });
-      setTimeout(() => setSuccess(false), 3000);
-    } catch (err) {
-      alert("Error saving question.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const F = ({ label, field, multiline }: { label: string; field: keyof Question; multiline?: boolean }) => (
+    <div>
+      <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">{label}</label>
+      {multiline ? (
+        <textarea value={form[field] as string || ""} rows={3}
+          onChange={e => setForm({...form, [field]: e.target.value})}
+          className="w-full px-3 py-2 border-2 border-gray-100 rounded-xl text-sm font-medium focus:outline-none focus:border-[#3F2171] resize-none"/>
+      ) : (
+        <input value={form[field] as string || ""}
+          onChange={e => setForm({...form, [field]: e.target.value})}
+          className="w-full px-3 py-2 border-2 border-gray-100 rounded-xl text-sm font-medium focus:outline-none focus:border-[#3F2171]"/>
+      )}
+    </div>
+  );
 
   return (
-    <Layout>
-      <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-10">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      <div className="bg-white rounded-[2rem] p-7 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="font-black text-gray-800 text-xl uppercase italic tracking-tight">Edit Question</h2>
+          <button onClick={onClose} className="p-2 rounded-xl hover:bg-gray-100"><X size={18}/></button>
+        </div>
+        <div className="space-y-4">
+          <F label="Question" field="question_text" multiline/>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <F label="Option A" field="option_a"/>
+            <F label="Option B" field="option_b"/>
+            <F label="Option C" field="option_c"/>
+          </div>
           <div>
-            <button
-              onClick={() => navigate(-1)}
-              className="flex items-center gap-1 text-[#3F2171] font-black text-[10px] uppercase tracking-widest mb-2 hover:opacity-70 transition-all"
-            >
-              <ChevronLeft size={14} /> Back
-            </button>
-            <h1 className="text-3xl md:text-4xl font-black text-gray-800 uppercase italic tracking-tighter">
-              Quiz Builder
-            </h1>
-          </div>
-
-          <div className="flex items-center gap-3">
-            {/* ✨ AI GENERATE BUTTON */}
-            <button
-              onClick={handleAIGenerate}
-              disabled={generatingAI || !selectedLesson}
-              className="flex items-center gap-2 bg-purple-600 text-white px-5 py-3 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-purple-700 transition-all shadow-lg disabled:opacity-50"
-            >
-              {generatingAI ? (
-                <Loader2 size={16} className="animate-spin" />
-              ) : (
-                <Sparkles size={16} />
-              )}
-              {generatingAI ? "Thinking..." : "AI Magic"}
-            </button>
-
-            {success && (
-              <div className="p-4 bg-green-50 border-2 border-green-100 text-[#3F2171] rounded-2xl flex items-center gap-2 font-bold animate-in slide-in-from-top-4">
-                <CheckCircle size={20} />{" "}
-                <span className="text-sm">Saved!</span>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Course/Lesson Selection dropdowns remain the same... */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-8">
-          {/* Dropdowns logic remains unchanged */}
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
-              Subject
-            </label>
-            <select
-              className="w-full p-4 bg-white border-2 border-gray-100 rounded-[1.25rem] font-bold outline-none focus:border-[#3F2171] text-sm md:text-base transition-all appearance-none"
-              onChange={(e) => setSelectedCourse(e.target.value)}
-              value={selectedCourse}
-            >
-              <option value="">-- Select Subject --</option>
-              {courses.map((c: any) => (
-                <option key={c.id} value={c.id}>
-                  {c.title}
-                </option>
+            <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Correct Answer</label>
+            <div className="flex gap-3">
+              {["a","b","c"].map(opt => (
+                <button key={opt} onClick={() => setForm({...form, correct_answer: opt})}
+                  className={`flex-1 py-2.5 rounded-xl font-black uppercase text-sm transition-all ${
+                    form.correct_answer === opt ? "bg-[#3F2171] text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                  }`}>
+                  {opt}
+                </button>
               ))}
-            </select>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
-              Lesson
-            </label>
-            <select
-              disabled={!selectedCourse}
-              className="w-full p-4 bg-white border-2 border-gray-100 rounded-[1.25rem] font-bold disabled:opacity-50 outline-none focus:border-[#3F2171] text-sm md:text-base transition-all appearance-none"
-              onChange={(e) => setSelectedLesson(e.target.value)}
-              value={selectedLesson}
-            >
-              <option value="">-- Select Lesson --</option>
-              {lessons.map((l: any) => (
-                <option key={l.id} value={l.id}>
-                  {l.title}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <form
-          onSubmit={handleSubmit}
-          className="bg-white p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-sm border-2 border-gray-50 space-y-6 md:space-y-8"
-        >
-          {/* Question fields remain the same, but now auto-filled by handleAIGenerate */}
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
-              The Question
-            </label>
-            <textarea
-              required
-              className="w-full p-5 bg-gray-50 rounded-2xl border-2 border-transparent focus:border-[#3F2171] outline-none font-medium h-28 md:h-32 resize-none transition-all text-sm md:text-base"
-              placeholder="Use 'AI Magic' or type here..."
-              value={questionData.question_text}
-              onChange={(e) =>
-                setQuestionData({
-                  ...questionData,
-                  question_text: e.target.value,
-                })
-              }
-            />
-          </div>
-
-          {/* Rest of the form (Options, Explanation, Submit Button) remains unchanged */}
-          <div className="space-y-3 md:space-y-4">
-            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
-              Answer Options
-            </label>
-            {["a", "b", "c"].map((letter) => (
-              <div key={letter} className="flex items-center gap-3 md:gap-4">
-                <div
-                  className={`w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center font-black uppercase text-sm transition-all shadow-sm flex-shrink-0 ${questionData.correct_answer === letter ? "bg-[#3F2171] text-white" : "bg-gray-100 text-gray-400"}`}
-                >
-                  {letter}
-                </div>
-                <input
-                  required
-                  className="flex-1 p-4 md:p-5 bg-gray-50 rounded-xl md:rounded-2xl border-2 border-transparent focus:border-[#3F2171] outline-none font-bold text-sm md:text-base transition-all"
-                  placeholder={`Option ${letter.toUpperCase()}`}
-                  value={(questionData as any)[`option_${letter}`]}
-                  onChange={(e) =>
-                    setQuestionData({
-                      ...questionData,
-                      [`option_${letter}`]: e.target.value,
-                    })
-                  }
-                />
-                <input
-                  type="radio"
-                  name="correct"
-                  className="w-5 h-5 md:w-6 md:h-6 accent-[#3F2171] cursor-pointer"
-                  checked={questionData.correct_answer === letter}
-                  onChange={() =>
-                    setQuestionData({ ...questionData, correct_answer: letter })
-                  }
-                />
-              </div>
-            ))}
-          </div>
-
-          <hr className="border-gray-50" />
-
-          <div className="space-y-4 md:space-y-6 bg-gray-50/50 p-5 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] border-2 border-dashed border-gray-100">
-            <h3 className="font-black text-gray-800 uppercase italic tracking-tight flex items-center gap-2 text-sm md:text-base">
-              <HelpCircle className="text-[#3F2171]" size={18} /> Tutor
-              Fail-Safe
-            </h3>
-
-            <div className="space-y-2">
-              <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                <Video size={12} /> YouTube Explanation URL
-              </label>
-              <input
-                type="url"
-                className="w-full p-4 bg-white rounded-xl border-2 border-transparent focus:border-[#3F2171] outline-none font-bold text-xs md:text-sm shadow-sm"
-                placeholder="https://www.youtube.com/watch?v=..."
-                value={questionData.explanation_video_url}
-                onChange={(e) =>
-                  setQuestionData({
-                    ...questionData,
-                    explanation_video_url: e.target.value,
-                  })
-                }
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                <MessageCircle size={12} /> Text Hint (Optional)
-              </label>
-              <textarea
-                className="w-full p-4 bg-white rounded-xl border-2 border-transparent focus:border-[#3F2171] outline-none font-medium text-xs md:text-sm shadow-sm h-20 md:h-24 resize-none"
-                placeholder="Explain why the answer is correct..."
-                value={questionData.explanation_text}
-                onChange={(e) =>
-                  setQuestionData({
-                    ...questionData,
-                    explanation_text: e.target.value,
-                  })
-                }
-              />
             </div>
           </div>
-
-          <button
-            disabled={loading || !selectedLesson}
-            className="w-full bg-[#3F2171] text-white py-5 md:py-6 rounded-[1.25rem] md:rounded-[1.5rem] font-black text-lg md:text-xl shadow-xl hover:scale-[1.01] active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:hover:scale-100"
-          >
-            {loading ? (
-              <Loader2 className="animate-spin" />
-            ) : (
-              <>
-                <Save size={20} /> Save Logic
-              </>
-            )}
+          <F label="Explanation (optional)" field="explanation_text" multiline/>
+        </div>
+        <div className="flex gap-3 mt-6">
+          <button onClick={save} disabled={saving}
+            className="flex-1 flex items-center justify-center gap-2 bg-[#3F2171] text-white py-3 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-black transition-all disabled:opacity-50">
+            {saving ? <Loader2 size={14} className="animate-spin"/> : <Save size={14}/>} Save Changes
           </button>
-        </form>
+          <button onClick={onClose} className="px-6 py-3 rounded-2xl font-black uppercase text-[10px] tracking-widest bg-gray-100 text-gray-600 hover:bg-gray-200">Cancel</button>
+        </div>
       </div>
-    </Layout>
+    </div>
+  );
+}
+
+export default function AdminQuiz() {
+  const [data, setData]         = useState<any>(null);
+  const [loading, setLoading]   = useState(true);
+  const [search, setSearch]     = useState("");
+  const [page, setPage]         = useState(1);
+  const [editing, setEditing]   = useState<Question | null>(null);
+  const [deleting, setDeleting] = useState<number | null>(null);
+
+  const fetch = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await api.get("/admin/questions-list", { params: { search, page } });
+      setData(res.data);
+    } catch(e) { console.error(e); }
+    finally { setLoading(false); }
+  }, [search, page]);
+
+  useEffect(() => { setPage(1); }, [search]);
+  useEffect(() => { fetch(); }, [fetch]);
+
+  const deleteQ = async (id: number) => {
+    if (!confirm("Delete this question permanently?")) return;
+    setDeleting(id);
+    try {
+      await api.delete(`/admin/questions/${id}`);
+      setData((d: any) => ({ ...d, data: d.data.filter((q: any) => q.id !== id), total: d.total - 1 }));
+    } catch(e) { console.error(e); }
+    finally { setDeleting(null); }
+  };
+
+  const onSaved = (updated: Question) => {
+    setData((d: any) => ({ ...d, data: d.data.map((q: any) => q.id === updated.id ? updated : q) }));
+    setEditing(null);
+  };
+
+  const qs: Question[] = data?.data || [];
+
+  return (
+    <AdminShell title="Quiz Builder">
+      {editing && <EditModal q={editing} onSave={onSaved} onClose={() => setEditing(null)}/>}
+
+      <div className="space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-black text-gray-800 uppercase italic tracking-tighter">Quiz Questions</h1>
+            <p className="text-gray-400 font-bold text-[10px] uppercase tracking-widest mt-1">{data?.total || 0} questions total</p>
+          </div>
+          <a href="/admin/add-quiz"
+            className="flex items-center gap-2 bg-[#3F2171] text-white px-5 py-3 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-black transition-all">
+            <Plus size={14}/> Add Question
+          </a>
+        </div>
+
+        <div className="relative">
+          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"/>
+          <input value={search} onChange={e => setSearch(e.target.value)}
+            placeholder="Search questions…"
+            className="w-full pl-10 pr-4 py-3 bg-white border-2 border-gray-100 rounded-2xl font-bold text-sm focus:outline-none focus:border-[#3F2171] transition-colors"/>
+        </div>
+
+        <div className="bg-white rounded-2xl border-2 border-gray-100 overflow-hidden">
+          {loading ? (
+            <div className="flex items-center justify-center py-20"><Loader2 className="animate-spin text-[#3F2171]" size={32}/></div>
+          ) : qs.length === 0 ? (
+            <div className="text-center py-20">
+              <HelpCircle size={40} className="text-gray-200 mx-auto mb-4"/>
+              <p className="font-black text-gray-500 uppercase italic">No questions yet</p>
+              <p className="text-gray-400 font-bold text-sm mt-2">Questions you create will appear here for editing and deletion</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-50">
+              {qs.map((q) => (
+                <div key={q.id} className="px-5 py-5 hover:bg-gray-50/50 transition-colors">
+                  <div className="flex flex-col sm:flex-row sm:items-start gap-3">
+                    <div className="flex-1 min-w-0">
+                      {q.lesson?.title && (
+                        <p className="text-[9px] font-black uppercase tracking-widest text-[#3F2171] mb-1">{q.lesson.title}</p>
+                      )}
+                      <p className="font-black text-gray-700 mb-3 leading-snug">{q.question_text}</p>
+                      <div className="flex flex-wrap gap-2">
+                        {["a","b","c"].map(opt => (
+                          <span key={opt} className={`flex items-center gap-1 text-[10px] font-black px-3 py-1.5 rounded-xl uppercase ${
+                            q.correct_answer === opt
+                              ? "bg-green-50 text-green-600 border border-green-200"
+                              : "bg-gray-100 text-gray-500"
+                          }`}>
+                            {q.correct_answer === opt && <Check size={10}/>}
+                            {opt.toUpperCase()}: {q[`option_${opt}` as keyof Question] as string}
+                          </span>
+                        ))}
+                      </div>
+                      {q.explanation_text && (
+                        <p className="text-[10px] text-gray-400 font-bold mt-2 italic">Explanation: {q.explanation_text}</p>
+                      )}
+                    </div>
+                    <div className="flex gap-2 shrink-0">
+                      <button onClick={() => setEditing(q)}
+                        className="p-2.5 rounded-xl bg-[#3F2171]/10 text-[#3F2171] hover:bg-[#3F2171] hover:text-white transition-all">
+                        <Pencil size={14}/>
+                      </button>
+                      <button onClick={() => deleteQ(q.id)} disabled={deleting === q.id}
+                        className="p-2.5 rounded-xl bg-red-50 text-red-400 hover:bg-red-500 hover:text-white transition-all disabled:opacity-40">
+                        {deleting === q.id ? <Loader2 size={14} className="animate-spin"/> : <Trash2 size={14}/>}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {data && data.last_page > 1 && (
+          <div className="flex items-center justify-between">
+            <p className="text-[10px] font-bold text-gray-400">{data.total} questions · Page {data.current_page} of {data.last_page}</p>
+            <div className="flex gap-2">
+              <button onClick={() => setPage(p => Math.max(1, p-1))} disabled={page === 1} className="p-2 rounded-xl bg-white border-2 border-gray-100 disabled:opacity-40">
+                <ChevronLeft size={16} className="text-gray-500"/>
+              </button>
+              <button onClick={() => setPage(p => Math.min(data.last_page, p+1))} disabled={page === data.last_page} className="p-2 rounded-xl bg-white border-2 border-gray-100 disabled:opacity-40">
+                <ChevronRight size={16} className="text-gray-500"/>
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </AdminShell>
   );
 }

@@ -1,179 +1,168 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import api from "../../api/axios";
-import Layout from "../../components/Layout";
-import { 
-  Users, 
-  BookOpen, 
-  HelpCircle, 
-  TrendingUp, 
-  AlertCircle, 
-  Loader2, 
-  ArrowRight,
-  Zap
+import { AdminShell } from "../../components/admin/AdminShell";
+import {
+  Users, UserCheck, CreditCard, AlertCircle, Clock,
+  Crown, Zap, BookOpen, MessageSquare, TrendingUp,
+  ChevronRight, CheckCircle2, XCircle, Loader2,
 } from "lucide-react";
 
+function StatCard({ label, value, icon: Icon, color, sub, link }: any) {
+  const card = (
+    <div className={`bg-white rounded-2xl border-2 border-gray-100 p-5 hover:shadow-md transition-all ${link ? "cursor-pointer" : ""}`}>
+      <div className="flex items-start justify-between mb-4">
+        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${color}`}>
+          <Icon size={18} className="text-white"/>
+        </div>
+        {link && <ChevronRight size={16} className="text-gray-300"/>}
+      </div>
+      <p className="text-2xl font-black text-gray-800">{value}</p>
+      <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-1">{label}</p>
+      {sub && <p className="text-[10px] font-bold text-gray-300 mt-0.5">{sub}</p>}
+    </div>
+  );
+  return link ? <Link to={link}>{card}</Link> : card;
+}
+
 export default function AdminDashboard() {
-  const navigate = useNavigate();
-  const [stats, setStats] = useState<any>(null);
+  const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
 
   useEffect(() => {
-    // Fetching from /admin/stats defined in Laravel routes/api.php
-    api.get("/admin/stats")
-      .then((res) => {
-        setStats(res.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Dashboard Stats Error:", err);
-        setError(true);
-        setLoading(false);
-      });
+    api.get("/admin/overview").then(res => setData(res.data)).catch(console.error).finally(() => setLoading(false));
   }, []);
 
-  const statCards = [
-    {
-      label: "Total Students",
-      value: stats?.total_students,
-      icon: <Users size={24} />,
-      color: "bg-blue-500",
-      shadow: "shadow-blue-200"
-    },
-    {
-      label: "Active Lessons",
-      value: stats?.total_lessons,
-      icon: <BookOpen size={24} />,
-      color: "bg-frica-green",
-      shadow: "shadow-green-200"
-    },
-    {
-      label: "Total Subjects",
-      value: stats?.total_courses,
-      icon: <HelpCircle size={24} />,
-      color: "bg-purple-500",
-      shadow: "shadow-purple-200"
-    },
-  ];
+  if (loading) return (
+    <AdminShell title="Dashboard">
+      <div className="flex items-center justify-center h-64"><Loader2 className="animate-spin text-[#3F2171]" size={36}/></div>
+    </AdminShell>
+  );
+
+  const s = data?.stats || {};
 
   return (
-    <Layout>
-      <div className="max-w-6xl mx-auto p-4 md:p-10">
-        
-        {/* --- HEADER --- */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-4">
-          <div className="animate-in fade-in slide-in-from-left duration-500">
-            <h1 className="text-4xl font-black text-gray-800 tracking-tighter uppercase italic">
-              Founder's Control Room
-            </h1>
-            <p className="text-gray-400 font-bold text-sm mt-1">
-              Monitoring the FricaLearn Diaspora Pilot
-            </p>
-          </div>
-          
-          <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-2xl shadow-sm border border-gray-50">
-             <div className="w-2 h-2 bg-frica-green rounded-full animate-pulse" />
-             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">System Live</span>
-             {loading && <Loader2 className="animate-spin text-frica-green ml-2" size={16} />}
-          </div>
-        </div>
+    <AdminShell title="Dashboard">
+      <div className="space-y-6">
 
-        {/* --- ERROR STATE --- */}
-        {error ? (
-          <div className="bg-red-50 border-4 border-white p-8 rounded-[2.5rem] flex items-center gap-6 text-red-600 mb-10 shadow-xl shadow-red-100/50 animate-in zoom-in">
-            <div className="bg-red-100 p-4 rounded-2xl">
-                <AlertCircle size={32} />
-            </div>
-            <div>
-                <p className="font-black text-xl uppercase italic tracking-tight">Sync Failed</p>
-                <p className="font-medium opacity-80 text-sm uppercase">Could not fetch academy stats. Check your Laravel API connection.</p>
-            </div>
-          </div>
-        ) : (
-          /* --- STATS GRID --- */
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            {statCards.map((card, i) => (
-              <div
-                key={i}
-                className="group bg-white p-8 rounded-[2.5rem] shadow-sm border-4 border-white flex items-center space-x-6 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 animate-in fade-in slide-in-from-bottom-4"
-                style={{ animationDelay: `${i * 100}ms` }}
-              >
-                <div className={`${card.color} p-5 rounded-3xl text-white shadow-xl ${card.shadow} group-hover:scale-110 transition-transform`}>
-                  {card.icon}
-                </div>
-                <div>
-                  <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] mb-1">
-                    {card.label}
-                  </p>
-                  <p className="text-4xl font-black text-gray-800 tracking-tighter">
-                    {loading ? "..." : (card.value ?? 0)}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
+        {/* Alert: pending payments */}
+        {s.pending_payments > 0 && (
+          <Link to="/admin/payments"
+            className="flex items-center gap-3 bg-orange-50 border-2 border-orange-200 rounded-2xl px-5 py-4 hover:bg-orange-100 transition-all">
+            <AlertCircle size={20} className="text-orange-500 shrink-0"/>
+            <p className="font-black text-orange-700 text-sm">
+              {s.pending_payments} payment{s.pending_payments !== 1 ? "s" : ""} waiting for approval
+            </p>
+            <ChevronRight size={16} className="text-orange-400 ml-auto"/>
+          </Link>
         )}
 
-        {/* --- ANALYTICS & ROADMAP SECTION --- */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
-            
-            {/* Expansion Card */}
-            <div className="bg-white border-4 border-white rounded-[3rem] p-12 shadow-xl shadow-gray-100/50 relative overflow-hidden group">
-                <div className="absolute -top-10 -right-10 w-40 h-40 bg-frica-green/5 rounded-full group-hover:scale-150 transition-transform duration-700" />
-                <div className="relative z-10">
-                    <div className="w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center mb-6">
-                        <TrendingUp className="text-frica-green" size={32} />
-                    </div>
-                    <h2 className="text-3xl font-black text-gray-800 mb-4 italic uppercase tracking-tighter leading-none">
-                        Expansion <br/>Roadmap
-                    </h2>
-                    <p className="text-gray-500 font-medium leading-relaxed mb-8 max-w-xs">
-                        Managing the **Yoruba Pilot**. Launch Hausa, Igbo, and Core Pillars soon.
-                    </p>
-                    <button 
-                        onClick={() => navigate('/admin/analytics')}
-                        className="bg-[#3F2171] text-white px-8 py-4 rounded-2xl font-black shadow-lg shadow-green-900/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-3 group/btn"
-                    >
-                        View Analytics
-                        <ArrowRight size={20} className="group-hover/btn:translate-x-1 transition-transform" />
-                    </button>
-                </div>
-            </div>
+        {s.unread_chats > 0 && (
+          <Link to="/admin/chats"
+            className="flex items-center gap-3 bg-purple-50 border-2 border-purple-200 rounded-2xl px-5 py-4 hover:bg-purple-100 transition-all">
+            <MessageSquare size={20} className="text-[#3F2171] shrink-0"/>
+            <p className="font-black text-[#3F2171] text-sm">
+              {s.unread_chats} unread support message{s.unread_chats !== 1 ? "s" : ""}
+            </p>
+            <ChevronRight size={16} className="text-[#3F2171] ml-auto"/>
+          </Link>
+        )}
 
-            {/* Quick Actions / Activity Feed */}
-            <div className="bg-gray-900 rounded-[3rem] p-12 text-white shadow-2xl relative overflow-hidden">
-                <div className="absolute bottom-0 right-0 p-8 opacity-10">
-                    <Zap size={140} fill="white" />
-                </div>
-                <div className="relative z-10">
-                    <h2 className="text-3xl font-black italic uppercase tracking-tighter mb-8 text-yellow-400">
-                        Quick Launch
-                    </h2>
-                    <div className="space-y-4">
-                        <button 
-                            onClick={() => navigate('/admin/courses')}
-                            className="w-full p-4 bg-white/10 rounded-2xl flex items-center justify-between hover:bg-white/20 transition-all border border-white/5"
-                        >
-                            <span className="font-black uppercase text-xs tracking-widest">Update Curriculum</span>
-                            <BookOpen size={18} className="text-frica-green" />
-                        </button>
-                        <button 
-                            onClick={() => navigate('/admin/quiz-builder')}
-                            className="w-full p-4 bg-white/10 rounded-2xl flex items-center justify-between hover:bg-white/20 transition-all border border-white/5"
-                        >
-                            <span className="font-black uppercase text-xs tracking-widest">Build New Quiz</span>
-                            <HelpCircle size={18} className="text-yellow-400" />
-                        </button>
-                    </div>
-                </div>
-            </div>
+        {/* Stats grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <StatCard label="Total Students"   value={s.total_students}    icon={Users}      color="bg-[#3F2171]" link="/admin/users"/>
+          <StatCard label="Parents"          value={s.total_parents}     icon={UserCheck}  color="bg-blue-500"  link="/admin/parents"/>
+          <StatCard label="Premium"          value={s.premium_students}  icon={Crown}      color="bg-[#FFFF00] !text-[#2A1650]" />
+          <StatCard label="Pending Payments" value={s.pending_payments}  icon={CreditCard} color="bg-orange-500" link="/admin/payments"/>
+          <StatCard label="Trials Expiring"  value={s.trials_expiring}   icon={Clock}      color="bg-red-400"   sub="in 7 days" link="/admin/payments"/>
         </div>
 
-        <p className="text-center text-gray-300 font-black uppercase text-[10px] tracking-[0.3em]">
-            FricaLearn Alpha v1.0 • Proudly Made for the Diaspora
-        </p>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <StatCard label="Lessons Completed" value={(s.lessons_completed||0).toLocaleString()} icon={BookOpen}     color="bg-green-500"/>
+          <StatCard label="Avg Quiz Score"    value={`${s.avg_quiz_score || 0}%`}               icon={TrendingUp}   color="bg-indigo-500"/>
+          <StatCard label="Total XP Awarded"  value={(s.total_xp_awarded||0).toLocaleString()}  icon={Zap}          color="bg-[#2A1650]"/>
+        </div>
+
+        {/* Two columns: recent payments + expiring trials */}
+        <div className="grid md:grid-cols-2 gap-5">
+
+          {/* Recent payments */}
+          <div className="bg-white rounded-2xl border-2 border-gray-100 overflow-hidden">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+              <h3 className="font-black text-gray-800 text-sm uppercase tracking-tight">Recent Payments</h3>
+              <Link to="/admin/payments" className="text-[10px] font-black text-[#3F2171] uppercase tracking-widest hover:underline">View all</Link>
+            </div>
+            {(data?.recent_payments || []).length === 0 ? (
+              <p className="text-gray-400 text-center py-8 text-sm font-bold">No recent payments</p>
+            ) : (
+              <div className="divide-y divide-gray-50">
+                {(data?.recent_payments || []).map((p: any) => (
+                  <div key={p.id} className="flex items-center justify-between px-5 py-3">
+                    <div>
+                      <p className="font-black text-gray-700 text-sm">{p.child_name}</p>
+                      <p className="text-[10px] text-gray-400 font-bold">{p.parent?.name} · {new Date(p.created_at).toLocaleDateString("en-GB", {day:"numeric",month:"short"})}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-black text-gray-700">{p.currency === "GBP" ? "£" : "₦"}{Number(p.amount).toLocaleString()}</span>
+                      {p.status === "pending"
+                        ? <span className="bg-orange-50 text-orange-500 text-[9px] font-black uppercase px-2 py-1 rounded-full">Pending</span>
+                        : p.status === "approved"
+                        ? <CheckCircle2 size={14} className="text-green-500"/>
+                        : <XCircle size={14} className="text-red-400"/>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Trials expiring soon */}
+          <div className="bg-white rounded-2xl border-2 border-gray-100 overflow-hidden">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+              <h3 className="font-black text-gray-800 text-sm uppercase tracking-tight">Trials Expiring Soon</h3>
+              <Link to="/admin/payments" className="text-[10px] font-black text-[#3F2171] uppercase tracking-widest hover:underline">View all</Link>
+            </div>
+            {(data?.expiring_trials || []).length === 0 ? (
+              <p className="text-gray-400 text-center py-8 text-sm font-bold">No trials expiring this week</p>
+            ) : (
+              <div className="divide-y divide-gray-50">
+                {(data?.expiring_trials || []).map((s: any) => {
+                  const daysLeft = Math.ceil((new Date(s.trial_ends_at).getTime() - Date.now()) / 86400000);
+                  return (
+                    <div key={s.id} className="flex items-center justify-between px-5 py-3">
+                      <div>
+                        <p className="font-black text-gray-700 text-sm">{s.name}</p>
+                        <p className="text-[10px] text-gray-400 font-bold">{s.email}</p>
+                      </div>
+                      <span className={`text-[9px] font-black uppercase px-2 py-1 rounded-full ${daysLeft <= 2 ? "bg-red-50 text-red-500" : "bg-orange-50 text-orange-500"}`}>
+                        {daysLeft}d left
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Quick actions */}
+        <div className="bg-white rounded-2xl border-2 border-gray-100 p-5">
+          <h3 className="font-black text-gray-800 text-sm uppercase tracking-tight mb-4">Quick Actions</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {[
+              { label: "Add Quiz",        path: "/admin/questions",      icon: HelpCircle,    color: "bg-[#3F2171]/10 text-[#3F2171]" },
+              { label: "View Payments",   path: "/admin/payments",       icon: CreditCard,    color: "bg-orange-50 text-orange-600" },
+              { label: "Support Chats",   path: "/admin/chats",          icon: MessageSquare, color: "bg-blue-50 text-blue-600" },
+              { label: "Analytics",       path: "/admin/analytics",      icon: TrendingUp,    color: "bg-green-50 text-green-600" },
+            ].map(({ label, path, icon: Icon, color }) => (
+              <Link key={path} to={path}
+                className={`flex items-center gap-3 p-4 rounded-xl ${color} hover:opacity-80 transition-all font-bold text-sm`}>
+                <Icon size={16} className="shrink-0"/> {label}
+              </Link>
+            ))}
+          </div>
+        </div>
       </div>
-    </Layout>
+    </AdminShell>
   );
 }

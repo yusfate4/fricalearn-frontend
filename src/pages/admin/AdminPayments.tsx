@@ -1,235 +1,220 @@
-import React, { useState, useEffect } from "react";
-import Layout from "../../components/Layout";
+import React, { useEffect, useState, useCallback } from "react";
 import api from "../../api/axios";
+import { AdminShell } from "../../components/admin/AdminShell";
 import {
-  Loader2,
-  CheckCircle2,
-  Eye,
-  ShieldCheck,
-  AlertCircle,
-  XCircle,
+  CreditCard, Clock, CheckCircle2, XCircle, AlertCircle,
+  ChevronDown, ChevronUp, Loader2, Eye, ExternalLink,
+  RefreshCw, Crown,
 } from "lucide-react";
 
+type Tab = "pending" | "expiring" | "expired";
+
+function CurrencyAmount({ amount, currency }: { amount: number; currency: string }) {
+  const sym = currency === "GBP" ? "£" : "₦";
+  return <span className="font-black text-gray-700">{sym}{Number(amount).toLocaleString()}</span>;
+}
+
 export default function AdminPayments() {
-  const [payments, setPayments] = useState<any[]>([]);
+  const [data, setData]       = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [processingId, setProcessingId] = useState<number | null>(null);
+  const [tab, setTab]         = useState<Tab>("pending");
+  const [approving, setApproving] = useState<number | null>(null);
+  const [rejecting, setRejecting] = useState<number | null>(null);
+  const [expanded, setExpanded]   = useState<number | null>(null);
 
-  // 🚀 Updated modal state to handle different types of feedback
-  const [modal, setModal] = useState({
-    show: false,
-    type: "success" as "success" | "error",
-    message: "",
-  });
-
-  useEffect(() => {
-    fetchPending();
+  const fetch = useCallback(async (silent = false) => {
+    if (!silent) setLoading(true);
+    try {
+      const res = await api.get("/admin/payments-overview");
+      setData(res.data);
+    } catch(e) { console.error(e); }
+    finally { setLoading(false); }
   }, []);
 
-  const fetchPending = async () => {
-    setLoading(true);
+  useEffect(() => { fetch(); }, [fetch]);
+
+  const approve = async (id: number) => {
+    setApproving(id);
     try {
-      const res = await api.get("/admin/payments/pending");
-      setPayments(Array.isArray(res.data) ? res.data : []);
-    } catch (err) {
-      console.error("Failed to fetch payments");
-    } finally {
-      setLoading(false);
-    }
+      await api.post(`/admin/payments/${id}/approve`);
+      await fetch(true);
+    } catch(e) { console.error(e); }
+    finally { setApproving(null); }
   };
 
-  const getReceiptUrl = (path: string) => {
-    if (!path) return "";
-
-    // 🚀 THE CRITICAL FIX: If the path is already a Cloudinary/External URL, return it as is
-    if (path.startsWith("http")) return path;
-
-    // 📂 FALLBACK: For old local files during development
-    const backendBase = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
-    const cleanPath = path.replace("public/", "").replace("storage/", "");
-    return `${backendBase}/storage/${cleanPath}`;
-  };
-
-  
-  const handleAction = async (id: number, action: "approve" | "reject") => {
-    setProcessingId(id);
+  const reject = async (id: number) => {
+    if (!confirm("Reject this payment?")) return;
+    setRejecting(id);
     try {
-      const res = await api.post(`/admin/payments/${id}/${action}`);
-
-      // Remove from list on success
-      setPayments((prev) => prev.filter((p) => p.id !== id));
-
-      setModal({
-        show: true,
-        type: "success",
-        message: res.data.message || `Payment successfully ${action}ed!`,
-      });
-    } catch (err: any) {
-      // 🚀 THE FIX: Capture the exact error from PaymentController (e.g., Student Not Found)
-      const errorMsg =
-        err.response?.data?.message || "Action failed. Check server logs.";
-      setModal({
-        show: true,
-        type: "error",
-        message: errorMsg,
-      });
-    } finally {
-      setProcessingId(null);
-    }
+      await api.post(`/admin/payments/${id}/reject`);
+      await fetch(true);
+    } catch(e) { console.error(e); }
+    finally { setRejecting(null); }
   };
+
+  const s = data?.summary || {};
+
+  const TABS: { id: Tab; label: string; count: number; color: string }[] = [
+    { id: "pending",  label: "Pending",         count: s.pending_count  || 0, color: "text-orange-600" },
+    { id: "expiring", label: "Trials Expiring",  count: s.expiring_count || 0, color: "text-red-500"    },
+    { id: "expired",  label: "Trials Expired",   count: s.expired_count  || 0, color: "text-gray-500"   },
+  ];
 
   return (
-    <Layout>
-      {/* 🚀 Refined Feedback Modal */}
-      {modal.show && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-md p-4 animate-in fade-in duration-300">
-          <div className="bg-white p-10 rounded-[3rem] shadow-2xl text-center max-w-sm w-full border-4 border-white">
-            {modal.type === "success" ? (
-              <CheckCircle2 className="mx-auto text-[#3F2171] mb-6" size={60} />
-            ) : (
-              <XCircle className="mx-auto text-red-500 mb-6" size={60} />
+    <AdminShell title="Payments">
+      <div className="space-y-5">
+
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-black text-gray-800 uppercase italic tracking-tighter">Payments</h1>
+            <p className="text-gray-400 font-bold text-[10px] uppercase tracking-widest mt-1">
+              ₦{Number(s.monthly_revenue || 0).toLocaleString()} approved this month · {s.pending_count || 0} pending
+            </p>
+          </div>
+          <button onClick={() => fetch()} className="flex items-center gap-2 px-4 py-2.5 bg-white border-2 border-gray-100 rounded-xl font-bold text-sm text-gray-600 hover:border-[#3F2171]/30 transition-all">
+            <RefreshCw size={14}/> Refresh
+          </button>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex gap-2 border-b border-gray-200 pb-0">
+          {TABS.map(t => (
+            <button key={t.id} onClick={() => setTab(t.id)}
+              className={`flex items-center gap-2 px-5 py-3 font-black text-sm uppercase tracking-tight border-b-2 transition-all -mb-px ${
+                tab === t.id ? "border-[#3F2171] text-[#3F2171]" : "border-transparent text-gray-400 hover:text-gray-600"
+              }`}>
+              {t.label}
+              {t.count > 0 && (
+                <span className={`text-[9px] font-black px-2 py-0.5 rounded-full bg-gray-100 ${t.color}`}>{t.count}</span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* Content */}
+        {loading ? (
+          <div className="flex items-center justify-center py-20"><Loader2 className="animate-spin text-[#3F2171]" size={32}/></div>
+        ) : (
+          <div className="bg-white rounded-2xl border-2 border-gray-100 overflow-hidden">
+
+            {/* ── PENDING tab ── */}
+            {tab === "pending" && (
+              <>
+                {(data?.pending_payments || []).length === 0 ? (
+                  <div className="text-center py-20">
+                    <CheckCircle2 size={40} className="text-green-300 mx-auto mb-4"/>
+                    <p className="font-black text-gray-500 uppercase italic">No pending payments</p>
+                  </div>
+                ) : (
+                  <div className="divide-y divide-gray-50">
+                    {(data?.pending_payments || []).map((p: any) => (
+                      <div key={p.id}>
+                        <div className="px-5 py-4 flex flex-col sm:flex-row sm:items-center gap-4">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <p className="font-black text-gray-700">{p.child_name}</p>
+                              <span className="bg-orange-50 text-orange-500 text-[9px] font-black uppercase px-2 py-0.5 rounded-full">Pending</span>
+                            </div>
+                            <p className="text-[11px] text-gray-400 font-bold">
+                              Parent: {p.parent?.name} · {p.parent?.email}
+                            </p>
+                            <p className="text-[10px] text-gray-300 font-bold">
+                              {new Date(p.created_at).toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <CurrencyAmount amount={p.amount} currency={p.currency}/>
+                            {p.receipt_path && (
+                              <a href={p.receipt_path} target="_blank" rel="noreferrer"
+                                className="p-2 rounded-xl bg-gray-100 text-gray-500 hover:bg-[#3F2171] hover:text-white transition-all">
+                                <ExternalLink size={14}/>
+                              </a>
+                            )}
+                            <button onClick={() => approve(p.id)} disabled={approving === p.id}
+                              className="flex items-center gap-1.5 px-4 py-2 bg-green-500 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-green-600 transition-all disabled:opacity-50">
+                              {approving === p.id ? <Loader2 size={12} className="animate-spin"/> : <CheckCircle2 size={12}/>}
+                              Approve
+                            </button>
+                            <button onClick={() => reject(p.id)} disabled={rejecting === p.id}
+                              className="p-2 rounded-xl bg-red-50 text-red-400 hover:bg-red-500 hover:text-white transition-all disabled:opacity-50">
+                              {rejecting === p.id ? <Loader2 size={14} className="animate-spin"/> : <XCircle size={14}/>}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
             )}
 
-            <h3 className="text-2xl font-black uppercase italic text-gray-800 tracking-tighter mb-2">
-              {modal.type === "success" ? "Confirmed" : "Action Halted"}
-            </h3>
-            <p className="font-bold text-gray-400 text-xs mb-8 leading-relaxed px-4 lowercase first-letter:uppercase">
-              {modal.message}
-            </p>
-
-            <button
-              onClick={() => setModal({ ...modal, show: false })}
-              className={`w-full py-5 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-xl transition-all active:scale-95 ${
-                modal.type === "success"
-                  ? "bg-[#3F2171] text-white shadow-green-100"
-                  : "bg-red-500 text-white shadow-red-100"
-              }`}
-            >
-              Continue
-            </button>
-          </div>
-        </div>
-      )}
-
-      <div className="max-w-7xl mx-auto p-6 md:p-12 min-h-screen">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16">
-          <div className="flex items-center gap-6">
-            <div className="bg-[#3F2171] p-6 rounded-[2.5rem] text-white shadow-2xl rotate-3">
-              <ShieldCheck size={36} />
-            </div>
-            <div>
-              <h1 className="text-4xl md:text-6xl font-black text-gray-800 italic uppercase tracking-tighter leading-none">
-                Payment <span className="text-[#3F2171]">Fulfillment</span>
-              </h1>
-              <p className="text-gray-400 font-black text-[10px] uppercase tracking-widest mt-3 flex items-center gap-2">
-                <span className="w-8 h-[2px] bg-gray-100"></span> Pending
-                Verifications
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {loading ? (
-          <div className="py-32 text-center flex flex-col items-center">
-            <Loader2 className="animate-spin text-[#3F2171] mb-4" size={48} />
-            <p className="text-[10px] font-black uppercase tracking-widest text-gray-300">
-              Syncing ledger...
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {payments.length > 0 ? (
-              payments.map((p) => (
-                <div
-                  key={p.id}
-                  className="bg-white rounded-[3.5rem] border-2 border-gray-50 overflow-hidden hover:border-[#3F2171] transition-all duration-500 shadow-sm hover:shadow-2xl flex flex-col group animate-in slide-in-from-bottom-4"
-                >
-                  <div className="h-64 bg-gray-100 relative overflow-hidden">
-                    <img
-                      src={getReceiptUrl(p.receipt_path)}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
-                      alt="Receipt"
-                      onError={(e) => {
-                        e.currentTarget.src =
-                          "https://placehold.co/600x400?text=Receipt+Not+Found";
-                      }}
-                    />
-                    <a
-                      href={getReceiptUrl(p.receipt_path)}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center text-white transition-all backdrop-blur-md cursor-pointer"
-                    >
-                      <Eye size={44} className="mb-2" />
-                      <span className="text-[10px] font-black uppercase tracking-widest">
-                        Open Full Receipt
-                      </span>
-                    </a>
+            {/* ── EXPIRING tab ── */}
+            {tab === "expiring" && (
+              <>
+                {(data?.expiring_soon || []).length === 0 ? (
+                  <div className="text-center py-20">
+                    <Clock size={40} className="text-gray-200 mx-auto mb-4"/>
+                    <p className="font-black text-gray-500 uppercase italic">No trials expiring in the next 14 days</p>
                   </div>
+                ) : (
+                  <div className="divide-y divide-gray-50">
+                    {(data?.expiring_soon || []).map((s: any) => {
+                      const days = Math.ceil((new Date(s.trial_ends_at).getTime() - Date.now()) / 86400000);
+                      return (
+                        <div key={s.id} className="px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <p className="font-black text-gray-700">{s.name}</p>
+                              <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${days <= 3 ? "bg-red-50 text-red-500" : "bg-orange-50 text-orange-500"}`}>
+                                {days}d left
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-gray-400 font-bold">{s.email}</p>
+                            <p className="text-[10px] text-gray-300 font-bold">
+                              Expires: {new Date(s.trial_ends_at).toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            {s.parents?.map((p: any) => (
+                              <p key={p.id} className="text-[10px] text-gray-400 font-bold">{p.email}</p>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </>
+            )}
 
-                  <div className="p-8 flex flex-col flex-1">
-                    <div className="flex justify-between items-start mb-6">
-                      <div>
-                        <h3 className="font-black text-gray-800 uppercase text-2xl italic leading-none tracking-tighter">
-                          {p.child_name}
-                        </h3>
-                        <p className="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mt-2">
-                          {p.course?.title || "Unknown Subject"}
-                        </p>
-                      </div>
-                      <div className="bg-gray-900 text-white p-3 rounded-2xl">
-                        <span className="text-[10px] font-black tracking-tighter">
-                          #{p.id}
+            {/* ── EXPIRED tab ── */}
+            {tab === "expired" && (
+              <>
+                {(data?.expired_trials || []).length === 0 ? (
+                  <div className="text-center py-20">
+                    <p className="font-black text-gray-500 uppercase italic">No expired trials</p>
+                  </div>
+                ) : (
+                  <div className="divide-y divide-gray-50">
+                    {(data?.expired_trials || []).map((s: any) => (
+                      <div key={s.id} className="px-5 py-4 flex items-center justify-between gap-3">
+                        <div>
+                          <p className="font-black text-gray-600">{s.name}</p>
+                          <p className="text-[11px] text-gray-400 font-bold">{s.email}</p>
+                        </div>
+                        <span className="text-[9px] font-bold text-gray-400">
+                          Expired {new Date(s.trial_ends_at).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"})}
                         </span>
                       </div>
-                    </div>
-
-                    <div className="bg-gray-50 p-5 rounded-[2rem] mb-10 flex items-center justify-between border-2 border-white shadow-inner">
-                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                        Amount Paid
-                      </span>
-                      <p className="text-[#3F2171] font-black text-2xl italic tracking-tighter">
-                        {p.currency} {Number(p.amount).toLocaleString()}
-                      </p>
-                    </div>
-
-                    <div className="flex gap-3 mt-auto">
-                      <button
-                        disabled={processingId === p.id}
-                        onClick={() => handleAction(p.id, "approve")}
-                        className="flex-[2] py-5 bg-[#3F2171] text-white rounded-[1.5rem] font-black text-[10px] uppercase tracking-widest shadow-xl shadow-green-100 hover:bg-black transition-all active:scale-95 disabled:opacity-50"
-                      >
-                        {processingId === p.id ? (
-                          <Loader2 className="animate-spin mx-auto" size={18} />
-                        ) : (
-                          "Activate Access"
-                        )}
-                      </button>
-                      <button
-                        disabled={processingId === p.id}
-                        onClick={() => handleAction(p.id, "reject")}
-                        className="flex-1 py-5 bg-red-50 text-red-500 rounded-[1.5rem] font-black text-[10px] uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all active:scale-95"
-                      >
-                        Reject
-                      </button>
-                    </div>
+                    ))}
                   </div>
-                </div>
-              ))
-            ) : (
-              <div className="col-span-full text-center py-40 bg-gray-50/50 rounded-[5rem] border-4 border-dashed border-gray-100 flex flex-col items-center">
-                <CheckCircle2 size={80} className="text-gray-200 mb-6" />
-                <h3 className="text-3xl font-black text-gray-300 uppercase italic tracking-tighter">
-                  Ledger Balanced
-                </h3>
-                <p className="text-gray-400 font-bold text-[10px] uppercase tracking-widest mt-2">
-                  All student accounts are currently up to date.
-                </p>
-              </div>
+                )}
+              </>
             )}
           </div>
         )}
       </div>
-    </Layout>
+    </AdminShell>
   );
 }

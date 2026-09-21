@@ -1,350 +1,178 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import api from "../../api/axios";
-import Layout from "../../components/Layout";
-import {
-  User,
-  Send,
-  Loader2,
-  MessageSquare,
-  ChevronLeft,
-  CheckCheck,
-  Image as ImageIcon,
-  X,
-  Mic,
-  Square,
-  Trash2,
-  ShieldCheck,
-  AlertCircle,
-  Headphones,
-  LifeBuoy,
-} from "lucide-react";
-import { useAuth } from "../../hooks/useAuth";
+import { AdminShell } from "../../components/admin/AdminShell";
+import { MessageSquare, Send, Loader2, RefreshCw, Circle, User } from "lucide-react";
 
 export default function AdminChatList() {
-  const { user } = useAuth();
-  const [conversations, setConversations] = useState<any[]>([]);
-  const [selectedChat, setSelectedChat] = useState<any>(null);
+  const [convos, setConvos]     = useState<any[]>([]);
+  const [selected, setSelected] = useState<any>(null);
   const [messages, setMessages] = useState<any[]>([]);
+  const [reply, setReply]       = useState("");
+  const [loading, setLoading]   = useState(true);
+  const [sending, setSending]   = useState(false);
+  const [polling, setPolling]   = useState(false);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
-  const [loading, setLoading] = useState(true);
-  const [sending, setSending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  // --- Notification Assets ---
-  const notificationSound = useRef(new Audio("/sounds/notification.mp3"));
-  const prevConvosRef = useRef<any[]>([]);
-
-  const [newMessage, setNewMessage] = useState("");
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const [isRecording, setIsRecording] = useState(false);
-  const [selectedAudio, setSelectedAudio] = useState<File | null>(null);
-  const [audioPreview, setAudioPreview] = useState<string | null>(null);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const audioChunksRef = useRef<Blob[]>([]);
-
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const getMediaUrl = (path: string) => {
-    if (!path) return "";
-    if (path.startsWith("http")) return path;
-    return `https://res.cloudinary.com/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/all/upload/${path}`;
-  };
-
-  // Browser Notification Helper
-  const showBrowserNotification = (title: string, body: string) => {
-    if (!("Notification" in window)) return;
-    if (Notification.permission === "granted") {
-      new Notification(title, { body, icon: "/logo192.png" });
-    } else if (Notification.permission !== "denied") {
-      Notification.requestPermission();
-    }
-  };
-
-  useEffect(() => {
-    fetchConversations();
+  const fetchConvos = useCallback(async (silent = false) => {
+    if (!silent) setLoading(true);
+    try {
+      const res = await api.get("/admin/chats");
+      setConvos(Array.isArray(res.data) ? res.data : []);
+    } catch(e) { console.error(e); }
+    finally { setLoading(false); }
   }, []);
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  const fetchMessages = useCallback(async (id: number) => {
+    try {
+      const res = await api.get(`/admin/conversations/${id}/messages`);
+      setMessages(Array.isArray(res.data) ? res.data : []);
+      setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
+    } catch(e) { console.error(e); }
+  }, []);
 
-  // Sync conversations every 15s to catch new inquiries
+  useEffect(() => { fetchConvos(); }, [fetchConvos]);
+
+  // Poll for new messages every 15 seconds
   useEffect(() => {
-    const interval = setInterval(fetchConversations, 15000);
+    const interval = setInterval(() => {
+      fetchConvos(true);
+      if (selected) fetchMessages(selected.id);
+    }, 15000);
     return () => clearInterval(interval);
-  }, [conversations.length]);
+  }, [selected, fetchConvos, fetchMessages]);
 
-  const fetchConversations = async () => {
-    try {
-      const res = await api.get(`/admin/conversations?t=${new Date().getTime()}`);
-      const newConvos = res.data || [];
-
-      // 🔔 Global Notification Logic for Admin
-      // Checks if any conversation has a newer message timestamp than before
-      if (prevConvosRef.current.length > 0) {
-        const hasNewActivity = newConvos.some((nc: any) => {
-          const oldConvo = prevConvosRef.current.find(oc => oc.id === nc.id);
-          return oldConvo && nc.updated_at !== oldConvo.updated_at && nc.unread_count > oldConvo.unread_count;
-        });
-
-        if (hasNewActivity) {
-          notificationSound.current.play().catch(e => console.log("Audio blocked", e));
-          showBrowserNotification("Support Desk", "A parent has sent a new message.");
-          
-          // If the currently selected chat is the one that got a message, refresh messages
-          if (selectedChat) {
-            refreshCurrentChat();
-          }
-        }
-      }
-
-      setConversations(newConvos);
-      prevConvosRef.current = newConvos;
-    } catch (err) {
-      console.error("Failed to sync conversations", err);
-    } finally {
-      setLoading(false);
-    }
+  const openConvo = async (c: any) => {
+    setSelected(c);
+    await fetchMessages(c.id);
+    // Mark as read
+    setConvos(prev => prev.map(x => x.id === c.id ? { ...x, unread_count: 0 } : x));
   };
 
-  const refreshCurrentChat = async () => {
-    if (!selectedChat) return;
-    try {
-      const res = await api.get(`/admin/conversations/${selectedChat.id}/messages`);
-      if (res.data.length !== messages.length) {
-        setMessages(res.data || []);
-      }
-    } catch (e) {
-      console.log("Chat refresh failed");
-    }
-  };
-
-  const selectConversation = async (chat: any) => {
-    setSelectedChat(chat);
-    setError(null);
-    try {
-      await api.post(`/admin/conversations/${chat.id}/read`);
-      const res = await api.get(`/admin/conversations/${chat.id}/messages`);
-      setMessages(res.data || []);
-      fetchConversations(); 
-    } catch (err) {
-      setError("Could not load messages.");
-    }
-  };
-
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedImage(file);
-      setImagePreview(URL.createObjectURL(file));
-    }
-  };
-
-  const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = recorder;
-      audioChunksRef.current = [];
-      recorder.ondataavailable = (e) => audioChunksRef.current.push(e.data);
-      recorder.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
-        const file = new File([audioBlob], "voice_note.webm", { type: "audio/webm" });
-        setSelectedAudio(file);
-        setAudioPreview(URL.createObjectURL(audioBlob));
-      };
-      recorder.start();
-      setIsRecording(true);
-    } catch (err) {
-      setError("Microphone access denied.");
-    }
-  };
-
-  const stopRecording = () => {
-    mediaRecorderRef.current?.stop();
-    setIsRecording(false);
-    mediaRecorderRef.current?.stream.getTracks().forEach((track) => track.stop());
-  };
-
-  const handleSend = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if ((!newMessage.trim() && !selectedImage && !selectedAudio) || !selectedChat || sending || isRecording) return;
-
+  const sendReply = async () => {
+    if (!reply.trim() || !selected) return;
     setSending(true);
-    setError(null);
-    const recipientId = selectedChat.student_id || selectedChat.user_id;
-
-    if (!recipientId) {
-      setError("Recipient ID not found.");
-      setSending(false);
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("receiver_id", recipientId.toString());
-    formData.append("conversation_id", selectedChat.id.toString());
-
-    if (newMessage.trim()) formData.append("message", newMessage);
-    if (selectedImage) formData.append("image", selectedImage);
-    if (selectedAudio) formData.append("audio", selectedAudio);
-
     try {
-      const res = await api.post("/chat/message", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      setMessages((prev) => [...prev, res.data]);
-      setConversations((prev) =>
-        prev.map((c) =>
-          c.id === selectedChat.id ? { ...c, last_message: newMessage || "📎 Attachment" } : c,
-        ),
-      );
-      setNewMessage(""); setSelectedImage(null); setImagePreview(null); setSelectedAudio(null); setAudioPreview(null);
-      if (fileInputRef.current) fileInputRef.current.value = "";
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Delivery failed.");
-      setTimeout(() => setError(null), 5000);
-    } finally {
-      setSending(false);
-    }
+      await api.post(`/admin/conversations/${selected.id}/reply`, { message: reply });
+      setReply("");
+      await fetchMessages(selected.id);
+      fetchConvos(true);
+    } catch(e) { console.error(e); }
+    finally { setSending(false); }
   };
 
-  if (loading) return (
-    <Layout>
-      <div className="flex flex-col items-center justify-center h-[70vh]">
-        <Loader2 className="animate-spin text-[#3F2171] mb-4" size={48} />
-        <p className="font-black text-gray-400 uppercase tracking-widest italic text-xs">Syncing Admin Inbox...</p>
-      </div>
-    </Layout>
-  );
+  const totalUnread = convos.reduce((s, c) => s + (c.unread_count || 0), 0);
 
   return (
-    <Layout>
-      <div className="max-w-7xl mx-auto h-[calc(100vh-100px)] md:h-[calc(100vh-140px)] flex flex-col md:flex-row gap-4 p-2 md:p-6">
-        {/* --- LEFT: CONVERSATION LIST --- */}
-        <div className={`${selectedChat ? "hidden md:flex" : "flex"} w-full md:w-96 bg-white rounded-[2.5rem] border-2 border-gray-100 flex-col overflow-hidden shadow-sm`}>
-          <div className="p-6 border-b-2 border-gray-50 flex items-center justify-between bg-gray-50/50">
-            <h2 className="text-xl font-black text-gray-800 uppercase italic">Support Desk</h2>
-            <div className="bg-[#3F2171] text-white text-[10px] font-black px-3 py-1 rounded-full">
-              {conversations.reduce((acc, c) => acc + (c.unread_count || 0), 0)} PENDING
+    <AdminShell title="Support Chat">
+      <div className="h-[calc(100vh-10rem)] flex gap-4">
+
+        {/* ── Conversation list ─── */}
+        <div className="w-72 shrink-0 bg-white border-2 border-gray-100 rounded-2xl flex flex-col overflow-hidden">
+          <div className="px-4 py-4 border-b border-gray-100 flex items-center justify-between">
+            <div>
+              <h3 className="font-black text-gray-800 text-sm uppercase tracking-tight">Inbox</h3>
+              {totalUnread > 0 && (
+                <p className="text-[9px] font-black text-[#3F2171] uppercase">{totalUnread} unread</p>
+              )}
             </div>
+            <button onClick={() => fetchConvos()} className="p-2 rounded-xl hover:bg-gray-100">
+              <RefreshCw size={14} className="text-gray-400"/>
+            </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
-            {conversations.length > 0 ? (
-              conversations.map((chat) => (
-                <button
-                  key={chat.id}
-                  onClick={() => selectConversation(chat)}
-                  className={`w-full p-5 rounded-[2rem] flex items-center gap-4 transition-all relative group ${
-                    selectedChat?.id === chat.id ? "bg-gray-900 text-white shadow-xl scale-[1.02]" : "hover:bg-gray-50 text-gray-600 border border-transparent hover:border-gray-100"
-                  }`}
-                >
-                  <div className={`p-3 rounded-2xl flex-shrink-0 ${selectedChat?.id === chat.id ? "bg-white/20" : "bg-gray-100"}`}><User size={20} /></div>
-                  <div className="flex-1 text-left overflow-hidden">
-                    <div className="flex justify-between items-center mb-0.5">
-                      <p className="font-black text-[11px] truncate uppercase italic tracking-tight">{chat.display_name}</p>
-                      <span className="text-[8px] font-black opacity-40">{chat.updated_at}</span>
-                    </div>
-                    <p className="text-[10px] truncate font-bold opacity-70 italic">{chat.last_message || "Voice note / Image"}</p>
+          {loading ? (
+            <div className="flex items-center justify-center flex-1"><Loader2 className="animate-spin text-[#3F2171]" size={24}/></div>
+          ) : convos.length === 0 ? (
+            <div className="flex-1 flex flex-col items-center justify-center text-center px-4 py-8">
+              <MessageSquare size={32} className="text-gray-200 mb-3"/>
+              <p className="font-black text-gray-400 text-sm uppercase italic">No conversations yet</p>
+            </div>
+          ) : (
+            <div className="flex-1 overflow-y-auto divide-y divide-gray-50">
+              {convos.map(c => (
+                <button key={c.id} onClick={() => openConvo(c)}
+                  className={`w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors flex items-start gap-3 ${selected?.id === c.id ? "bg-[#3F2171]/5 border-l-4 border-l-[#3F2171]" : ""}`}>
+                  <div className="w-9 h-9 bg-[#3F2171]/10 rounded-xl flex items-center justify-center text-[#3F2171] font-black text-sm shrink-0 mt-0.5">
+                    {(c.display_name || "?")[0].toUpperCase()}
                   </div>
-                  {chat.unread_count > 0 && selectedChat?.id !== chat.id && (
-                    <div className="h-5 w-5 bg-orange-500 text-white text-[8px] flex items-center justify-center rounded-full shadow-lg animate-pulse">{chat.unread_count}</div>
-                  )}
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between">
+                      <p className="font-black text-sm text-gray-700 truncate">{c.display_name}</p>
+                      {c.unread_count > 0 && (
+                        <span className="bg-[#3F2171] text-white text-[8px] font-black px-1.5 py-0.5 rounded-full shrink-0 ml-1">{c.unread_count}</span>
+                      )}
+                    </div>
+                    <p className="text-[10px] text-gray-400 truncate font-bold">{c.last_message}</p>
+                    <p className="text-[9px] text-gray-300 font-bold mt-0.5">{c.updated_at}</p>
+                  </div>
                 </button>
-              ))
-            ) : (
-              <div className="text-center py-20 opacity-30"><MessageSquare className="mx-auto mb-2" /><p className="text-[10px] font-black uppercase">No active inquiries</p></div>
-            )}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* --- RIGHT: ACTIVE CHAT --- */}
-        <div className={`${!selectedChat ? "hidden md:flex" : "flex"} flex-1 bg-white rounded-[2.5rem] md:rounded-[3rem] border-2 border-gray-100 flex-col overflow-hidden shadow-sm relative`}>
-          {selectedChat ? (
+        {/* ── Message pane ─── */}
+        <div className="flex-1 bg-white border-2 border-gray-100 rounded-2xl flex flex-col overflow-hidden">
+          {!selected ? (
+            <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
+              <MessageSquare size={48} className="text-gray-200 mb-4"/>
+              <h3 className="font-black text-gray-500 uppercase italic text-lg">Select a conversation</h3>
+              <p className="text-gray-400 font-bold text-sm mt-2">Messages are stored permanently — nothing is lost when you're offline</p>
+            </div>
+          ) : (
             <>
               {/* Header */}
-              <div className="p-4 md:p-6 border-b-2 border-gray-50 flex items-center justify-between bg-gray-50/30">
-                <div className="flex items-center gap-4">
-                  <button onClick={() => setSelectedChat(null)} className="md:hidden p-2 hover:bg-gray-100 rounded-xl"><ChevronLeft size={24} /></button>
-                  <div className="bg-gray-900 p-3 rounded-2xl text-white"><Headphones size={20} /></div>
-                  <div>
-                    <span className="font-black text-gray-800 block text-base md:text-lg leading-none italic uppercase tracking-tighter">{selectedChat.display_name}</span>
-                    <span className="text-[8px] md:text-[9px] font-black text-[#3F2171] uppercase tracking-[0.2em] mt-1 block flex items-center gap-2"><ShieldCheck size={10} /> Official Parent Inquiry</span>
-                  </div>
+              <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-3">
+                <div className="w-9 h-9 bg-[#3F2171] rounded-xl flex items-center justify-center text-[#FFFF00] font-black">
+                  {(selected.display_name || "?")[0].toUpperCase()}
+                </div>
+                <div>
+                  <p className="font-black text-gray-800">{selected.display_name}</p>
+                  <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-1">
+                    <Circle size={6} className="text-green-400 fill-green-400"/> Auto-email reply when offline enabled
+                  </p>
                 </div>
               </div>
 
-              {/* Messages Container */}
-              <div className="flex-1 overflow-y-auto p-4 md:p-10 space-y-6 bg-gray-50/30 custom-scrollbar">
-                {messages.map((msg) => {
-                  const isMe = Number(msg.sender_id) === Number(user?.id);
+              {/* Messages */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                {messages.map((m: any) => {
+                  const isAdmin = m.sender?.role === "admin" || m.sender?.is_admin;
                   return (
-                    <div key={msg.id} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
-                      <div className={`max-w-[90%] md:max-w-[70%] p-5 rounded-[1.8rem] md:rounded-[2rem] font-bold text-xs md:text-sm shadow-sm ${
-                          isMe ? "bg-[#3F2171] text-white rounded-tr-none" : "bg-white text-gray-700 rounded-tl-none border-2 border-gray-100"
-                        }`}>
-                        <div className="flex items-center gap-2 mb-2 opacity-40">
-                          {isMe ? <LifeBuoy size={10} /> : <User size={10} />}
-                          <span className="text-[8px] font-black uppercase tracking-widest">{isMe ? "Admin" : "Parent"}</span>
-                        </div>
-                        {msg.image_path && <img src={getMediaUrl(msg.image_path)} alt="attachment" className="rounded-2xl mb-3 max-w-full shadow-sm border-2 border-white/20" />}
-                        {msg.audio_path && <audio controls src={getMediaUrl(msg.audio_path)} className="w-full mb-2 h-10" />}
-                        {msg.message && <p className="leading-relaxed whitespace-pre-wrap">{msg.message}</p>}
-                        <div className={`text-[8px] mt-2 flex items-center gap-1 opacity-50 uppercase ${isMe ? "justify-end" : "justify-start"}`}>
-                          {new Date(msg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                          {isMe && <CheckCheck size={12} className={msg.is_read ? "text-blue-300" : "text-gray-200"} />}
-                        </div>
+                    <div key={m.id} className={`flex ${isAdmin ? "justify-end" : "justify-start"}`}>
+                      <div className={`max-w-[75%] rounded-2xl px-4 py-3 ${
+                        isAdmin ? "bg-[#3F2171] text-white" : "bg-gray-100 text-gray-700"
+                      }`}>
+                        <p className="text-sm font-medium leading-relaxed">{m.message}</p>
+                        <p className={`text-[9px] font-bold mt-1 ${isAdmin ? "text-white/50" : "text-gray-400"}`}>
+                          {new Date(m.created_at).toLocaleString("en-GB",{hour:"2-digit",minute:"2-digit",day:"numeric",month:"short"})}
+                        </p>
                       </div>
                     </div>
                   );
                 })}
-                <div ref={messagesEndRef} />
+                <div ref={bottomRef}/>
               </div>
 
-              {/* Input Area */}
-              <div className="bg-white p-4 md:p-6 border-t-2 border-gray-50">
-                <div className="flex gap-4 mb-3">
-                  {imagePreview && (
-                    <div className="relative">
-                      <img src={imagePreview} className="h-16 w-16 rounded-xl object-cover border-2 border-[#3F2171]" />
-                      <button onClick={() => { setSelectedImage(null); setImagePreview(null); }} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"><X size={12} /></button>
-                    </div>
-                  )}
-                  {audioPreview && (
-                    <div className="relative flex items-center bg-gray-50 p-2 rounded-xl pr-10 border-2 border-[#3F2171]">
-                      <span className="text-[9px] font-black text-[#3F2171] uppercase tracking-widest px-2">Voice Note Ready</span>
-                      <button onClick={() => { setSelectedAudio(null); setAudioPreview(null); }} className="absolute right-2 text-red-500"><Trash2 size={16} /></button>
-                    </div>
-                  )}
-                </div>
-
-                <form onSubmit={handleSend} className="flex gap-2 md:gap-3 items-center">
-                  <input type="file" accept="image/*" ref={fileInputRef} onChange={handleImageSelect} className="hidden" />
-                  <button type="button" onClick={() => fileInputRef.current?.click()} className="p-4 bg-gray-50 text-gray-400 rounded-2xl hover:text-gray-900"><ImageIcon size={22} /></button>
-                  {isRecording ? (
-                    <button type="button" onClick={stopRecording} className="p-4 bg-red-100 text-red-500 rounded-2xl animate-pulse"><Square size={22} fill="currentColor" /></button>
-                  ) : (
-                    <button type="button" onClick={startRecording} className="p-4 bg-gray-50 text-gray-400 rounded-2xl hover:text-blue-500"><Mic size={22} /></button>
-                  )}
-                  <input type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder={isRecording ? "Listening..." : "Type reply..."} className="flex-1 bg-gray-50 p-4 rounded-2xl outline-none font-bold text-sm border-2 border-transparent focus:border-gray-900" disabled={sending || isRecording} />
-                  <button type="submit" disabled={(!newMessage.trim() && !selectedImage && !selectedAudio) || sending} className="bg-gray-900 text-white p-5 rounded-full hover:bg-[#3F2171] transition-all shadow-xl">
-                    {sending ? <Loader2 size={24} className="animate-spin" /> : <Send size={24} />}
+              {/* Reply box */}
+              <div className="px-4 py-4 border-t border-gray-100">
+                <div className="flex gap-3">
+                  <textarea value={reply} onChange={e => setReply(e.target.value)}
+                    onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendReply(); }}}
+                    placeholder="Type your reply… (Enter to send, Shift+Enter for new line)"
+                    rows={2}
+                    className="flex-1 bg-gray-50 border-2 border-gray-100 rounded-2xl px-4 py-3 text-sm font-medium focus:outline-none focus:border-[#3F2171] resize-none transition-colors"/>
+                  <button onClick={sendReply} disabled={!reply.trim() || sending}
+                    className="w-12 h-12 self-end bg-[#3F2171] text-white rounded-2xl flex items-center justify-center hover:bg-black transition-all disabled:opacity-40 shrink-0">
+                    {sending ? <Loader2 size={16} className="animate-spin"/> : <Send size={16}/>}
                   </button>
-                </form>
+                </div>
+                <p className="text-[9px] text-gray-300 font-bold mt-2">Reply also sends an email to the parent so they never miss a response</p>
               </div>
             </>
-          ) : (
-            <div className="flex-1 flex flex-col items-center justify-center text-gray-300 p-10 text-center">
-              <div className="w-32 h-32 bg-gray-50 rounded-full flex items-center justify-center mb-8"><Headphones size={64} className="opacity-10" /></div>
-              <h3 className="text-2xl font-black uppercase italic tracking-tighter text-gray-400">Support Terminal</h3>
-              <p className="font-bold text-xs mt-3 max-w-xs opacity-50 uppercase tracking-widest leading-relaxed">Select a parent inquiry from the list to begin correspondence.</p>
-            </div>
           )}
         </div>
       </div>
-    </Layout>
+    </AdminShell>
   );
 }

@@ -1,171 +1,177 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import api from "../../api/axios";
-import Layout from "../../components/Layout";
-import { 
-  Users, 
-  Search, 
-  BarChart3, 
-  Mail, 
-  UserCheck, 
-  ShieldCheck, 
-  ChevronRight,
-  Loader2,
-  Trophy
+import { AdminShell } from "../../components/admin/AdminShell";
+import {
+  Search, Filter, Users, Crown, Clock, AlertCircle,
+  ChevronLeft, ChevronRight, Loader2, BookOpen, Star,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+
+const FILTERS = [
+  { id: "all",     label: "All Students" },
+  { id: "trial",   label: "On Trial"     },
+  { id: "premium", label: "Premium"      },
+  { id: "expired", label: "Trial Ended"  },
+];
+
+function StatusBadge({ student }: { student: any }) {
+  const now = new Date();
+  const trial = student.trial_ends_at ? new Date(student.trial_ends_at) : null;
+  if (student.is_premium) return <span className="bg-[#FFFF00] text-[#2A1650] text-[9px] font-black uppercase px-2 py-1 rounded-full">Premium</span>;
+  if (trial && trial > now) {
+    const days = Math.ceil((trial.getTime() - now.getTime()) / 86400000);
+    return <span className={`text-[9px] font-black uppercase px-2 py-1 rounded-full ${days <= 3 ? "bg-red-50 text-red-500" : "bg-orange-50 text-orange-600"}`}>{days}d trial</span>;
+  }
+  return <span className="bg-gray-100 text-gray-400 text-[9px] font-black uppercase px-2 py-1 rounded-full">Expired</span>;
+}
 
 export default function AdminUsers() {
-  const navigate = useNavigate();
-  const [users, setUsers] = useState<any[]>([]);
+  const [data, setData]       = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [search, setSearch]   = useState("");
+  const [filter, setFilter]   = useState("all");
+  const [page, setPage]       = useState(1);
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const fetchUsers = async () => {
+  const fetch = useCallback(async () => {
+    setLoading(true);
     try {
-      const res = await api.get("/admin/users");
-      // Safety check for array response
-      const data = Array.isArray(res.data) ? res.data : res.data.data || [];
-      setUsers(data);
-    } catch (err) {
-      console.error("Failed to load users", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+      const res = await api.get("/admin/students", { params: { search, filter, page } });
+      setData(res.data);
+    } catch (e) { console.error(e); }
+    finally { setLoading(false); }
+  }, [search, filter, page]);
 
-  // Filter logic for searching Ayo or other students
-  const filteredUsers = users.filter(u => 
-    u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    u.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  useEffect(() => { setPage(1); }, [search, filter]);
+  useEffect(() => { fetch(); }, [fetch]);
+
+  const students = data?.data || [];
 
   return (
-    <Layout>
-      <div className="max-w-6xl mx-auto p-4 md:p-10">
-        
-        {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
-          <div>
-            <h1 className="text-4xl font-black text-gray-800 uppercase italic tracking-tighter flex items-center gap-3">
-              <Users size={36} className="text-[#3F2171]" /> Student Registry
-            </h1>
-            <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest mt-1">
-              Manage and Monitor Diaspora Learners
-            </p>
-          </div>
+    <AdminShell title="Student Registry">
+      <div className="space-y-5">
 
-          <div className="relative w-full md:w-72">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-            <input 
-              type="text"
-              placeholder="Search by name or email..."
-              className="w-full pl-12 pr-4 py-4 bg-white border-2 border-gray-100 rounded-2xl font-bold text-sm outline-none focus:border-[#3F2171] transition-all"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-black text-gray-800 uppercase italic tracking-tighter">Student Registry</h1>
+            <p className="text-gray-400 font-bold text-[10px] uppercase tracking-widest mt-1">
+              {data?.total || 0} students total
+            </p>
           </div>
         </div>
 
-        {/* Users Table / List */}
-        <div className="bg-white rounded-[2.5rem] shadow-sm border-2 border-gray-50 overflow-hidden">
+        {/* Search + filter */}
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1">
+            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"/>
+            <input value={search} onChange={e => setSearch(e.target.value)}
+              placeholder="Search by name or email…"
+              className="w-full pl-10 pr-4 py-3 bg-white border-2 border-gray-100 rounded-2xl font-bold text-sm focus:outline-none focus:border-[#3F2171] transition-colors"/>
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            {FILTERS.map(f => (
+              <button key={f.id} onClick={() => setFilter(f.id)}
+                className={`px-4 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all ${filter === f.id ? "bg-[#3F2171] text-white" : "bg-white border-2 border-gray-100 text-gray-500 hover:border-[#3F2171]/30"}`}>
+                {f.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Table */}
+        <div className="bg-white rounded-2xl border-2 border-gray-100 overflow-hidden">
           {loading ? (
-            <div className="p-20 text-center">
-              <Loader2 className="animate-spin mx-auto text-[#3F2171] mb-4" size={40} />
-              <p className="font-black text-gray-400 uppercase text-xs tracking-widest">Loading Registry...</p>
+            <div className="flex items-center justify-center py-20"><Loader2 className="animate-spin text-[#3F2171]" size={32}/></div>
+          ) : students.length === 0 ? (
+            <div className="text-center py-20">
+              <Users size={40} className="text-gray-200 mx-auto mb-4"/>
+              <p className="font-black text-gray-500 uppercase italic">No students found</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-gray-50/50 border-b-2 border-gray-100">
-                    <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Student</th>
-                    <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
-                    <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Performance</th>
-                    <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Actions</th>
+            <>
+              {/* Desktop table */}
+              <table className="w-full hidden md:table">
+                <thead className="bg-gray-50 border-b border-gray-100">
+                  <tr>
+                    {["Student","Email","Status","XP","Lessons","Enrolled",""].map(h => (
+                      <th key={h} className="px-5 py-3 text-left text-[9px] font-black uppercase tracking-widest text-gray-400">{h}</th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
-                  {filteredUsers.map((u) => (
-                    <tr key={u.id} className="hover:bg-gray-50/80 transition-colors group">
-                      <td className="p-6">
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center text-[#3F2171] font-black text-xl shadow-inner">
-                            {u.name.charAt(0)}
-                          </div>
-                          <div>
-                            <p className="font-black text-gray-800 text-lg tracking-tight uppercase italic">{u.name}</p>
-                            <p className="text-xs text-gray-400 font-bold flex items-center gap-1">
-                              <Mail size={12} /> {u.email}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="p-6">
-                        {u.is_admin ? (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-blue-100">
-                            <ShieldCheck size={12} /> Founder
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 text-[#3F2171] rounded-full text-[10px] font-black uppercase tracking-widest border border-green-100">
-                            <UserCheck size={12} /> Active Student
-                          </span>
-                        )}
-                      </td>
-                      <td className="p-6">
+                  {students.map((s: any) => (
+                    <tr key={s.id} className="hover:bg-gray-50/50 transition-colors">
+                      <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
-                           <div className="text-center bg-gray-50 px-3 py-2 rounded-xl border border-gray-100">
-                              <p className="text-xs font-black text-[#3F2171] leading-none">{u.student_profile?.total_points || 0}</p>
-                              <p className="text-[8px] font-black text-gray-400 uppercase mt-1">Pts</p>
-                           </div>
-                           <div className="text-center bg-yellow-50 px-3 py-2 rounded-xl border border-yellow-100">
-                              <p className="text-xs font-black text-yellow-600 leading-none">{u.student_profile?.total_coins || 0}</p>
-                              <p className="text-[8px] font-black text-gray-400 uppercase mt-1">Coins</p>
-                           </div>
+                          <div className="w-8 h-8 bg-[#3F2171]/10 rounded-xl flex items-center justify-center text-[#3F2171] font-black text-sm">
+                            {s.name?.[0]?.toUpperCase()}
+                          </div>
+                          <p className="font-black text-gray-700 text-sm">{s.name}</p>
                         </div>
                       </td>
-                      <td className="p-6 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                           {/* 📊 ANALYTICS BUTTON: Navigates to the shared analytics page */}
-                           <button 
-                             onClick={() => navigate(`/analytics/${u.id}`)}
-                             className="p-3 bg-white border-2 border-gray-100 text-gray-400 rounded-2xl hover:text-[#3F2171] hover:border-[#3F2171] hover:shadow-md transition-all flex items-center gap-2 group/btn"
-                           >
-                             <BarChart3 size={18} />
-                             <span className="text-[10px] font-black uppercase tracking-widest hidden group-hover/btn:block">View Progress</span>
-                           </button>
-                           
-                           <button className="p-3 bg-white border-2 border-gray-100 text-gray-300 rounded-2xl hover:text-gray-600 transition-all">
-                             <ChevronRight size={18} />
-                           </button>
-                        </div>
+                      <td className="px-5 py-4 text-gray-500 text-sm font-bold">{s.email}</td>
+                      <td className="px-5 py-4"><StatusBadge student={s}/></td>
+                      <td className="px-5 py-4 font-black text-gray-700">{(s.student_profile?.total_points || 0).toLocaleString()}</td>
+                      <td className="px-5 py-4 font-bold text-gray-500">{s.lessons_completed || 0}</td>
+                      <td className="px-5 py-4 text-gray-400 font-bold text-xs">{new Date(s.created_at).toLocaleDateString("en-GB", {day:"numeric",month:"short",year:"2-digit"})}</td>
+                      <td className="px-5 py-4">
+                        <span className="text-[10px] font-black text-[#3F2171] uppercase tracking-widest">{s.student_profile?.current_level || "Beginner"}</span>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
 
-              {filteredUsers.length === 0 && (
-                <div className="p-20 text-center">
-                  <p className="text-gray-400 font-black uppercase text-xs tracking-widest italic">No students found matching "{searchTerm}"</p>
-                </div>
-              )}
-            </div>
+              {/* Mobile cards */}
+              <div className="md:hidden divide-y divide-gray-50">
+                {students.map((s: any) => (
+                  <div key={s.id} className="px-4 py-4">
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <p className="font-black text-gray-700">{s.name}</p>
+                        <p className="text-[10px] text-gray-400 font-bold">{s.email}</p>
+                      </div>
+                      <StatusBadge student={s}/>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 mt-2">
+                      <div className="bg-gray-50 rounded-xl p-2 text-center">
+                        <p className="font-black text-sm text-gray-700">{(s.student_profile?.total_points || 0).toLocaleString()}</p>
+                        <p className="text-[8px] text-gray-400 uppercase font-bold">XP</p>
+                      </div>
+                      <div className="bg-gray-50 rounded-xl p-2 text-center">
+                        <p className="font-black text-sm text-gray-700">{s.lessons_completed || 0}</p>
+                        <p className="text-[8px] text-gray-400 uppercase font-bold">Lessons</p>
+                      </div>
+                      <div className="bg-gray-50 rounded-xl p-2 text-center">
+                        <p className="font-black text-[10px] text-[#3F2171]">{s.student_profile?.current_level || "Beginner"}</p>
+                        <p className="text-[8px] text-gray-400 uppercase font-bold">Rank</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
           )}
         </div>
 
-        {/* Bottom Stat Summary */}
-        <div className="mt-8 flex items-center gap-4 bg-[#3F2171]/5 p-6 rounded-[2rem] border-2 border-[#3F2171]/10">
-           <Trophy className="text-[#3F2171]" size={32} />
-           <div>
-              <p className="text-xl font-black text-gray-800 uppercase italic leading-none">{users.filter(u => !u.is_admin).length} Registered Learners</p>
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Building the future of the Diaspora</p>
-           </div>
-        </div>
+        {/* Pagination */}
+        {data && data.last_page > 1 && (
+          <div className="flex items-center justify-between">
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+              Page {data.current_page} of {data.last_page} · {data.total} students
+            </p>
+            <div className="flex gap-2">
+              <button onClick={() => setPage(p => Math.max(1, p-1))} disabled={page === 1}
+                className="p-2 rounded-xl bg-white border-2 border-gray-100 disabled:opacity-40 hover:border-[#3F2171]/30 transition-all">
+                <ChevronLeft size={16} className="text-gray-500"/>
+              </button>
+              <button onClick={() => setPage(p => Math.min(data.last_page, p+1))} disabled={page === data.last_page}
+                className="p-2 rounded-xl bg-white border-2 border-gray-100 disabled:opacity-40 hover:border-[#3F2171]/30 transition-all">
+                <ChevronRight size={16} className="text-gray-500"/>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
-    </Layout>
+    </AdminShell>
   );
 }

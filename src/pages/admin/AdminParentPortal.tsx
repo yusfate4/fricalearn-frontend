@@ -1,168 +1,114 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import api from "../../api/axios";
-import Layout from "../../components/Layout";
-import { 
-  UserPlus, 
-  Copy, 
-  CheckCircle, 
-  Users, 
-  ShieldCheck, 
-  Search,
-  ExternalLink,
-  Loader2,
-  MessageCircle // 👈 Added for WhatsApp
-} from "lucide-react";
+import { AdminShell } from "../../components/admin/AdminShell";
+import { Search, UserCheck, ChevronLeft, ChevronRight, Loader2, Users, Crown, Clock } from "lucide-react";
+
+function ChildPill({ child }: { child: any }) {
+  const now = new Date();
+  const trial = child.trial_ends_at ? new Date(child.trial_ends_at) : null;
+  const isPremium = child.is_premium;
+  const active = trial && trial > now && !isPremium;
+  return (
+    <span className={`inline-flex items-center gap-1 text-[9px] font-black uppercase px-2 py-1 rounded-full ${
+      isPremium ? "bg-[#FFFF00] text-[#2A1650]" : active ? "bg-green-50 text-green-600" : "bg-gray-100 text-gray-400"
+    }`}>
+      {isPremium ? <Crown size={8}/> : active ? <Clock size={8}/> : null}
+      {child.name.split(" ")[0]}
+    </span>
+  );
+}
 
 export default function AdminParentPortal() {
-  const [students, setStudents] = useState<any[]>([]);
+  const [data, setData]       = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [copiedId, setCopiedId] = useState<number | null>(null);
+  const [search, setSearch]   = useState("");
+  const [page, setPage]       = useState(1);
 
-  useEffect(() => {
-    fetchStudents();
-  }, []);
-
-  const fetchStudents = async () => {
+  const fetch = useCallback(async () => {
+    setLoading(true);
     try {
-      const res = await api.get("/admin/users");
-      const data = Array.isArray(res.data) ? res.data : res.data.data || [];
-      setStudents(data.filter((u: any) => !u.is_admin));
-    } catch (err) {
-      console.error("Failed to load students", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+      const res = await api.get("/admin/parents-list", { params: { search, page } });
+      setData(res.data);
+    } catch (e) { console.error(e); }
+    finally { setLoading(false); }
+  }, [search, page]);
 
-  /**
-   * 📲 WhatsApp Share Logic
-   * Opens WhatsApp with a professional pre-filled message
-   */
-  const handleWhatsAppShare = (student: any) => {
-    const accessLink = `${window.location.origin}/parent/view/${student.id}`;
-    const message = `Hello! 🌟 This is Yusuf from FricaLearn. I wanted to share some great news—${student.name} has been making incredible progress! You can view their latest quiz scores and FricaCoins here: ${accessLink} %0A%0ANo login is required. Thank you for supporting their journey! 🇳🇬✨`;
-    
-    // Opens WhatsApp (works on Web and Mobile)
-    window.open(`https://wa.me/?text=${message}`, "_blank");
-  };
+  useEffect(() => { setPage(1); }, [search]);
+  useEffect(() => { fetch(); }, [fetch]);
 
-  const handleCopyLink = (studentId: number) => {
-    const accessLink = `${window.location.origin}/parent/view/${studentId}`;
-    navigator.clipboard.writeText(accessLink);
-    setCopiedId(studentId);
-    setTimeout(() => setCopiedId(null), 2000);
-  };
-
-  const filteredStudents = students.filter(s => 
-    s.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const parents = data?.data || [];
 
   return (
-    <Layout>
-      <div className="max-w-5xl mx-auto p-4 md:p-10">
-        
-        {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-          <div className="space-y-2">
-            <h1 className="text-4xl font-black text-gray-800 uppercase italic tracking-tighter flex items-center gap-3">
-              <UserPlus size={36} className="text-blue-500" /> Parent Access
-            </h1>
-            <p className="text-gray-400 font-bold uppercase text-[10px] tracking-widest">
-              Generate secure progress links for Diaspora Families
-            </p>
-          </div>
-
-          <div className="relative w-full md:w-80">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={18} />
-            <input 
-              type="text"
-              placeholder="Search student name..."
-              className="w-full pl-12 pr-4 py-4 bg-white border-2 border-gray-100 rounded-[1.25rem] font-bold text-sm focus:border-blue-500 outline-none transition-all shadow-sm"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+    <AdminShell title="Parent Access">
+      <div className="space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-black text-gray-800 uppercase italic tracking-tighter">Parent Registry</h1>
+            <p className="text-gray-400 font-bold text-[10px] uppercase tracking-widest mt-1">{data?.total || 0} parents registered</p>
           </div>
         </div>
 
-        {/* Info Card */}
-        <div className="bg-blue-50 border-2 border-blue-100 p-6 rounded-[2rem] mb-10 flex items-start gap-4">
-            <div className="bg-white p-2 rounded-xl text-blue-500 shadow-sm"><ShieldCheck size={24}/></div>
-            <div>
-                <p className="text-blue-800 font-black uppercase text-xs tracking-tight">How it works</p>
-                <p className="text-blue-600/80 text-sm font-medium mt-1">
-                    Use the WhatsApp button to instantly notify parents, or copy the link manually.
-                    Parents can view real-time scores and FricaCoins without needing a password.
-                </p>
-            </div>
+        <div className="relative">
+          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"/>
+          <input value={search} onChange={e => setSearch(e.target.value)}
+            placeholder="Search by name or email…"
+            className="w-full pl-10 pr-4 py-3 bg-white border-2 border-gray-100 rounded-2xl font-bold text-sm focus:outline-none focus:border-[#3F2171] transition-colors"/>
         </div>
 
-        {/* Responsive List/Table */}
-        <div className="space-y-4">
+        <div className="bg-white rounded-2xl border-2 border-gray-100 overflow-hidden">
           {loading ? (
-            <div className="p-20 text-center"><Loader2 className="animate-spin mx-auto text-blue-500" /></div>
-          ) : filteredStudents.map((student) => (
-            <div 
-              key={student.id} 
-              className="bg-white p-5 md:p-8 rounded-[2rem] border-2 border-gray-50 shadow-sm flex flex-col xl:flex-row items-center justify-between gap-6 hover:border-blue-100 transition-all"
-            >
-              <div className="flex items-center gap-5 w-full xl:w-auto">
-                <div className="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center text-2xl font-black text-gray-300 shadow-inner">
-                  {student.name.charAt(0)}
-                </div>
-                <div>
-                  <h3 className="text-xl font-black text-gray-800 uppercase italic tracking-tighter leading-none">{student.name}</h3>
-                  <div className="flex items-center gap-2 mt-2">
-                    <span className="px-2 py-0.5 bg-gray-100 text-gray-400 text-[9px] font-black rounded uppercase tracking-widest">ID: #{student.id}</span>
-                    <span className="px-2 py-0.5 bg-green-50 text-[#3F2171] text-[9px] font-black rounded uppercase tracking-widest">Active</span>
+            <div className="flex items-center justify-center py-20"><Loader2 className="animate-spin text-[#3F2171]" size={32}/></div>
+          ) : parents.length === 0 ? (
+            <div className="text-center py-20">
+              <UserCheck size={40} className="text-gray-200 mx-auto mb-4"/>
+              <p className="font-black text-gray-500 uppercase italic">No parents found</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-50">
+              {parents.map((p: any) => (
+                <div key={p.id} className="px-5 py-4 hover:bg-gray-50/50 transition-colors">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-[#3F2171]/10 rounded-2xl flex items-center justify-center text-[#3F2171] font-black">
+                        {p.name?.[0]?.toUpperCase()}
+                      </div>
+                      <div>
+                        <p className="font-black text-gray-700">{p.name}</p>
+                        <p className="text-[10px] text-gray-400 font-bold">{p.email}</p>
+                        <p className="text-[9px] text-gray-300 font-bold">Joined {new Date(p.created_at).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"2-digit"})}</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5 items-center">
+                      {(p.children || []).length === 0 ? (
+                        <span className="text-[9px] text-gray-300 font-bold uppercase">No children linked</span>
+                      ) : (
+                        <>
+                          <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest mr-1">Children:</span>
+                          {p.children.map((c: any) => <ChildPill key={c.id} child={c}/>)}
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-
-              {/* Action Buttons Group */}
-              <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto">
-                {/* 🟢 WhatsApp Share */}
-                <button 
-                  onClick={() => handleWhatsAppShare(student)}
-                  className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-4 bg-[#25D366] text-white rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#128C7E] transition-all shadow-lg shadow-green-100"
-                >
-                  <MessageCircle size={18} />
-                  <span>WhatsApp</span>
-                </button>
-
-                {/* 📋 Copy Link */}
-                <button 
-                  onClick={() => handleCopyLink(student.id)}
-                  className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${
-                    copiedId === student.id 
-                      ? "bg-green-500 text-white" 
-                      : "bg-gray-900 text-white hover:bg-blue-600 shadow-lg"
-                  }`}
-                >
-                  {copiedId === student.id ? <CheckCircle size={16}/> : <Copy size={16}/>}
-                  <span>{copiedId === student.id ? "Copied!" : "Copy Link"}</span>
-                </button>
-
-                {/* 👁️ Preview */}
-                <button 
-                  onClick={() => window.open(`/parent/view/${student.id}`, "_blank")}
-                  className="p-4 bg-gray-50 text-gray-400 rounded-xl hover:bg-white hover:text-blue-500 border border-transparent hover:border-blue-100 transition-all shadow-sm"
-                  title="Preview as Parent"
-                >
-                  <ExternalLink size={20} />
-                </button>
-              </div>
-            </div>
-          ))}
-
-          {filteredStudents.length === 0 && (
-            <div className="text-center py-20 bg-gray-50 rounded-[3rem] border-2 border-dashed border-gray-200">
-                <Users size={48} className="mx-auto text-gray-200 mb-4" />
-                <p className="font-black text-gray-400 uppercase text-sm tracking-widest">No students found.</p>
+              ))}
             </div>
           )}
         </div>
+
+        {data && data.last_page > 1 && (
+          <div className="flex items-center justify-between">
+            <p className="text-[10px] font-bold text-gray-400">{data.total} parents · Page {data.current_page} of {data.last_page}</p>
+            <div className="flex gap-2">
+              <button onClick={() => setPage(p => Math.max(1, p-1))} disabled={page === 1} className="p-2 rounded-xl bg-white border-2 border-gray-100 disabled:opacity-40">
+                <ChevronLeft size={16} className="text-gray-500"/>
+              </button>
+              <button onClick={() => setPage(p => Math.min(data.last_page, p+1))} disabled={page === data.last_page} className="p-2 rounded-xl bg-white border-2 border-gray-100 disabled:opacity-40">
+                <ChevronRight size={16} className="text-gray-500"/>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
-    </Layout>
+    </AdminShell>
   );
 }
