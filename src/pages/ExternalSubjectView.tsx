@@ -6,6 +6,7 @@ import {
   ChevronRight,
   ChevronDown,
   CheckCircle2,
+  Lock,
 } from "lucide-react";
 import api from "../api/axios";
 import Layout from "../components/Layout";
@@ -15,8 +16,6 @@ export default function ExternalSubjectView() {
   const navigate = useNavigate();
   const [subject, setSubject] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  
-  // State to track which topic is currently open
   const [expandedTopic, setExpandedTopic] = useState<number | null>(null);
 
   useEffect(() => {
@@ -32,6 +31,11 @@ export default function ExternalSubjectView() {
         : `/external/subjects/${id}`;
       const res = await api.get(endpoint);
       setSubject(res.data.subject);
+      
+      // Automatically expand the first topic by default
+      if (res.data.subject?.topics?.length > 0) {
+        setExpandedTopic(res.data.subject.topics[0].id);
+      }
     } catch (err) {
       console.error("Failed to load subject:", err);
     } finally {
@@ -112,9 +116,20 @@ export default function ExternalSubjectView() {
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-800 mb-6 leading-tight tracking-tighter italic uppercase">
                 {subject.name}
               </h1>
-              <p className="text-gray-500 font-medium leading-relaxed italic text-base md:text-lg max-w-2xl">
-                {subject.source} • UK National Curriculum
-              </p>
+              
+              {/* Overall Progress Bar */}
+              <div className="space-y-2 mt-2 max-w-md">
+                <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-gray-400">
+                  <span>Course Progress</span>
+                  <span>{subject.progress_percentage || 0}% Complete</span>
+                </div>
+                <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-[#3F2171] transition-all duration-500 rounded-full"
+                    style={{ width: `${subject.progress_percentage || 0}%` }}
+                  ></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -167,27 +182,34 @@ export default function ExternalSubjectView() {
                     </div>
                   </button>
 
-                  {/* LESSONS LIST (Only shows when clicked) */}
+                  {/* LESSONS LIST */}
                   {isExpanded && (
                     <div className="divide-y divide-gray-100 border-t-2 border-gray-50 bg-gray-50/30 animate-in slide-in-from-top-4 duration-300">
                       {topic.lessons?.map((lesson: any) => {
                         const userProgress = lesson.user_progress?.[0];
                         const isCompleted = userProgress?.status === "completed";
+                        const isLocked = lesson.is_locked; // Handled sequentially by backend
 
                         return (
                           <div
                             key={lesson.id}
-                            className="p-6 md:p-10 flex flex-col lg:flex-row items-center justify-between transition-all gap-8 hover:bg-white"
+                            className={`p-6 md:p-10 flex flex-col lg:flex-row items-center justify-between transition-all gap-8 ${
+                              isLocked ? "bg-gray-50/60 opacity-75" : "hover:bg-white"
+                            }`}
                           >
                             <div className="flex items-center gap-6 md:gap-10 w-full">
                               <div
                                 className={`w-14 h-14 md:w-20 md:h-20 shrink-0 rounded-[1.5rem] flex items-center justify-center border-2 shadow-sm transition-all ${
-                                  isCompleted
+                                  isLocked
+                                    ? "bg-gray-100 border-gray-200 text-gray-400"
+                                    : isCompleted
                                     ? "bg-[#3F2171]/10 border-[#3F2171]/20 text-[#3F2171]"
                                     : "bg-white border-gray-100 text-[#3F2171]"
                                 }`}
                               >
-                                {isCompleted ? (
+                                {isLocked ? (
+                                  <Lock size={28} />
+                                ) : isCompleted ? (
                                   <CheckCircle2 size={32} />
                                 ) : (
                                   <PlayCircle size={36} />
@@ -195,36 +217,39 @@ export default function ExternalSubjectView() {
                               </div>
 
                               <div className="flex-1 text-left">
-                                <h4 className="font-black text-gray-800 text-lg md:text-2xl uppercase italic leading-tight mb-2 tracking-tight">
+                                <h4 className={`font-black text-lg md:text-2xl uppercase italic leading-tight mb-2 tracking-tight ${
+                                  isLocked ? "text-gray-400" : "text-gray-800"
+                                }`}>
                                   {lesson.title}
                                 </h4>
-                                <div className="flex flex-wrap items-center gap-4 mt-3">
+                                <p className="text-gray-400 text-sm mb-2">
+                                  {isLocked 
+                                    ? "🔒 Locked until previous lesson complete" 
+                                    : "Interactive video, slides & quiz available"}
+                                </p>
+                                <div className="flex flex-wrap items-center gap-4">
                                   <span
                                     className={`text-[10px] font-black uppercase italic ${
-                                      isCompleted ? "text-gray-400" : "text-[#3F2171]"
+                                      isLocked ? "text-gray-300" : isCompleted ? "text-gray-400" : "text-[#3F2171]"
                                     }`}
                                   >
-                                    {isCompleted
-                                      ? `Completed • Score: ${userProgress.quiz_score}%`
-                                      : "Available"}
+                                    {isLocked ? "Locked" : isCompleted ? `Completed • Score: ${userProgress.quiz_score}%` : "Available"}
                                   </span>
-                                  {lesson.duration_minutes && (
-                                    <span className="text-[10px] font-black text-gray-400 uppercase border-l pl-4 border-gray-200">
-                                      {lesson.duration_minutes} min
-                                    </span>
-                                  )}
                                 </div>
                               </div>
                             </div>
 
                             <button
-                              onClick={() =>
-                                navigate(`/external-lessons/${lesson.id}`)
-                              }
-                              className="w-full lg:w-auto px-10 py-5 rounded-[1.5rem] font-black text-xs uppercase tracking-[0.2em] transition-all shadow-xl flex items-center justify-center gap-3 bg-[#3F2171] text-white hover:bg-black active:scale-95 hover:-translate-y-1"
+                              disabled={isLocked}
+                              onClick={() => navigate(`/external-lessons/${lesson.id}`)}
+                              className={`w-full lg:w-auto px-10 py-5 rounded-[1.5rem] font-black text-xs uppercase tracking-[0.2em] transition-all shadow-xl flex items-center justify-center gap-3 ${
+                                isLocked
+                                  ? "bg-gray-200 text-gray-400 cursor-not-allowed shadow-none"
+                                  : "bg-[#3F2171] text-white hover:bg-black active:scale-95 hover:-translate-y-1"
+                              }`}
                             >
-                              {isCompleted ? "Review" : "Start Now"}
-                              <ChevronRight size={16} />
+                              {isLocked ? "Locked" : isCompleted ? "Review" : "Start Now"}
+                              {!isLocked && <ChevronRight size={16} />}
                             </button>
                           </div>
                         );
