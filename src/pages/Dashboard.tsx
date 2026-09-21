@@ -158,7 +158,7 @@ export default function Dashboard() {
 
           {/* ── AI Tutor — PROMINENT ── */}
           <div className="bg-[#FFFF00] rounded-[2rem] p-6 sm:p-8 flex flex-col justify-between shadow-xl relative overflow-hidden group min-h-[160px]"
-            onClick={() => navigate("/ai-tutor")}
+            onClick={() => navigate("/olu-chat")}
             style={{ cursor: "pointer" }}>
             <div className="absolute -right-4 -bottom-4 opacity-10 group-hover:opacity-20 transition-opacity pointer-events-none">
               <Bot size={130}/>
@@ -177,7 +177,7 @@ export default function Dashboard() {
               </h2>
             </div>
             <div className="relative z-10 flex items-center justify-between">
-              <button onClick={(e) => { e.stopPropagation(); navigate("/ai-tutor"); }}
+              <button onClick={(e) => { e.stopPropagation(); navigate("/olu-chat"); }}
                 className="bg-[#2A1650] text-[#FFFF00] px-6 py-3.5 rounded-2xl font-black text-sm flex items-center gap-2 hover:bg-black transition-all shadow-lg uppercase border-b-4 border-[#1A1040] active:translate-y-0.5 active:border-b-0">
                 <Sparkles size={16}/> Talk Now
               </button>
@@ -245,7 +245,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
           {[
             { icon: BookOpen,     label: "My Lessons",   path: "/courses",      bg: "bg-blue-50",   ic: "text-blue-600" },
-            { icon: Bot,          label: "AI Tutor",     path: "/ai-tutor",     bg: "bg-[#FFFF00]", ic: "text-[#2A1650]" },
+            { icon: Bot,          label: "AI Tutor",     path: "/olu-chat",     bg: "bg-[#FFFF00]", ic: "text-[#2A1650]" },
             { icon: Trophy,       label: "Leaderboard",  path: "/leaderboard",  bg: "bg-purple-50", ic: "text-purple-600" },
             { icon: Star,         label: "My Rewards",   path: "/my-treasures", bg: "bg-orange-50", ic: "text-orange-500" },
           ].map(({ icon: Icon, label, path, bg, ic }) => (
