@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, Users, UserCheck, MessageSquare,
-  HelpCircle, BarChart3, CreditCard, History,
+  CircleHelp, BarChart3, CreditCard, History,
   LogOut, Menu, X, Bell, Settings, ChevronRight,
   GraduationCap, Trophy,
 } from "lucide-react";
@@ -15,7 +15,7 @@ const NAV = [
   { label: "Students",        path: "/admin/users",              icon: Users           },
   { label: "Parents",         path: "/admin/parents",            icon: UserCheck       },
   { label: "Support Chat",    path: "/admin/chats",              icon: MessageSquare   },
-  { label: "Quiz Builder",    path: "/admin/questions",          icon: HelpCircle      },
+  { label: "Quiz Builder",    path: "/admin/questions",          icon: CircleHelp      },
   { label: "Analytics",       path: "/admin/analytics",          icon: BarChart3       },
   { label: "Payments",        path: "/admin/payments",           icon: CreditCard      },
   { label: "Pay History",     path: "/admin/payments/history",   icon: History         },

@@ -4,9 +4,9 @@ import api from "../../api/axios";
 import Layout from "../../components/Layout";
 import FileUpload from "../../components/FileUpload";
 import {
-  CheckCircle,
+  CircleCheck,
   Loader2,
-  AlertCircle,
+  CircleAlert,
   ArrowLeft,
   ChevronRight,
   Mic, // 👈 Added for the new field icon
@@ -91,7 +91,7 @@ export default function AdminAddLesson() {
 
         {errorMessage && (
           <div className="mb-6 p-6 bg-red-50 border-2 border-red-100 text-red-600 rounded-[2rem] flex items-center gap-3 font-bold animate-in zoom-in">
-            <AlertCircle size={24} /> {errorMessage}
+            <CircleAlert size={24} /> {errorMessage}
           </div>
         )}
 
@@ -194,7 +194,7 @@ export default function AdminAddLesson() {
           <div className="animate-in fade-in slide-in-from-right-8 duration-500">
             <div className="bg-green-50 border border-green-100 p-6 rounded-[2rem] flex items-center gap-4 mb-8">
               <div className="bg-white p-2 rounded-full text-[#3F2171] shadow-sm">
-                <CheckCircle size={24} />
+                <CircleCheck size={24} />
               </div>
               <div>
                 <h3 className="font-black text-green-800 text-lg">

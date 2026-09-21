@@ -3,7 +3,7 @@ import api from "../../api/axios";
 import {
   X,
   Loader2,
-  AlertCircle,
+  CircleAlert,
   Image as ImageIcon,
   Sparkles,
 } from "lucide-react";
@@ -121,7 +121,7 @@ export default function CourseModal({
         <form onSubmit={handleSubmit} className="space-y-6">
           {errorMessage && (
             <div className="p-4 bg-red-50 border-2 border-red-100 text-red-600 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 animate-in shake duration-300">
-              <AlertCircle size={18} /> {errorMessage}
+              <CircleAlert size={18} /> {errorMessage}
             </div>
           )}
 

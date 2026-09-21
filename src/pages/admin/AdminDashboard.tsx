@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import api from "../../api/axios";
 import { AdminShell } from "../../components/admin/AdminShell";
 import {
-  Users, UserCheck, CreditCard, AlertCircle, Clock,
+  Users, UserCheck, CreditCard, CircleAlert, Clock,
   Crown, Zap, BookOpen, MessageSquare, TrendingUp,
-  ChevronRight, CheckCircle2, XCircle, Loader2,
+  ChevronRight, CircleCheckBig, CircleX, Loader2,
 } from "lucide-react";
 
 function StatCard({ label, value, icon: Icon, color, sub, link }: any) {
@@ -49,7 +49,7 @@ export default function AdminDashboard() {
         {s.pending_payments > 0 && (
           <Link to="/admin/payments"
             className="flex items-center gap-3 bg-orange-50 border-2 border-orange-200 rounded-2xl px-5 py-4 hover:bg-orange-100 transition-all">
-            <AlertCircle size={20} className="text-orange-500 shrink-0"/>
+            <CircleAlert size={20} className="text-orange-500 shrink-0"/>
             <p className="font-black text-orange-700 text-sm">
               {s.pending_payments} payment{s.pending_payments !== 1 ? "s" : ""} waiting for approval
             </p>
@@ -107,8 +107,8 @@ export default function AdminDashboard() {
                       {p.status === "pending"
                         ? <span className="bg-orange-50 text-orange-500 text-[9px] font-black uppercase px-2 py-1 rounded-full">Pending</span>
                         : p.status === "approved"
-                        ? <CheckCircle2 size={14} className="text-green-500"/>
-                        : <XCircle size={14} className="text-red-400"/>}
+                        ? <CircleCheckBig size={14} className="text-green-500"/>
+                        : <CircleX size={14} className="text-red-400"/>}
                     </div>
                   </div>
                 ))}
@@ -150,7 +150,7 @@ export default function AdminDashboard() {
           <h3 className="font-black text-gray-800 text-sm uppercase tracking-tight mb-4">Quick Actions</h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
-              { label: "Add Quiz",        path: "/admin/questions",      icon: HelpCircle,    color: "bg-[#3F2171]/10 text-[#3F2171]" },
+              { label: "Add Quiz",        path: "/admin/questions",      icon: CircleHelp,    color: "bg-[#3F2171]/10 text-[#3F2171]" },
               { label: "View Payments",   path: "/admin/payments",       icon: CreditCard,    color: "bg-orange-50 text-orange-600" },
               { label: "Support Chats",   path: "/admin/chats",          icon: MessageSquare, color: "bg-blue-50 text-blue-600" },
               { label: "Analytics",       path: "/admin/analytics",      icon: TrendingUp,    color: "bg-green-50 text-green-600" },

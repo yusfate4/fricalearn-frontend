@@ -4,10 +4,10 @@ import api from "../../api/axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Upload,
-  PlusCircle,
+  CirclePlus,
   Loader2,
-  CheckCircle2,
-  AlertCircle,
+  CircleCheckBig,
+  CircleAlert,
   Save,
 } from "lucide-react";
 
@@ -249,9 +249,9 @@ export default function AdminCourses() {
               }`}
             >
               {status.type === "success" ? (
-                <CheckCircle2 size={24} />
+                <CircleCheckBig size={24} />
               ) : (
-                <AlertCircle size={24} />
+                <CircleAlert size={24} />
               )}
               <span className="font-black uppercase italic tracking-tight text-xs">
                 {status.msg}
@@ -268,7 +268,7 @@ export default function AdminCourses() {
               <Loader2 className="animate-spin" size={24} />
             ) : (
               <>
-                {formData.id ? <Save size={20} /> : <PlusCircle size={20} />}
+                {formData.id ? <Save size={20} /> : <CirclePlus size={20} />}
                 {formData.id ? "Update Changes" : "Launch Course"}
               </>
             )}

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import api from "../../api/axios";
 import { AdminShell } from "../../components/admin/AdminShell";
 import {
-  HelpCircle, Plus, Pencil, Trash2, Search,
+  CircleHelp, Plus, Pencil, Trash2, Search,
   ChevronLeft, ChevronRight, Loader2, Check, X, Save,
 } from "lucide-react";
 
@@ -147,7 +147,7 @@ export default function AdminQuiz() {
             <div className="flex items-center justify-center py-20"><Loader2 className="animate-spin text-[#3F2171]" size={32}/></div>
           ) : qs.length === 0 ? (
             <div className="text-center py-20">
-              <HelpCircle size={40} className="text-gray-200 mx-auto mb-4"/>
+              <CircleHelp size={40} className="text-gray-200 mx-auto mb-4"/>
               <p className="font-black text-gray-500 uppercase italic">No questions yet</p>
               <p className="text-gray-400 font-bold text-sm mt-2">Questions you create will appear here for editing and deletion</p>
             </div>

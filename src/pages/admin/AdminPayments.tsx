@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import api from "../../api/axios";
 import { AdminShell } from "../../components/admin/AdminShell";
 import {
-  CreditCard, Clock, CheckCircle2, XCircle, AlertCircle,
+  CreditCard, Clock, CircleCheckBig, CircleX, CircleAlert,
   ChevronDown, ChevronUp, Loader2, Eye, ExternalLink,
   RefreshCw, Crown,
 } from "lucide-react";
@@ -103,7 +103,7 @@ export default function AdminPayments() {
               <>
                 {(data?.pending_payments || []).length === 0 ? (
                   <div className="text-center py-20">
-                    <CheckCircle2 size={40} className="text-green-300 mx-auto mb-4"/>
+                    <CircleCheckBig size={40} className="text-green-300 mx-auto mb-4"/>
                     <p className="font-black text-gray-500 uppercase italic">No pending payments</p>
                   </div>
                 ) : (
@@ -133,12 +133,12 @@ export default function AdminPayments() {
                             )}
                             <button onClick={() => approve(p.id)} disabled={approving === p.id}
                               className="flex items-center gap-1.5 px-4 py-2 bg-green-500 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-green-600 transition-all disabled:opacity-50">
-                              {approving === p.id ? <Loader2 size={12} className="animate-spin"/> : <CheckCircle2 size={12}/>}
+                              {approving === p.id ? <Loader2 size={12} className="animate-spin"/> : <CircleCheckBig size={12}/>}
                               Approve
                             </button>
                             <button onClick={() => reject(p.id)} disabled={rejecting === p.id}
                               className="p-2 rounded-xl bg-red-50 text-red-400 hover:bg-red-500 hover:text-white transition-all disabled:opacity-50">
-                              {rejecting === p.id ? <Loader2 size={14} className="animate-spin"/> : <XCircle size={14}/>}
+                              {rejecting === p.id ? <Loader2 size={14} className="animate-spin"/> : <CircleX size={14}/>}
                             </button>
                           </div>
                         </div>

@@ -9,10 +9,10 @@ import {
   Loader2,
   X,
   Tag,
-  AlertCircle,
+  CircleAlert,
   FileText,
   UploadCloud,
-  CheckCircle2,
+  CircleCheckBig,
   ShieldAlert,
   AlertTriangle,
 } from "lucide-react";
@@ -253,7 +253,7 @@ export default function ManageMarketplace() {
               <form onSubmit={handleSubmit} className="space-y-6">
                 {errorMessage && (
                   <div className="p-4 bg-red-50 text-red-600 rounded-2xl text-[10px] font-black uppercase flex items-center gap-3 border border-red-100">
-                    <AlertCircle size={18} /> {errorMessage}
+                    <CircleAlert size={18} /> {errorMessage}
                   </div>
                 )}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -311,7 +311,7 @@ export default function ManageMarketplace() {
                         onClick={() => imageInputRef.current?.click()}
                         className={`p-6 border-2 border-dashed rounded-2xl flex flex-col items-center justify-center transition-all ${selectedImage ? "border-[#3F2171] bg-green-50 text-[#3F2171]" : "border-gray-100 text-gray-300"}`}
                       >
-                        {selectedImage ? <CheckCircle2 size={24} /> : <UploadCloud size={24} />}
+                        {selectedImage ? <CircleCheckBig size={24} /> : <UploadCloud size={24} />}
                         <span className="text-[8px] font-black uppercase mt-2">Thumbnail</span>
                       </button>
                       <input
