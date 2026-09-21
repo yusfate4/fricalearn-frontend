@@ -208,29 +208,70 @@ export default function ExternalLessonViewer() {
     if (quizSubmitted && (activeQuizType === "starter" || quizResults)) {
       const passed = activeQuizType === "starter" ? true : quizResults?.passed;
       const score = activeQuizType === "starter" ? 100 : quizResults?.score;
+      const pointsEarned = quizResults?.points_earned || 0;
+      const nextLessonId = quizResults?.next_lesson_id;
 
       return (
         <Layout>
           <div className="max-w-3xl mx-auto px-4 py-10 pb-32">
-            <div className="bg-white rounded-[3.5rem] shadow-2xl border-4 border-gray-50 overflow-hidden text-center p-10">
+            <div className="bg-white rounded-[3.5rem] shadow-2xl border-4 border-gray-50 overflow-hidden text-center p-10 md:p-14">
               <h2 className="text-4xl font-black text-gray-800 mb-4 italic uppercase tracking-tighter">
-                {activeQuizType === "starter" ? "Starter Quiz Complete! 🚀" : "Lesson Quiz Complete!"}
+                {activeQuizType === "starter" ? "Starter Quiz Complete! 🚀" : passed ? "Lesson Complete! 🎉" : "Keep Practising! 💪"}
               </h2>
+
               {activeQuizType === "exit" && (
-                <div className={`inline-flex items-center gap-4 px-10 py-6 rounded-[2rem] mb-8 ${passed ? "bg-green-100 text-green-700" : "bg-orange-100 text-orange-700"}`}>
-                  <Award size={36}/>
-                  <div className="text-left">
-                    <p className="text-[10px] font-black uppercase tracking-widest opacity-70">Your Score</p>
-                    <p className="text-5xl font-black">{score}%</p>
+                <div className="space-y-6 mb-8">
+                  <div className={`inline-flex items-center gap-4 px-10 py-6 rounded-[2rem] ${passed ? "bg-green-100 text-green-700" : "bg-orange-100 text-orange-700"}`}>
+                    <Award size={36}/>
+                    <div className="text-left">
+                      <p className="text-[10px] font-black uppercase tracking-widest opacity-70">Your Score</p>
+                      <p className="text-5xl font-black">{score}%</p>
+                    </div>
                   </div>
+
+                  {pointsEarned > 0 && (
+                    <div className="inline-flex items-center gap-2 px-6 py-3 bg-[#F4B400]/20 text-[#3F2171] rounded-2xl font-black text-xs uppercase tracking-widest">
+                      ⭐ +{pointsEarned} Points Added to Your Balance!
+                    </div>
+                  )}
                 </div>
               )}
-              <p className="text-gray-500 font-bold mb-8">
-                {activeQuizType === "starter" ? "Great job warming up your brain! Now dive into the video lesson." : "Awesome work completing this lesson module!"}
+
+              <p className="text-gray-500 font-bold mb-10 max-w-md mx-auto text-sm leading-relaxed">
+                {activeQuizType === "starter" 
+                  ? "Great job warming up your brain! Now dive into the video lesson." 
+                  : passed 
+                    ? "Awesome work mastering this module! You are ready for the next step." 
+                    : "Review the lesson materials and key points below, then try again to unlock the next lesson!"}
               </p>
-              <button onClick={resetQuiz} className="bg-[#3F2171] text-white px-10 py-5 rounded-[2rem] font-black uppercase text-sm tracking-widest hover:bg-black transition-all shadow-xl">
-                Return to Lesson
-              </button>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                {passed ? (
+                  <>
+                    {nextLessonId && (
+                      <button onClick={() => navigate(`/external-lessons/${nextLessonId}`)} 
+                        className="w-full sm:w-auto bg-[#3F2171] text-white px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest hover:bg-black transition-all shadow-xl">
+                        Next Lesson ➔
+                      </button>
+                    )}
+                    <button onClick={() => navigate(-1)} 
+                      className="w-full sm:w-auto bg-gray-100 text-gray-700 px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest hover:bg-gray-200 transition-all">
+                      Return to Subject
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button onClick={resetQuiz} 
+                      className="w-full sm:w-auto bg-[#3F2171] text-white px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest hover:bg-black transition-all shadow-xl">
+                      Try Again 🔄
+                    </button>
+                    <button onClick={() => { setActiveQuizType("none"); setQuizSubmitted(false); }} 
+                      className="w-full sm:w-auto bg-gray-100 text-gray-700 px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest hover:bg-gray-200 transition-all">
+                      Review Lesson 📖
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </Layout>
