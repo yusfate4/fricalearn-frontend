@@ -5,7 +5,7 @@ import api from "../../api/axios";
 import {
   ChevronLeft, Loader2, Trophy, BookOpen, Star,
   TrendingUp, TrendingDown, Target, Zap, Calendar,
-  CircleCheckBig, CircleAlert, Lightbulb, Award,
+  CheckCircle2, AlertCircle, Lightbulb, Award,
   BarChart3, ChevronRight,
 } from "lucide-react";
 
@@ -59,7 +59,7 @@ export default function ChildProgressView() {
   if (!data) return (
     <Layout>
       <div className="flex flex-col items-center justify-center h-[60vh] gap-4 text-center px-6">
-        <CircleAlert size={40} className="text-red-400" />
+        <AlertCircle size={40} className="text-red-400" />
         <p className="font-black text-gray-600 text-lg">Could not load progress data.</p>
         <button onClick={() => navigate(-1)} className="text-[#3F2171] font-bold text-sm underline">Go back</button>
       </div>
@@ -299,7 +299,7 @@ export default function ChildProgressView() {
                     <div key={i} className="flex items-center justify-between gap-3 py-3 border-b border-gray-50 last:border-0">
                       <div className="flex items-center gap-3 min-w-0">
                         <div className="w-8 h-8 bg-[#3F2171]/10 rounded-xl flex items-center justify-center shrink-0">
-                          <CircleCheckBig size={14} className="text-[#3F2171]" />
+                          <CheckCircle2 size={14} className="text-[#3F2171]" />
                         </div>
                         <div className="min-w-0">
                           <p className="font-black text-gray-700 text-sm truncate">{l.lesson_title}</p>
@@ -342,7 +342,7 @@ export default function ChildProgressView() {
               })
             ) : (
               <div className="text-center py-16">
-                <CircleCheckBig size={40} className="text-green-400 mx-auto mb-4" />
+                <CheckCircle2 size={40} className="text-green-400 mx-auto mb-4" />
                 <p className="font-black text-gray-600 text-lg">All good! No recommendations right now.</p>
                 <p className="text-gray-400 text-sm mt-2">Keep up the great work!</p>
               </div>

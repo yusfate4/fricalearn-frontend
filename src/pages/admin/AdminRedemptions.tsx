@@ -7,7 +7,7 @@ import {
   Clock, 
   User, 
   Gift, 
-  CircleCheckBig,
+  CheckCircle2,
   ShieldCheck,
   Calendar,
   Tag
@@ -73,7 +73,7 @@ export default function AdminRedemptions() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
           <div className="bg-white rounded-[2.5rem] p-10 max-w-sm w-full shadow-2xl text-center">
             <div className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-6 ${modal.type === 'error' ? 'bg-red-50 text-red-500' : 'bg-green-50 text-green-600'}`}>
-               {modal.type === 'success' ? <CircleCheckBig size={32} /> : <ShieldCheck size={32} />}
+               {modal.type === 'success' ? <CheckCircle2 size={32} /> : <ShieldCheck size={32} />}
             </div>
             <h2 className="text-2xl font-black italic uppercase mb-2 text-gray-800">{modal.title}</h2>
             <p className="text-gray-500 font-bold text-sm mb-8 leading-relaxed">{modal.message}</p>
@@ -150,7 +150,7 @@ export default function AdminRedemptions() {
                       </button>
                     ) : (
                       <div className="px-12 py-6 bg-green-50 text-green-600 rounded-[1.5rem] font-black text-[11px] uppercase tracking-widest border-2 border-green-100 flex items-center gap-3">
-                        <CircleCheckBig size={18} /> Order Shipped
+                        <CheckCircle2 size={18} /> Order Shipped
                       </div>
                     )}
                   </div>

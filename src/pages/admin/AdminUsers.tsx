@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import api from "../../api/axios";
 import { AdminShell } from "../../components/admin/AdminShell";
 import {
-  Search, Filter, Users, Crown, Clock, CircleAlert,
+  Search, Filter, Users, Crown, Clock, AlertCircle,
   ChevronLeft, ChevronRight, Loader2, BookOpen, Star,
 } from "lucide-react";
 

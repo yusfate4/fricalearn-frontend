@@ -10,7 +10,7 @@ import {
   Mic, 
   Search, 
   Loader2, 
-  CircleAlert 
+  AlertCircle 
 } from "lucide-react";
 
 export default function AdminLessonList() {

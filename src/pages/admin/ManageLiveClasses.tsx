@@ -3,7 +3,7 @@ import api from "../../api/axios";
 import { AdminShell } from "../../components/admin/AdminShell";
 import {
   Video, Plus, Trash2, Loader2, Calendar, Clock,
-  Zap, RefreshCw, CircleCheckBig, CircleAlert,
+  Zap, RefreshCw, CheckCircle2, AlertCircle,
 } from "lucide-react";
 
 const SATURDAY_SLOTS = [
@@ -119,7 +119,7 @@ export default function ManageLiveClasses() {
         {/* Success toast */}
         {success && (
           <div className="flex items-center gap-3 bg-green-50 border-2 border-green-200 rounded-2xl px-5 py-4">
-            <CircleCheckBig size={18} className="text-green-500 shrink-0"/>
+            <CheckCircle2 size={18} className="text-green-500 shrink-0"/>
             <p className="font-black text-green-700 text-sm">{success}</p>
           </div>
         )}

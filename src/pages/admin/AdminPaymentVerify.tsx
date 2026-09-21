@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "../../api/axios";
 import { AdminShell } from "../../components/admin/AdminShell";
-import { History, CircleCheckBig, CircleX, Loader2, ExternalLink, Search } from "lucide-react";
+import { History, CheckCircle2, XCircle, Loader2, ExternalLink, Search } from "lucide-react";
 
 export default function AdminPaymentVerify() {
   const [payments, setPayments] = useState<any[]>([]);
@@ -86,8 +86,8 @@ export default function AdminPaymentVerify() {
                       <td className="px-5 py-4 text-gray-500 text-sm font-bold">{p.course?.title || "—"}</td>
                       <td className="px-5 py-4">
                         {p.status === "approved"
-                          ? <span className="flex items-center gap-1 text-green-600 font-black text-[10px] uppercase"><CircleCheckBig size={12}/> Approved</span>
-                          : <span className="flex items-center gap-1 text-red-400 font-black text-[10px] uppercase"><CircleX size={12}/> Rejected</span>}
+                          ? <span className="flex items-center gap-1 text-green-600 font-black text-[10px] uppercase"><CheckCircle2 size={12}/> Approved</span>
+                          : <span className="flex items-center gap-1 text-red-400 font-black text-[10px] uppercase"><XCircle size={12}/> Rejected</span>}
                       </td>
                       <td className="px-5 py-4 text-gray-400 font-bold text-xs">
                         {new Date(p.created_at).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"2-digit"})}
@@ -119,8 +119,8 @@ export default function AdminPaymentVerify() {
                           {p.currency === "GBP" ? "£" : "₦"}{Number(p.amount).toLocaleString()}
                         </span>
                         {p.status === "approved"
-                          ? <CircleCheckBig size={16} className="text-green-500"/>
-                          : <CircleX size={16} className="text-red-400"/>}
+                          ? <CheckCircle2 size={16} className="text-green-500"/>
+                          : <XCircle size={16} className="text-red-400"/>}
                       </div>
                     </div>
                     <p className="text-[10px] text-gray-300 font-bold">

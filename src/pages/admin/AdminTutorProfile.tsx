@@ -8,8 +8,8 @@ import {
   Link as LinkIcon, 
   Save, 
   Loader2,
-  CircleCheckBig,
-  CircleAlert,
+  CheckCircle2,
+  AlertCircle,
   ShieldCheck
 } from "lucide-react";
 
@@ -119,7 +119,7 @@ export default function AdminTutorProfile() {
         <div className={`mt-8 p-6 rounded-[2rem] flex items-center gap-4 animate-in slide-in-from-bottom-4 ${
           status.type === 'success' ? 'bg-green-50 text-[#3F2171] border border-green-100' : 'bg-red-50 text-red-700 border border-red-100'
         }`}>
-          {status.type === 'success' ? <CircleCheckBig size={24} /> : <CircleAlert size={24} />}
+          {status.type === 'success' ? <CheckCircle2 size={24} /> : <AlertCircle size={24} />}
           <span className="font-black uppercase italic text-sm">{status.msg}</span>
         </div>
       )}

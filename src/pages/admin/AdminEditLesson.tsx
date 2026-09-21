@@ -4,9 +4,9 @@ import api from "../../api/axios";
 import Layout from "../../components/Layout";
 import FileUpload from "../../components/FileUpload";
 import {
-  CircleCheck,
+  CheckCircle2,
   Loader2,
-  CircleAlert,
+  AlertCircle,
   ArrowLeft,
   Save,
   Mic,
@@ -121,13 +121,13 @@ export default function AdminEditLesson() {
         {/* Status Messages */}
         {errorMessage && (
           <div className="mb-6 p-5 bg-red-50 border-2 border-red-100 text-red-600 rounded-3xl flex items-center gap-3 font-bold animate-in zoom-in">
-            <CircleAlert size={20} /> {errorMessage}
+            <AlertCircle size={20} /> {errorMessage}
           </div>
         )}
 
         {successMessage && (
           <div className="mb-6 p-5 bg-green-50 border-2 border-green-100 text-[#3F2171] rounded-3xl flex items-center gap-3 font-bold animate-in zoom-in">
-            <CircleCheck size={20} /> {successMessage}
+            <CheckCircle2 size={20} /> {successMessage}
           </div>
         )}
 

@@ -8,10 +8,10 @@ import {
   Trash2,
   Loader2,
   Search,
-  CircleCheckBig,
+  CheckCircle2,
   X,
   BookOpen,
-  CircleAlert,
+  AlertCircle,
 } from "lucide-react";
 
 export default function AdminCourseList() {
@@ -123,9 +123,9 @@ export default function AdminCourseList() {
                 className={`mt-4 flex items-center gap-2 px-4 py-2 rounded-xl w-fit animate-in slide-in-from-left ${status.type === "success" ? "bg-green-50 text-green-600" : "bg-red-50 text-red-600"}`}
               >
                 {status.type === "success" ? (
-                  <CircleCheckBig size={16} />
+                  <CheckCircle2 size={16} />
                 ) : (
-                  <CircleAlert size={16} />
+                  <AlertCircle size={16} />
                 )}
                 <span className="text-[10px] font-black uppercase tracking-widest">
                   {status.msg}
