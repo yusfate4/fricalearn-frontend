@@ -4,23 +4,45 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, Users, UserCheck, MessageSquare,
-  BarChart3, CreditCard, History,
+  BarChart3, CreditCard, History, HelpCircle,
   LogOut, Menu, X, Bell, ChevronRight,
-  GraduationCap, Trophy,
+  GraduationCap, Trophy, Video, BookOpen,
+  Gift, Package,
 } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 
-const NAV = [
-  { label: "Dashboard",       path: "/admin",                    icon: LayoutDashboard },
-  { label: "Students",        path: "/admin/users",              icon: Users           },
-  { label: "Parents",         path: "/admin/parents",            icon: UserCheck       },
-  { label: "Support Chat",    path: "/admin/chats",              icon: MessageSquare   },
-  { label: "Quiz Builder",    path: "/admin/questions",          icon: MessageSquare      },
-  { label: "Analytics",       path: "/admin/analytics",          icon: BarChart3       },
-  { label: "Payments",        path: "/admin/payments",           icon: CreditCard      },
-  { label: "Pay History",     path: "/admin/payments/history",   icon: History         },
-  { label: "Marketplace",     path: "/admin/manage-rewards",     icon: Trophy          },
-  { label: "Courses",         path: "/admin/courses",            icon: GraduationCap   },
+const NAV_GROUPS = [
+  {
+    label: "Control Room",
+    color: "text-[#FFFF00]",
+    items: [
+      { label: "Dashboard", path: "/admin",         icon: LayoutDashboard },
+      { label: "Students",  path: "/admin/users",   icon: Users           },
+      { label: "Parents",   path: "/admin/parents", icon: UserCheck       },
+      { label: "Support",   path: "/admin/chats",   icon: MessageSquare   },
+    ],
+  },
+  {
+    label: "Academic",
+    color: "text-white/40",
+    items: [
+      { label: "Live Classes", path: "/admin/live-classes",   icon: Video         },
+      { label: "Courses",      path: "/admin/courses/list",   icon: GraduationCap },
+      { label: "Lessons",      path: "/admin/lessons",        icon: BookOpen      },
+      { label: "Quizzes",      path: "/admin/questions",      icon: HelpCircle    },
+      { label: "Analytics",    path: "/admin/analytics",      icon: BarChart3     },
+    ],
+  },
+  {
+    label: "Economy",
+    color: "text-red-300",
+    items: [
+      { label: "Payments",    path: "/admin/payments",         icon: CreditCard },
+      { label: "History",     path: "/admin/payments/history", icon: History    },
+      { label: "Redemptions", path: "/admin/rewards",          icon: Gift       },
+      { label: "Inventory",   path: "/admin/manage-rewards",   icon: Package    },
+    ],
+  },
 ];
 
 export function AdminShell({ children, title }: { children: React.ReactNode; title: string }) {
@@ -28,7 +50,7 @@ export function AdminShell({ children, title }: { children: React.ReactNode; tit
   const location = useLocation();
   const { user, logout } = useAuth();
 
-  const NavLink = ({ item }: { item: typeof NAV[0] }) => {
+  const NavLink = ({ item }: { item: { label: string; path: string; icon: any } }) => {
     const Icon  = item.icon;
     const exact = item.path === "/admin";
     const active = exact ? location.pathname === "/admin" : location.pathname.startsWith(item.path) && item.path !== "/admin";
@@ -50,7 +72,14 @@ export function AdminShell({ children, title }: { children: React.ReactNode; tit
         <p className="text-white/40 text-[10px] font-black uppercase tracking-widest mt-1">Admin Portal</p>
       </div>
       <nav className="flex-1 space-y-1 overflow-y-auto">
-        {NAV.map(item => <NavLink key={item.path} item={item}/>)}
+        {NAV_SECTIONS.map(section => (
+          <div key={section.label} className="mb-2">
+            <p className={`px-2 text-[9px] font-black uppercase tracking-[0.2em] mb-1 mt-4 ${section.color}`}>
+              {section.label}
+            </p>
+            {section.items.map(item => <NavLink key={item.path} item={item}/>)}
+          </div>
+        ))}
       </nav>
       <div className="mt-6 pt-6 border-t border-white/10">
         <div className="flex items-center gap-3 px-2 mb-4">
