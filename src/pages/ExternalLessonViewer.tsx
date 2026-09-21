@@ -247,27 +247,26 @@ export default function ExternalLessonViewer() {
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 {activeQuizType === "starter" ? (
-                  <button onClick={() => { setActiveQuizType("none"); setQuizSubmitted(false); }} 
-                    className="w-full sm:w-auto bg-[#3F2171] text-white px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest hover:bg-black transition-all shadow-xl">
-                    Start Learning Lesson ➔
-                  </button>
+                 <button onClick={() => { setActiveQuizType("none"); setQuizSubmitted(false); }} 
+  className="w-full sm:w-auto bg-[#3F2171] text-white px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest hover:bg-black transition-all shadow-xl">
+  Start Learning Lesson ➔
+</button>
                 ) : passed ? (
                   <>
-                    {nextLessonId && (
-                      <button onClick={() => {
-                          setQuizSubmitted(false);
-                          setActiveQuizType("none");
-                          navigate(`/external-lessons/${nextLessonId}`);
-                          window.location.reload();
-                        }} 
-                        className="w-full sm:w-auto bg-[#3F2171] text-white px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest hover:bg-black transition-all shadow-xl">
-                        Next Lesson ➔
-                      </button>
-                    )}
-                    <button onClick={() => navigate(`/external-subjects/${lesson?.topic?.subject_id}`)} 
-                      className="w-full sm:w-auto bg-gray-100 text-gray-700 px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest hover:bg-gray-200 transition-all">
-                      Return to Subject
-                    </button>
+                   {nextLessonId && (
+  <button onClick={() => {
+      setQuizSubmitted(false);
+      setActiveQuizType("none");
+      navigate(`/external-lessons/${nextLessonId}`);
+    }} 
+    className="w-full sm:w-auto bg-[#3F2171] text-white px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest hover:bg-black transition-all shadow-xl">
+    Next Lesson ➔
+  </button>
+)}
+<button onClick={() => navigate(`/external-subjects/${lesson?.topic?.subject_id}`)} 
+  className="w-full sm:w-auto bg-gray-100 text-gray-700 px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest hover:bg-gray-200 transition-all">
+  Return to Subject
+</button>
                   </>
                 ) : (
                   <>
