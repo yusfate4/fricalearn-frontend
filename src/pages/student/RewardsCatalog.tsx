@@ -48,10 +48,10 @@ export default function RewardsCatalog() {
   const refreshData = async () => {
     try {
       if (isImpersonating && activeStudentId) {
-        // 🚀 THE FIX: Use the new accessible parent route instead of admin route
         const res = await api.get(`/parent/active-student/${activeStudentId}`);
-        // Ensure we handle the structure correctly (res.data.student_profile)
-        setChildProfile(res.data.student_profile);
+        // /parent/active-student returns the student user with nested student_profile
+        const profile = res.data.student_profile || res.data;
+        setChildProfile(profile);
       } else {
         const res = await api.get("/auth/me");
         setUser(res.data);
@@ -72,10 +72,10 @@ export default function RewardsCatalog() {
     }
   };
 
-  // 🚀 Current XP Logic
-  const currentXP = isImpersonating 
-    ? (childProfile?.total_coins || 0) 
-    : (user?.student_profile?.total_coins || 0);
+  // Current XP — use total_points (primary) with total_coins as fallback
+  const currentXP = isImpersonating
+    ? (childProfile?.total_points || childProfile?.total_coins || 0)
+    : (user?.student_profile?.total_points || user?.student_profile?.total_coins || 0);
 
   const handlePurchase = async () => {
     if (!purchasing) return;
@@ -86,14 +86,15 @@ export default function RewardsCatalog() {
         `/gamification/rewards/${purchasing.id}/redeem`
       );
 
-      // Update balance in state immediately
+      // Update balance in state immediately after purchase
+      const newBalance = res.data.remaining_coins ?? res.data.remaining_points ?? res.data.new_balance;
       if (isImpersonating) {
-        setChildProfile({ ...childProfile, total_coins: res.data.remaining_coins });
+        setChildProfile((prev: any) => ({ ...prev, total_points: newBalance, total_coins: newBalance }));
       } else {
-        setUser({
-          ...user,
-          student_profile: { ...user?.student_profile, total_coins: res.data.remaining_coins }
-        });
+        setUser((prev: any) => ({
+          ...prev,
+          student_profile: { ...prev?.student_profile, total_points: newBalance, total_coins: newBalance }
+        }));
       }
 
       const downloadUrl = res.data.download_url;
@@ -200,6 +201,18 @@ export default function RewardsCatalog() {
                 </div>
               );
             })}
+          </div>
+        )}
+
+        {!loading && items.length === 0 && (
+          <div className="py-32 bg-gray-50 rounded-[4rem] border-4 border-dashed border-gray-100 text-center flex flex-col items-center">
+            <ShoppingBag size={40} className="text-gray-200 mb-6" />
+            <h3 className="text-2xl font-black text-gray-800 uppercase italic tracking-tighter mb-2">
+              Store Coming Soon
+            </h3>
+            <p className="text-gray-400 font-bold uppercase text-[10px] tracking-[0.2em]">
+              Rewards will appear here once the admin adds them.
+            </p>
           </div>
         )}
 
