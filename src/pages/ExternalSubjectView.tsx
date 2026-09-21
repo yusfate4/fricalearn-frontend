@@ -16,18 +16,10 @@ export default function ExternalSubjectView() {
   const navigate = useNavigate();
   const [subject, setSubject] = useState<any>(null);
 
-  // Compute real progress from lesson userProgress data
-  const computedProgress = React.useMemo(() => {
-    if (!subject?.topics) return 0;
-    let total = 0, completed = 0;
-    for (const topic of subject.topics) {
-      for (const lesson of (topic.lessons || [])) {
-        total++;
-        if (lesson.userProgress?.[0]?.status === "completed") completed++;
-      }
-    }
-    return total > 0 ? Math.round((completed / total) * 100) : 0;
-  }, [subject]);
+  // Use server-computed progress (calculated fresh from DB on each load)
+  const computedProgress = subject?.progress_percentage ?? 0;
+  const lessonsCompleted = subject?.lessons_completed ?? 0;
+  const lessonsTotal     = subject?.lessons_total ?? 0;
   const [loading, setLoading] = useState(true);
   const [expandedTopic, setExpandedTopic] = useState<number | null>(null);
 
@@ -134,7 +126,11 @@ export default function ExternalSubjectView() {
               <div className="space-y-2 mt-2 max-w-md">
                 <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-gray-400">
                   <span>Course Progress</span>
-                  <span>{computedProgress}% Complete</span>
+                  <span>
+                    {lessonsTotal > 0
+                      ? `${lessonsCompleted} / ${lessonsTotal} lessons · ${computedProgress}%`
+                      : `${computedProgress}% Complete`}
+                  </span>
                 </div>
                 <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
                   <div
