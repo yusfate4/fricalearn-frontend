@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import Layout from "../components/Layout";
 import {
-  ArrowLeft, Loader2, CheckCircle2, XCircle, Award,
+  ArrowLeft, Loader2, CheckCircle2, Award,
   Target, Lightbulb, AlertTriangle, ChevronRight, 
   ChevronLeft, Presentation, FileText, Download, HelpCircle
 } from "lucide-react";
@@ -246,15 +246,25 @@ export default function ExternalLessonViewer() {
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                {passed ? (
+                {activeQuizType === "starter" ? (
+                  <button onClick={() => { setActiveQuizType("none"); setQuizSubmitted(false); }} 
+                    className="w-full sm:w-auto bg-[#3F2171] text-white px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest hover:bg-black transition-all shadow-xl">
+                    Start Learning Lesson ➔
+                  </button>
+                ) : passed ? (
                   <>
                     {nextLessonId && (
-                      <button onClick={() => navigate(`/external-lessons/${nextLessonId}`)} 
+                      <button onClick={() => {
+                          setQuizSubmitted(false);
+                          setActiveQuizType("none");
+                          navigate(`/external-lessons/${nextLessonId}`);
+                          window.location.reload();
+                        }} 
                         className="w-full sm:w-auto bg-[#3F2171] text-white px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest hover:bg-black transition-all shadow-xl">
                         Next Lesson ➔
                       </button>
                     )}
-                    <button onClick={() => navigate(-1)} 
+                    <button onClick={() => navigate(`/external-subjects/${lesson?.topic?.subject_id}`)} 
                       className="w-full sm:w-auto bg-gray-100 text-gray-700 px-10 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest hover:bg-gray-200 transition-all">
                       Return to Subject
                     </button>
@@ -481,7 +491,7 @@ export default function ExternalLessonViewer() {
           </div>
         )}
 
-        {/* ── KEY POINTS TO REMEMBER (RESTORED) ── */}
+        {/* KEY POINTS TO REMEMBER */}
         {meta.key_points && meta.key_points.length > 0 && (
           <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border-2 border-gray-50">
             <div className="flex items-center gap-3 mb-6">
@@ -490,7 +500,7 @@ export default function ExternalLessonViewer() {
             </div>
             <ul className="space-y-4">
               {meta.key_points.map((point, i) => (
-                <li key={i} className="flex items-start gap-4 p-4 bg-green-50 rounded-2xl">
+                <li key={i} className="frames-center flex items-start gap-4 p-4 bg-green-50 rounded-2xl">
                   <span className="w-7 h-7 bg-[#3F2171] text-white rounded-xl flex items-center justify-center font-black text-xs shrink-0">{i + 1}</span>
                   <span className="text-gray-700 font-medium text-sm leading-relaxed">{point}</span>
                 </li>
@@ -499,7 +509,7 @@ export default function ExternalLessonViewer() {
           </div>
         )}
 
-        {/* ── COMMON MISTAKES TO AVOID (RESTORED) ── */}
+        {/* COMMON MISTAKES TO AVOID */}
         {meta.misconceptions && meta.misconceptions.length > 0 && (
           <div className="bg-amber-50 rounded-[2.5rem] p-8 border-2 border-amber-100">
             <div className="flex items-center gap-3 mb-6">
