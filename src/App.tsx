@@ -22,7 +22,7 @@ import CookieConsent from "./components/CookieConsent";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
-import ParentProgressView from "./pages/ParentProgressView";
+import ChildProgressView from "./pages/parent/ChildProgressView";
 import StudentAnalytics from "./pages/student/StudentAnalytics";
 import LiveRoom from "./pages/LiveRoom";
 import VerifyNotice from "./pages/VerifyNotice"; 
@@ -180,6 +180,10 @@ function App() {
                     element={user?.role === "parent" ? <ParentDashboard /> : <Navigate to="/dashboard" />}
                   />
                   <Route
+                    path="/parent/progress/:childId"
+                    element={user?.role === "parent" ? <ChildProgressView /> : <Navigate to="/login" />}
+                  />
+                  <Route
                     path="/parent/messages"
                     element={user?.role === "parent" ? <ParentMessages /> : <Navigate to="/dashboard" />}
                   />
@@ -205,7 +209,9 @@ function App() {
                   <Route path="/leaderboard" element={canAccessStudentArea ? <Leaderboard /> : <Navigate to="/parent/dashboard" />} />
                   <Route path="/store" element={canAccessStudentArea ? <RewardsCatalog /> : <Navigate to="/parent/dashboard" />} />
                   <Route path="/my-rewards" element={canAccessStudentArea ? <MyRewards /> : <Navigate to="/parent/dashboard" />} />
+                  <Route path="/my-treasures" element={canAccessStudentArea ? <MyRewards /> : <Navigate to="/parent/dashboard" />} />
                   <Route path="/olu-chat" element={canAccessStudentArea ? <OluChat /> : <Navigate to="/parent/dashboard" />} />
+                  <Route path="/ai-tutor" element={canAccessStudentArea ? <OluChat /> : <Navigate to="/parent/dashboard" />} />
                   <Route path="/analytics/:userId?" element={canAccessStudentArea ? <StudentAnalytics /> : <Navigate to="/parent/dashboard" />} />
                   <Route path="/live-room/:id" element={<LiveRoom />} />
 
