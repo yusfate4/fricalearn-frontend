@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import api from "../../api/axios";
 import { AdminShell } from "../../components/admin/AdminShell";
 import {
-  CircleHelp, Plus, Pencil, Trash2, Search,
+  MessageSquare, Plus, Pencil, Trash2, Search,
   ChevronLeft, ChevronRight, Loader2, Check, X, Save,
 } from "lucide-react";
 
@@ -82,6 +82,89 @@ function EditModal({ q, onSave, onClose }: { q: Question; onSave: (updated: Ques
   );
 }
 
+function AddModal({ onSaved, onClose }: { onSaved: () => void; onClose: () => void }) {
+  const [form, setForm] = useState({
+    lesson_id: "", question_text: "", option_a: "", option_b: "", option_c: "",
+    correct_answer: "a", explanation_text: "",
+  });
+  const [saving, setSaving] = useState(false);
+  const [lessons, setLessons] = useState<any[]>([]);
+
+  React.useEffect(() => {
+    api.get("/admin/lessons").then(r => setLessons(Array.isArray(r.data) ? r.data : r.data?.data || [])).catch(() => {});
+  }, []);
+
+  const save = async () => {
+    if (!form.lesson_id || !form.question_text || !form.option_a || !form.option_b || !form.option_c) return;
+    setSaving(true);
+    try {
+      await api.post("/admin/questions", form);
+      onSaved();
+    } catch(e: any) {
+      alert(e?.response?.data?.message || "Failed to save question");
+    } finally { setSaving(false); }
+  };
+
+  const F = ({ label, field, multiline }: { label: string; field: string; multiline?: boolean }) => (
+    <div>
+      <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">{label}</label>
+      {multiline
+        ? <textarea value={(form as any)[field]} rows={3} onChange={e => setForm({...form, [field]: e.target.value})}
+            className="w-full px-3 py-2 border-2 border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#3F2171] resize-none"/>
+        : <input value={(form as any)[field]} onChange={e => setForm({...form, [field]: e.target.value})}
+            className="w-full px-3 py-2 border-2 border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#3F2171]"/>
+      }
+    </div>
+  );
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      <div className="bg-white rounded-[2rem] p-7 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="font-black text-gray-800 text-xl uppercase italic tracking-tight">Add Question</h2>
+          <button onClick={onClose} className="p-2 rounded-xl hover:bg-gray-100"><X size={18}/></button>
+        </div>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">Lesson</label>
+            <select value={form.lesson_id} onChange={e => setForm({...form, lesson_id: e.target.value})}
+              className="w-full px-3 py-2 border-2 border-gray-100 rounded-xl text-sm focus:outline-none focus:border-[#3F2171]">
+              <option value="">Select a lesson…</option>
+              {lessons.map((l: any) => <option key={l.id} value={l.id}>{l.title}</option>)}
+            </select>
+          </div>
+          <F label="Question" field="question_text" multiline/>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <F label="Option A" field="option_a"/>
+            <F label="Option B" field="option_b"/>
+            <F label="Option C" field="option_c"/>
+          </div>
+          <div>
+            <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Correct Answer</label>
+            <div className="flex gap-3">
+              {["a","b","c"].map(opt => (
+                <button key={opt} onClick={() => setForm({...form, correct_answer: opt})}
+                  className={`flex-1 py-2.5 rounded-xl font-black uppercase text-sm transition-all ${
+                    form.correct_answer === opt ? "bg-[#3F2171] text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                  }`}>{opt}</button>
+              ))}
+            </div>
+          </div>
+          <F label="Explanation (optional)" field="explanation_text" multiline/>
+        </div>
+        <div className="flex gap-3 mt-6">
+          <button onClick={save} disabled={saving || !form.lesson_id || !form.question_text}
+            className="flex-1 flex items-center justify-center gap-2 bg-[#3F2171] text-white py-3 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-black transition-all disabled:opacity-50">
+            {saving ? <Loader2 size={14} className="animate-spin"/> : <Save size={14}/>} Save Question
+          </button>
+          <button onClick={onClose} className="px-6 py-3 rounded-2xl font-black uppercase text-[10px] tracking-widest bg-gray-100 text-gray-600 hover:bg-gray-200">Cancel</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 export default function AdminQuiz() {
   const [data, setData]         = useState<any>(null);
   const [loading, setLoading]   = useState(true);
@@ -89,6 +172,7 @@ export default function AdminQuiz() {
   const [page, setPage]         = useState(1);
   const [editing, setEditing]   = useState<Question | null>(null);
   const [deleting, setDeleting] = useState<number | null>(null);
+  const [adding, setAdding] = useState(false);
 
   const fetch = useCallback(async () => {
     setLoading(true);
@@ -122,6 +206,7 @@ export default function AdminQuiz() {
   return (
     <AdminShell title="Quiz Builder">
       {editing && <EditModal q={editing} onSave={onSaved} onClose={() => setEditing(null)}/>}
+      {adding && <AddModal onSaved={() => { setAdding(false); fetch(); }} onClose={() => setAdding(false)}/>}
 
       <div className="space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -129,10 +214,10 @@ export default function AdminQuiz() {
             <h1 className="text-2xl font-black text-gray-800 uppercase italic tracking-tighter">Quiz Questions</h1>
             <p className="text-gray-400 font-bold text-[10px] uppercase tracking-widest mt-1">{data?.total || 0} questions total</p>
           </div>
-          <a href="/admin/add-quiz"
+          <button onClick={() => setAdding(true)}
             className="flex items-center gap-2 bg-[#3F2171] text-white px-5 py-3 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-black transition-all">
             <Plus size={14}/> Add Question
-          </a>
+          </button>
         </div>
 
         <div className="relative">
@@ -147,7 +232,7 @@ export default function AdminQuiz() {
             <div className="flex items-center justify-center py-20"><Loader2 className="animate-spin text-[#3F2171]" size={32}/></div>
           ) : qs.length === 0 ? (
             <div className="text-center py-20">
-              <CircleHelp size={40} className="text-gray-200 mx-auto mb-4"/>
+              <MessageSquare size={40} className="text-gray-200 mx-auto mb-4"/>
               <p className="font-black text-gray-500 uppercase italic">No questions yet</p>
               <p className="text-gray-400 font-bold text-sm mt-2">Questions you create will appear here for editing and deletion</p>
             </div>

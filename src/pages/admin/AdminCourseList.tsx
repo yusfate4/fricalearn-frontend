@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Layout from "../../components/Layout";
+import { AdminShell } from "../../components/admin/AdminShell";
 import api from "../../api/axios";
 import { useNavigate, Link } from "react-router-dom";
 import {
@@ -77,7 +77,7 @@ export default function AdminCourseList() {
   );
 
   return (
-    <Layout>
+    <AdminShell title="Courses">
       <div className="max-w-7xl mx-auto p-4 md:p-12 relative min-h-screen">
         {/* --- DELETE MODAL --- */}
         {confirmDelete && (
@@ -239,6 +239,6 @@ export default function AdminCourseList() {
           )}
         </div>
       </div>
-    </Layout>
+    </AdminShell>
   );
 }

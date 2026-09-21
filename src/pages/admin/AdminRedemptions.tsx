@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Layout from "../../components/Layout";
+import { AdminShell } from "../../components/admin/AdminShell";
 import api from "../../api/axios";
 import { 
   Loader2, 
@@ -67,7 +67,7 @@ export default function AdminRedemptions() {
   };
 
   return (
-    <Layout>
+    <AdminShell title="Redemptions">
       {/* 🔔 CUSTOM FEEDBACK MODAL */}
       {modal.show && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
@@ -165,6 +165,6 @@ export default function AdminRedemptions() {
           </div>
         )}
       </div>
-    </Layout>
+    </AdminShell>
   );
 }

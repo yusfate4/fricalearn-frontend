@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Layout from "../../components/Layout"; // 🚀 1. Import the Layout
+import { AdminShell } from "../../components/admin/AdminShell";
+ // 🚀 1. Import the Layout
 import { 
   Video, 
   BookOpen, 
@@ -46,9 +47,9 @@ export default function TutorDashboard() {
     fetchData();
   }, []);
 
-  // 🚀 2. Wrap the return in <Layout>
+  // 🚀 2. Wrap the return in <AdminShell title="Tutor Dashboard">
   return (
-    <Layout> 
+    <AdminShell title="Tutor Dashboard"> 
       <div className="animate-in fade-in duration-700">
         <div className="mb-10">
           <h1 className="text-4xl font-black text-[#1A1A40] italic uppercase tracking-tighter">Ẹ n lẹ́, Olùkọ́!</h1>
@@ -95,7 +96,7 @@ export default function TutorDashboard() {
           </div>
         </div>
       </div>
-    </Layout>
+    </AdminShell>
   );
 }
 

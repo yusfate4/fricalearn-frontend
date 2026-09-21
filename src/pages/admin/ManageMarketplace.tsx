@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import api from "../../api/axios";
-import Layout from "../../components/Layout";
+import { AdminShell } from "../../components/admin/AdminShell";
 import {
   Plus,
   Store,
@@ -149,7 +149,7 @@ export default function ManageMarketplace() {
   };
 
   return (
-    <Layout>
+    <AdminShell title="Inventory">
       <div className="max-w-7xl mx-auto p-4 md:p-10">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
           <div className="flex items-center gap-5">
@@ -398,6 +398,6 @@ export default function ManageMarketplace() {
           </div>
         )}
       </div>
-    </Layout>
+    </AdminShell>
   );
 }

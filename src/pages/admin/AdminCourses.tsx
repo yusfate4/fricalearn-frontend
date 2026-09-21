@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Layout from "../../components/Layout";
+import { AdminShell } from "../../components/admin/AdminShell";
 import api from "../../api/axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -84,7 +84,7 @@ export default function AdminCourses() {
   };
 
   return (
-    <Layout>
+    <AdminShell title="Courses">
       <div className="max-w-4xl mx-auto p-4 md:p-12">
         <div className="mb-10">
           <h1 className="text-4xl font-black text-gray-800 italic uppercase tracking-tighter">
@@ -275,6 +275,6 @@ export default function AdminCourses() {
           </button>
         </form>
       </div>
-    </Layout>
+    </AdminShell>
   );
 }

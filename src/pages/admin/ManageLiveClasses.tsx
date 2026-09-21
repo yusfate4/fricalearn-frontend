@@ -50,11 +50,16 @@ export default function ManageLiveClasses() {
     try {
       const scheduled_at = nextSaturday(slot.hour, slot.minute);
       await api.post("/admin/live-classes", {
-        title: `FricaLearn ${slot.tag}`,
-        description: "Weekly group learning session — Yoruba, Maths and English practice with your tutor.",
+        title: "FricaLearn " + slot.tag,
+        description: "Weekly group learning session - Yoruba, Maths and English practice with your tutor.",
         scheduled_at,
         duration_minutes: 90,
         is_paid: false,
+        price: null,
+        meeting_url: "",
+        is_active: true,
+        status: "scheduled",
+        max_students: 50,
       });
       setSuccess(`Scheduled: ${slot.tag} for next Saturday at ${slot.label} (Nigeria time)`);
       setTimeout(() => setSuccess(null), 4000);
@@ -69,8 +74,16 @@ export default function ManageLiveClasses() {
     setSubmitting(true);
     try {
       await api.post("/admin/live-classes", {
-        ...form,
+        title: form.title,
+        description: form.description,
+        scheduled_at: form.scheduled_at,
+        duration_minutes: form.duration_minutes,
+        is_paid: form.is_paid,
         price: form.is_paid ? Number(form.price) : null,
+        meeting_url: "",
+        is_active: true,
+        status: "scheduled",
+        max_students: 50,
       });
       setShowManual(false);
       setForm({ title: "", description: "", scheduled_at: "", duration_minutes: 60, is_paid: false, price: "" });

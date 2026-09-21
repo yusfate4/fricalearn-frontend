@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
-import Layout from "../../components/Layout";
+import { AdminShell } from "../../components/admin/AdminShell";
 import FileUpload from "../../components/FileUpload";
 import {
-  CheckCircle2,
+  CheckCircle,
   Loader2,
   AlertCircle,
   ArrowLeft,
@@ -69,7 +69,7 @@ export default function AdminAddLesson() {
   };
 
   return (
-    <Layout>
+    <AdminShell title="Add Lesson">
       <div className="max-w-4xl mx-auto p-4 md:p-10">
         <button
           onClick={() => navigate("/admin/courses")}
@@ -194,7 +194,7 @@ export default function AdminAddLesson() {
           <div className="animate-in fade-in slide-in-from-right-8 duration-500">
             <div className="bg-green-50 border border-green-100 p-6 rounded-[2rem] flex items-center gap-4 mb-8">
               <div className="bg-white p-2 rounded-full text-[#3F2171] shadow-sm">
-                <CheckCircle2 size={24} />
+                <CheckCircle size={24} />
               </div>
               <div>
                 <h3 className="font-black text-green-800 text-lg">
@@ -222,6 +222,6 @@ export default function AdminAddLesson() {
           </div>
         )}
       </div>
-    </Layout>
+    </AdminShell>
   );
 }

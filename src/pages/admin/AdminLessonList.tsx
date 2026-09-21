@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
-import Layout from "../../components/Layout";
+import { AdminShell } from "../../components/admin/AdminShell";
 import { 
   Edit3, 
   Trash2, 
@@ -65,15 +65,15 @@ export default function AdminLessonList() {
   );
 
   if (loading) return (
-    <Layout>
+    <AdminShell title="Lessons">
       <div className="p-20 text-center font-black animate-pulse text-gray-300 italic uppercase tracking-widest">
         Loading Curriculum...
       </div>
-    </Layout>
+    </AdminShell>
   );
 
   return (
-    <Layout>
+    <AdminShell title="Lessons">
       <div className="max-w-6xl mx-auto p-4 md:p-10">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
           <div>
@@ -172,6 +172,6 @@ export default function AdminLessonList() {
           </table>
         </div>
       </div>
-    </Layout>
+    </AdminShell>
   );
 }
