@@ -247,7 +247,7 @@ export default function Dashboard() {
             { icon: BookOpen,     label: "My Lessons",   path: "/courses",      bg: "bg-blue-50",   ic: "text-blue-600" },
             { icon: Bot,          label: "AI Tutor",     path: "/olu-chat",     bg: "bg-[#FFFF00]", ic: "text-[#2A1650]" },
             { icon: Trophy,       label: "Leaderboard",  path: "/leaderboard",  bg: "bg-purple-50", ic: "text-purple-600" },
-            { icon: Star,         label: "My Rewards",   path: "/my-treasures", bg: "bg-orange-50", ic: "text-orange-500" },
+            { icon: Star,         label: "My Rewards",   path: "/my-rewards", bg: "bg-orange-50", ic: "text-orange-500" },
           ].map(({ icon: Icon, label, path, bg, ic }) => (
             <button key={label} onClick={() => navigate(path)}
               className="flex flex-col items-center gap-2 bg-white border-2 border-gray-100 rounded-2xl p-4 sm:p-5 hover:shadow-md hover:-translate-y-0.5 transition-all group">
