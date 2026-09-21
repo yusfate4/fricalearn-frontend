@@ -258,6 +258,7 @@ export default function ExternalLessonViewer() {
                           setQuizSubmitted(false);
                           setActiveQuizType("none");
                           const sid = localStorage.getItem("active_student_id");
+                          // ALWAYS append student_id if present (vital for parent impersonation)
                           const targetUrl = sid 
                             ? `/external-lessons/${nextLessonId}?student_id=${sid}` 
                             : `/external-lessons/${nextLessonId}`;
