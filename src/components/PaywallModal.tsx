@@ -94,7 +94,7 @@ export default function PaywallModal({ open, onClose, onUnlocked }: PaywallModal
                 Continue Learning
               </h2>
               <p className="text-white/60 font-medium text-xs">
-                Choose a plan — both Maths &amp; English included. Longer plans save more.
+                Choose a plan to continue learning. Heritage languages stay free.
               </p>
             </div>
 
@@ -143,7 +143,7 @@ export default function PaywallModal({ open, onClose, onUnlocked }: PaywallModal
                             </div>
                             <div>
                               <p className="font-black text-sm text-gray-800">{t.label}</p>
-                              <p className="text-[10px] font-bold text-gray-400">{pm} · {t.days} days</p>
+                              <p className="text-[10px] font-bold text-gray-400">{pm} · {t.days} days · Your subjects</p>
                             </div>
                           </div>
                           <div className="text-right shrink-0">
