@@ -1,228 +1,249 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import Layout from "../../components/Layout";
-import api from "../../api/axios";
-import { CheckCircle2, Loader2, ArrowRight, Award, BookOpen, GraduationCap, ChevronLeft } from "lucide-react";
-
-interface Course {
-  id: string; name: string; description: string;
-  price_ngn: number; price_gbp: number; type: "paid" | "free";
-  grades?: number[]; grade_labels?: string[];
-  scholarship?: boolean; trial?: boolean; trial_label?: string;
-  original_price_ngn?: number; original_price_gbp?: number;
-  curriculum?: string; source?: string; icon: string;
-}
+import { CheckCircle2, ArrowRight, Award, BookOpen, GraduationCap, ChevronLeft } from "lucide-react";
 
 const LANGUAGE_COURSES = ["yoruba", "igbo", "hausa"];
+
+// ── Pricing (always UK curriculum, currency = payment preference only) ──
+const PRICES = {
+  maths:   { ngn: 20000, gbp: 10 },
+  english: { ngn: 20000, gbp: 10 },
+  both:    { ngn: 30000, gbp: 15 }, // bundle — save ₦10k / £5
+};
+
+const COURSES = [
+  {
+    id: "maths", name: "Mathematics", type: "paid" as const,
+    description: "4,000+ lessons from Year 1 to Year 11 · KS1–KS4 aligned · Quizzes included",
+    icon: "🔢",
+  },
+  {
+    id: "english", name: "English", type: "paid" as const,
+    description: "Reading, writing, comprehension and literary analysis · Year 1 to Year 11",
+    icon: "📖",
+  },
+  {
+    id: "yoruba",  name: "Yoruba",  type: "free" as const, description: "Connect with Yoruba heritage through language and culture", icon: "🌍",
+  },
+  {
+    id: "igbo",   name: "Igbo",    type: "free" as const, description: "Explore Igbo language and heritage", icon: "🌍",
+  },
+  {
+    id: "hausa",  name: "Hausa",   type: "free" as const, description: "Learn Hausa language and cultural traditions", icon: "🌍",
+  },
+];
 
 export default function Step1CourseSelection() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [courses, setCourses] = useState<Course[]>([]);
   const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
   const [currency, setCurrency] = useState<"NGN" | "GBP">("NGN");
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => { fetchCourses(currency); setSelectedCourses([]); }, [currency]);
-
-  const fetchCourses = async (cur: "NGN" | "GBP") => {
-    setLoading(true);
-    try {
-      const res = await api.get(`/onboarding/courses?currency=${cur}`);
-      setCourses(res.data.courses);
-    } catch (err) { console.error("Failed to load courses", err); }
-    finally { setLoading(false); }
-  };
-
-  const curriculumRegion = currency === "NGN" ? "nigeria" : "uk";
-
-  const toggleCourse = (courseId: string) => {
-    const isLanguage = LANGUAGE_COURSES.includes(courseId);
-
+  const toggleCourse = (id: string) => {
+    const isLang = LANGUAGE_COURSES.includes(id);
     setSelectedCourses(prev => {
-      if (prev.includes(courseId)) {
-        // Deselect
-        return prev.filter(id => id !== courseId);
-      } else {
-        if (isLanguage) {
-          // ✅ Only 1 language at a time — replace any existing language
-          const withoutLanguages = prev.filter(id => !LANGUAGE_COURSES.includes(id));
-          return [...withoutLanguages, courseId];
-        }
-        return [...prev, courseId];
-      }
+      if (prev.includes(id)) return prev.filter(x => x !== id);
+      if (isLang) return [...prev.filter(x => !LANGUAGE_COURSES.includes(x)), id];
+      return [...prev, id];
     });
   };
 
+  const hasMaths   = selectedCourses.includes("maths");
+  const hasEnglish = selectedCourses.includes("english");
+  const hasBoth    = hasMaths && hasEnglish;
+  const selectedLang = selectedCourses.find(id => LANGUAGE_COURSES.includes(id));
+  const sym = currency === "NGN" ? "₦" : "£";
+
+  // Price summary for bottom bar
+  const paidCount = [hasMaths, hasEnglish].filter(Boolean).length;
+  const subtotal = hasBoth
+    ? PRICES.both[currency === "NGN" ? "ngn" : "gbp"]
+    : paidCount === 1
+    ? PRICES.maths[currency === "NGN" ? "ngn" : "gbp"]
+    : 0;
+  const afterTrial = subtotal > 0 ? `${sym}${subtotal.toLocaleString()} after free trial` : "";
+  const saving = hasBoth
+    ? (currency === "NGN" ? "Save ₦10,000" : "Save £5")
+    : "";
+
   const handleContinue = () => {
     if (selectedCourses.length === 0) return;
-    navigate("/onboarding/step2", { state: { selectedCourses, currency, curriculumRegion } });
+    navigate("/onboarding/step2", {
+      state: {
+        selectedCourses, currency,
+        curriculumRegion: "uk", // always UK (Oak) regardless of payment currency
+      },
+    });
   };
-
-  const getDisplayName = (name: string) =>
-    name.replace(/\s*\((UK|Nigerian)\s*Curriculum\)/i, "").trim();
-
-  const curriculumLabel = currency === "NGN" ? "🇳🇬 Nigerian Curriculum (NERDC)" : "🇬🇧 UK National Curriculum (Oak)";
-  const gradeRangeLabel = currency === "NGN" ? "Primary 1–6 & JSS 1–3" : "Year 1–11";
-
-  if (loading) return (
-    <Layout>
-      <div className="flex flex-col items-center justify-center h-[60vh]">
-        <Loader2 className="animate-spin text-[#3F2171] mb-4" size={40} />
-        <p className="font-black text-gray-300 uppercase italic text-[10px] tracking-widest">Loading Courses...</p>
-      </div>
-    </Layout>
-  );
-
-  const selectedLanguage = selectedCourses.find(id => LANGUAGE_COURSES.includes(id));
 
   return (
     <Layout>
-      <div className="max-w-7xl mx-auto px-6 py-10 md:px-12 md:py-16 animate-in fade-in duration-700">
-        <div className="mb-12">
-          <button onClick={() => navigate("/parent/dashboard")}
-            className="group flex items-center gap-2 text-gray-400 hover:text-[#3F2171] transition-colors mb-8">
-            <div className="p-2 bg-gray-50 rounded-xl group-hover:bg-[#3F2171]/10"><ChevronLeft size={20}/></div>
-            <span className="text-[10px] font-black uppercase tracking-[0.2em]">Back to Dashboard</span>
-          </button>
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 md:py-14 pb-36 animate-in fade-in duration-700">
 
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-8">
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-4">Step 1 of 4</p>
-              <h1 className="text-4xl md:text-6xl font-black text-gray-800 italic uppercase tracking-tighter leading-tight mb-4">
-                Choose <span className="text-[#3F2171]">Courses</span>
-              </h1>
-              <p className="text-gray-500 font-bold text-sm max-w-2xl">
-                Select subjects and <span className="text-[#3F2171] font-black">one</span> free language course.
-              </p>
-            </div>
+        {/* Back */}
+        <button onClick={() => navigate("/parent/dashboard")}
+          className="group flex items-center gap-2 text-gray-400 hover:text-[#3F2171] transition-colors mb-6">
+          <div className="p-2 bg-gray-50 rounded-xl group-hover:bg-[#3F2171]/10"><ChevronLeft size={18}/></div>
+          <span className="text-[10px] font-black uppercase tracking-[0.2em]">Back to Dashboard</span>
+        </button>
 
-            <div className="flex flex-col items-end gap-2">
-              <div className="flex bg-gray-100 p-1.5 rounded-[2.5rem] border-2 border-gray-200 shadow-inner">
-                <button onClick={() => setCurrency("NGN")}
-                  className={`px-8 py-4 rounded-[2rem] font-black text-[10px] tracking-widest transition-all ${currency === "NGN" ? "bg-white text-[#3F2171] shadow-lg" : "text-gray-400"}`}>
-                  🇳🇬 NAIRA (₦)
-                </button>
-                <button onClick={() => setCurrency("GBP")}
-                  className={`px-8 py-4 rounded-[2rem] font-black text-[10px] tracking-widest transition-all ${currency === "GBP" ? "bg-white text-[#3F2171] shadow-lg" : "text-gray-400"}`}>
-                  🇬🇧 POUNDS (£)
-                </button>
-              </div>
-              <p className="text-[9px] font-black uppercase tracking-widest text-gray-400">{curriculumLabel}</p>
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-5 mb-8">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-3">Step 1 of 4</p>
+            <h1 className="text-3xl sm:text-5xl font-black text-gray-800 italic uppercase tracking-tighter leading-tight">
+              Choose <span className="text-[#3F2171]">Courses</span>
+            </h1>
+            <p className="text-gray-500 font-bold text-sm mt-2">
+              Pick subjects — one language is always free. 1-month trial included.
+            </p>
+          </div>
+
+          {/* Currency toggle — payment only, not curriculum */}
+          <div className="flex flex-col items-start sm:items-end gap-1 w-full sm:w-auto">
+            <div className="flex bg-gray-100 p-1 rounded-2xl w-full sm:w-auto">
+              <button onClick={() => setCurrency("NGN")}
+                className={`flex-1 sm:flex-none px-5 py-3 rounded-xl font-black text-[10px] tracking-widest transition-all ${currency === "NGN" ? "bg-white text-[#3F2171] shadow" : "text-gray-400"}`}>
+                🇳🇬 Pay in ₦
+              </button>
+              <button onClick={() => setCurrency("GBP")}
+                className={`flex-1 sm:flex-none px-5 py-3 rounded-xl font-black text-[10px] tracking-widest transition-all ${currency === "GBP" ? "bg-white text-[#3F2171] shadow" : "text-gray-400"}`}>
+                🇬🇧 Pay in £
+              </button>
             </div>
+            <p className="text-[9px] text-gray-400 font-bold pl-1">
+              🇬🇧 UK National Curriculum (Oak Academy) · All payment currencies
+            </p>
           </div>
         </div>
 
-        {/* Language notice */}
-        {selectedLanguage && (
-          <div className="mb-6 px-6 py-4 bg-[#3F2171]/10 border-2 border-[#3F2171]/30 rounded-2xl flex items-center gap-3">
-            <Award size={18} className="text-[#3F2171]" />
-            <p className="text-sm font-black text-gray-700 uppercase tracking-wide">
-              1 free language selected: <span className="text-[#3F2171]">{selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)}</span>
-              <span className="text-gray-400 font-normal text-xs ml-2">(Select another to switch)</span>
+        {/* Bundle savings notice */}
+        {hasBoth && (
+          <div className="mb-5 px-5 py-3.5 bg-[#FFFF00]/20 border-2 border-[#FFFF00] rounded-2xl flex items-center gap-3">
+            <span className="text-lg">🎉</span>
+            <p className="text-sm font-black text-[#2A1650]">
+              Bundle discount applied! Both subjects = {sym}{PRICES.both[currency === "NGN" ? "ngn" : "gbp"].toLocaleString()} · {saving}
             </p>
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
-          {courses.map((course) => {
+        {selectedLang && (
+          <div className="mb-5 px-5 py-3.5 bg-[#3F2171]/10 border-2 border-[#3F2171]/30 rounded-2xl flex items-center gap-3">
+            <Award size={16} className="text-[#3F2171] shrink-0"/>
+            <p className="text-sm font-black text-gray-700">
+              Free language: <span className="text-[#3F2171]">{selectedLang.charAt(0).toUpperCase() + selectedLang.slice(1)}</span>
+              <span className="text-gray-400 font-normal text-xs ml-2">— select another to switch</span>
+            </p>
+          </div>
+        )}
+
+        {/* Course cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-4">
+          {COURSES.map(course => {
             const isSelected = selectedCourses.includes(course.id);
-            const isLanguage = LANGUAGE_COURSES.includes(course.id);
-            const price = currency === "NGN" ? course.price_ngn : course.price_gbp;
-            const originalPrice = currency === "NGN" ? course.original_price_ngn : course.original_price_gbp;
+            const isLang     = LANGUAGE_COURSES.includes(course.id);
+            const isPaid     = course.type === "paid";
+            const isInBundle = hasBoth && isPaid;
+
+            // Per-card price logic
+            let priceDisplay: React.ReactNode;
+            if (!isPaid) {
+              priceDisplay = (
+                <div className="text-center pt-5 border-t border-gray-100">
+                  <p className="text-3xl font-black text-[#1A7A4A] italic">FREE</p>
+                  <p className="text-[8px] font-black uppercase tracking-widest text-gray-400 mt-1">Full scholarship — always</p>
+                </div>
+              );
+            } else if (isInBundle) {
+              priceDisplay = (
+                <div className="text-center pt-5 border-t border-gray-100">
+                  <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest mb-1">First Month</p>
+                  <p className="text-3xl font-black text-[#1A7A4A] italic">FREE</p>
+                  <p className="text-[9px] font-black text-[#3F2171] mt-1">Bundled — {sym}{PRICES.both[currency === "NGN" ? "ngn" : "gbp"].toLocaleString()} for both</p>
+                </div>
+              );
+            } else {
+              const p = PRICES[course.id as "maths" | "english"][currency === "NGN" ? "ngn" : "gbp"];
+              priceDisplay = (
+                <div className="text-center pt-5 border-t border-gray-100">
+                  <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest mb-1">First Month</p>
+                  <p className="text-3xl font-black text-[#1A7A4A] italic">FREE</p>
+                  <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest mt-1">
+                    Then {sym}{p.toLocaleString()} / 3 months
+                  </p>
+                </div>
+              );
+            }
 
             return (
               <div key={course.id} onClick={() => toggleCourse(course.id)}
-                className={`relative bg-white rounded-[2.5rem] md:rounded-[3rem] p-8 md:p-10 border-4 cursor-pointer transition-all duration-500 group ${
-                  isSelected ? "border-[#3F2171] shadow-2xl -translate-y-2" : "border-gray-100 hover:border-gray-200 shadow-sm"
+                className={`relative bg-white rounded-[2rem] p-6 sm:p-8 border-4 cursor-pointer transition-all duration-300 ${
+                  isSelected ? "border-[#3F2171] shadow-xl -translate-y-1" : "border-gray-100 hover:border-gray-200 shadow-sm"
                 }`}>
 
-                {/* Language — radio indicator */}
-                {isLanguage && (
-                  <div className="absolute top-6 right-6 bg-[#3F2171] text-white px-4 py-2 rounded-2xl flex items-center gap-2 shadow-lg">
-                    <Award size={14} className="text-[#FFFF00]"/>
+                {isLang && (
+                  <div className="absolute top-5 right-5 bg-[#3F2171] text-white px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow">
+                    <Award size={12} className="text-[#FFFF00]"/>
                     <span className="text-[8px] font-black uppercase tracking-widest">Free · Pick 1</span>
                   </div>
                 )}
 
                 {isSelected && (
-                  <div className="absolute top-6 left-6 bg-[#3F2171] p-3 rounded-2xl text-white shadow-xl animate-in zoom-in duration-300">
-                    <CheckCircle2 size={20}/>
+                  <div className="absolute top-5 left-5 bg-[#3F2171] p-2 rounded-xl text-white shadow-lg">
+                    <CheckCircle2 size={18}/>
                   </div>
                 )}
 
-                <div className="mb-6 flex justify-center">
-                  <div className={`p-6 rounded-3xl ${isSelected ? "bg-[#3F2171]/10" : "bg-gray-50"} transition-colors`}>
-                    {course.id === "maths" ? <BookOpen size={40} className="text-blue-500"/>
-                      : course.id === "english" ? <BookOpen size={40} className="text-purple-500"/>
-                      : <GraduationCap size={40} className="text-[#3F2171]"/>}
+                <div className="mb-5 flex justify-center">
+                  <div className={`p-5 rounded-2xl ${isSelected ? "bg-[#3F2171]/10" : "bg-gray-50"} transition-colors`}>
+                    {course.id === "maths"   ? <BookOpen size={36} className="text-blue-500"/>
+                     : course.id === "english" ? <BookOpen size={36} className="text-purple-500"/>
+                     : <GraduationCap size={36} className="text-[#3F2171]"/>}
                   </div>
                 </div>
 
-                <h3 className="text-2xl md:text-3xl font-black text-gray-800 italic uppercase tracking-tighter mb-3 text-center">
-                  {getDisplayName(course.name)}
+                <h3 className="text-xl sm:text-2xl font-black text-gray-800 italic uppercase tracking-tighter mb-2 text-center">
+                  {course.name}
                 </h3>
-                <p className="text-gray-400 text-xs md:text-sm font-medium leading-relaxed mb-6 text-center min-h-[3rem]">
+                <p className="text-gray-400 text-xs font-medium leading-relaxed mb-5 text-center min-h-[2.5rem]">
                   {course.description}
                 </p>
 
-                <div className="text-center pt-6 border-t border-gray-100">
-                  {course.scholarship ? (
-                    <div>
-                      <p className="text-gray-400 text-sm line-through mb-1">
-                        {currency === "NGN" ? "₦" : "£"}{originalPrice?.toLocaleString()}
-                      </p>
-                      <p className="text-3xl font-black text-[#3F2171] italic">FREE</p>
-                      <p className="text-[8px] font-black uppercase tracking-widest text-gray-400 mt-2">Full Scholarship Applied</p>
-                    </div>
-                  ) : course.trial ? (
-                    <div>
-                      <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest mb-1">First Month</p>
-                      <p className="text-3xl font-black text-[#1A7A4A] italic">FREE</p>
-                      <p className="text-[8px] font-black uppercase tracking-widest text-gray-400 mt-1">
-                        Then from {currency === "NGN" ? "₦30,000" : "£15"} / 3 months
-                      </p>
-                    </div>
-                  ) : (
-                    <div>
-                      <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest mb-1">First Month</p>
-                      <p className="text-3xl font-black text-[#1A7A4A] italic">FREE</p>
-                      <p className="text-[8px] font-black uppercase tracking-widest text-gray-400 mt-1">
-                        Then from {currency === "NGN" ? "₦30,000" : "£15"} / 3 months
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {(course.grades || course.grade_labels) && (
-                  <div className="mt-4 text-center">
-                    <span className="text-[8px] font-black uppercase tracking-widest text-gray-400 bg-gray-50 px-3 py-2 rounded-lg">
-                      {curriculumLabel.split("(")[0].trim()} • {gradeRangeLabel}
-                    </span>
-                  </div>
-                )}
+                {priceDisplay}
               </div>
             );
           })}
         </div>
 
+        {/* Maths + English bundle hint */}
+        {(hasMaths || hasEnglish) && !hasBoth && (
+          <p className="text-center text-xs font-bold text-gray-400 mt-2">
+            💡 Add both Maths & English to unlock the bundle price ({sym}{PRICES.both[currency === "NGN" ? "ngn" : "gbp"].toLocaleString()} instead of {sym}{(PRICES.maths[currency === "NGN" ? "ngn" : "gbp"] * 2).toLocaleString()})
+          </p>
+        )}
+
+        {/* Fixed CTA */}
         {selectedCourses.length > 0 && (
-          <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t-2 border-gray-100 p-6 md:p-8 z-[60] shadow-[0_-20px_50px_rgba(0,0,0,0.08)] animate-in slide-in-from-bottom duration-500">
-            <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">
-                  {selectedCourses.length} Course{selectedCourses.length !== 1 ? "s" : ""} Selected
+          <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t-2 border-gray-100 p-4 sm:p-6 z-[60] shadow-[0_-10px_30px_rgba(0,0,0,0.06)]">
+            <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="text-center sm:text-left">
+                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">
+                  {selectedCourses.length} course{selectedCourses.length !== 1 ? "s" : ""} selected
                 </p>
-                <p className="text-sm font-bold text-gray-600">
-                  {selectedCourses.map(id => courses.find(c => c.id === id)?.name.split(" ")[0]).join(", ")}
+                <p className="text-sm font-bold text-gray-700">
+                  {selectedCourses.map(id => COURSES.find(c => c.id === id)?.name).join(", ")}
                 </p>
-                <p className="text-[9px] font-bold text-[#1A7A4A] mt-0.5">🎁 1-month free trial · No payment today</p>
+                <p className="text-[9px] font-bold text-[#1A7A4A] mt-0.5">
+                  🎁 First month free · No payment today{afterTrial ? ` · ${afterTrial}` : ""}
+                  {saving ? ` · ${saving}` : ""}
+                </p>
               </div>
               <button onClick={handleContinue}
-                className="group flex items-center justify-center gap-4 bg-[#3F2171] text-white px-10 py-6 rounded-[2.5rem] font-black uppercase text-[11px] tracking-widest shadow-2xl hover:bg-black transition-all border-b-4 border-[#1E1038] active:translate-y-1 active:border-b-0 w-full md:w-auto">
+                className="group flex items-center justify-center gap-3 bg-[#3F2171] text-white px-8 py-5 rounded-[2rem] font-black uppercase text-[11px] tracking-widest shadow-xl hover:bg-black transition-all border-b-4 border-[#1E1038] active:translate-y-1 active:border-b-0 w-full sm:w-auto">
                 Continue to Grade Selection
-                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform"/>
+                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform"/>
               </button>
             </div>
           </div>

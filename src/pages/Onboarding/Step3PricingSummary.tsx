@@ -17,7 +17,7 @@ interface Tier {
 // Paid tiers only — 1 month is the FREE TRIAL, not a paid option
 const TIERS: Tier[] = [
   {
-    months: 3,  label: "3 Months",  priceNGN: 30000, priceGBP: 15,
+    months: 3,  label: "3 Months",  priceNGN: 20000, priceGBP: 10,
     savingsPct: null, popular: false, days: 90,  perMonthNGN: 10000,
   },
   {
@@ -63,7 +63,7 @@ export default function Step3PricingSummary() {
 
   return (
     <Layout>
-      <div className="max-w-3xl mx-auto px-6 py-10 md:px-12 md:py-16 pb-40">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10 md:px-12 md:py-16 pb-40">
         {/* Back */}
         <button onClick={() => navigate(-1)}
           className="group flex items-center gap-2 text-gray-400 hover:text-[#3F2171] transition-colors mb-8">
@@ -73,7 +73,7 @@ export default function Step3PricingSummary() {
 
         <div className="mb-8">
           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-4">Step 3 of 4</p>
-          <h1 className="text-4xl md:text-5xl font-black text-gray-800 italic uppercase tracking-tighter leading-tight mb-3">
+          <h1 className="text-3xl sm:text-5xl font-black text-gray-800 italic uppercase tracking-tighter leading-tight mb-3">
             Choose Your <span className="text-[#3F2171]">Plan</span>
           </h1>
           <p className="text-gray-500 font-bold text-sm max-w-xl">
@@ -182,7 +182,7 @@ export default function Step3PricingSummary() {
 
         {/* Fixed footer CTA */}
         <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t-2 border-gray-100 p-5 z-[60]">
-          <div className="max-w-3xl mx-auto flex items-center justify-between gap-6">
+          <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
             {!freeOnly && (
               <div className="min-w-0">
                 <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Selected Plan</p>

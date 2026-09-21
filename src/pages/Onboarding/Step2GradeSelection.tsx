@@ -16,7 +16,7 @@ export default function Step2GradeSelection() {
   const includesMaths   = selectedCourses?.includes("maths");
   const includesEnglish = selectedCourses?.includes("english");
   const bothSelected    = includesMaths && includesEnglish;
-  const isNigerian      = currency === "NGN" || curriculumRegion === "nigeria";
+  const isNigerian      = false; // Always UK curriculum (Oak) regardless of currency
 
   // Skip step if no academic subjects
   if (!includesMaths && !includesEnglish) {
@@ -101,11 +101,11 @@ export default function Step2GradeSelection() {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-4 md:grid-cols-6 gap-3">
+          <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 sm:gap-3">
             {ukGrades.map(g => (
               <button key={g} onClick={() => { onSelect(g); setError(null); }}
                 className={`p-5 rounded-2xl font-black transition-all duration-300 ${selected === g ? colors.active : "bg-gray-50 text-gray-600 hover:bg-gray-100 hover:scale-105"}`}>
-                <p className="text-xl font-black italic">Y{g}</p>
+                <p className="text-lg sm:text-xl font-black italic">Y{g}</p>
                 <p className="text-[7px] font-black uppercase tracking-widest mt-1 opacity-60">{getFrameworkLabel(g)}</p>
               </button>
             ))}
@@ -125,7 +125,7 @@ export default function Step2GradeSelection() {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto px-6 py-10 md:px-12 md:py-16 animate-in fade-in duration-700">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-10 pb-36 md:px-12 md:py-16 animate-in fade-in duration-700">
         <button onClick={() => navigate(-1)}
           className="group flex items-center gap-2 text-gray-400 hover:text-[#3F2171] transition-colors mb-8">
           <div className="p-2 bg-gray-50 rounded-xl group-hover:bg-[#3F2171]/10"><ChevronLeft size={20}/></div>
