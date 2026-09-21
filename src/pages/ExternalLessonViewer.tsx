@@ -88,6 +88,28 @@ export default function ExternalLessonViewer() {
       const res = await api.get(ep);
       setLesson(res.data.lesson);
       if (res.data.progress?.status === "completed") { setQuizSubmitted(true); }
+
+      // Mark lesson as started immediately so the next lesson unlocks
+      // (The lock check requires a progress record to exist for the previous lesson)
+      if (res.data.progress?.status !== "completed") {
+        const progressEp = sid
+          ? `/external/lessons/${id}/progress?student_id=${sid}`
+          : `/external/lessons/${id}/progress`;
+        api.post(progressEp, { status: "in_progress" }).catch(() => {});
+      }
+
+      // If no quiz available, auto-complete the lesson (nothing to pass)
+      const lessonData = res.data.lesson;
+      const hasQuiz = lessonData?.quiz_data &&
+        JSON.parse(typeof lessonData.quiz_data === "string" ? lessonData.quiz_data : "[]").length > 0;
+      if (!hasQuiz && res.data.progress?.status !== "completed") {
+        const completeEp = sid
+          ? `/external/lessons/${id}/progress?student_id=${sid}`
+          : `/external/lessons/${id}/progress`;
+        api.post(completeEp, { status: "completed" }).catch(() => {});
+        setQuizSubmitted(true); // hide quiz section
+      }
+
     } catch (err: any) {
       console.error('Lesson fetch error:', err);
       const status = err?.response?.status;
