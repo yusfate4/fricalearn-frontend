@@ -223,14 +223,17 @@ export default function ParentDashboard() {
                           <div className="bg-gray-50 rounded-xl p-3 text-center">
                             <BookOpen size={16} className="text-[#3F2171] mx-auto mb-1"/>
                             <p className="text-[9px] font-black uppercase tracking-widest text-gray-400">Subjects</p>
-                            <p className="text-sm font-black text-gray-700 mt-0.5">
+                            <p className="text-xs font-black text-gray-700 mt-0.5 leading-tight">
                               {(() => {
                                 try {
-                                  const c = typeof child.selected_courses === "string"
+                                  const list = typeof child.selected_courses === "string"
                                     ? JSON.parse(child.selected_courses)
                                     : (child.selected_courses || []);
-                                  return c.filter((x: string) => ["maths","english"].includes(x)).length || "—";
-                                } catch { return "—"; }
+                                  const paid = list.filter((x: string) => ["maths","english"].includes(x));
+                                  if (paid.length === 2) return "Maths + English";
+                                  if (paid.length === 1) return paid[0] === "maths" ? "Maths" : "English";
+                                  return "Language";
+                                } catch { return "Enrolled"; }
                               })()}
                             </p>
                           </div>
@@ -324,8 +327,8 @@ export default function ParentDashboard() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {[
                   { icon: BookOpen,      label: "Start Onboarding",   desc: "Enrol a new child",            action: () => navigate("/onboarding/step1") },
-                  { icon: GraduationCap, label: "Learning Hub",       desc: "Browse all subjects",          action: () => navigate("/courses") },
-                  { icon: Headphones,    label: "Get Support",        desc: "Email hello@fricalearn.com",   action: () => window.location.href = "mailto:hello@fricalearn.com" },
+                  { icon: GraduationCap, label: "Curriculum",         desc: "UK National Curriculum info",  action: () => window.open("https://www.thenational.academy", "_blank") },
+                  { icon: Headphones,    label: "Get Support",        desc: "hello@fricalearn.com",          action: () => window.open("mailto:hello@fricalearn.com", "_self") },
                 ].map(({ icon: Icon, label, desc, action }) => (
                   <button key={label} onClick={action}
                     className="bg-white border-2 border-gray-100 rounded-2xl p-5 flex items-center gap-4 hover:border-[#3F2171]/30 hover:shadow-md transition-all text-left group">
