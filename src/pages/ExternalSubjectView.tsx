@@ -223,17 +223,27 @@ export default function ExternalSubjectView() {
                                   {lesson.title}
                                 </h4>
                                 <p className="text-gray-400 text-sm mb-2">
-                                  {isLocked 
-                                    ? "🔒 Locked until previous lesson complete" 
-                                    : "Interactive video, slides & quiz available"}
+                                  {isLocked
+                                    ? "Complete and open the previous lesson first"
+                                    : lesson.prev_quiz_passed === false
+                                    ? "Read this lesson freely — pass the previous quiz to unlock your quiz here"
+                                    : isCompleted
+                                    ? "Lesson complete — review anytime"
+                                    : "Video, slides and quiz available"}
                                 </p>
                                 <div className="flex flex-wrap items-center gap-4">
                                   <span
                                     className={`text-[10px] font-black uppercase italic ${
-                                      isLocked ? "text-gray-300" : isCompleted ? "text-gray-400" : "text-[#3F2171]"
+                                      isLocked ? "text-gray-300" : isCompleted ? "text-green-600" : "text-[#3F2171]"
                                     }`}
                                   >
-                                    {isLocked ? "Locked" : isCompleted ? `Completed • Score: ${userProgress.quiz_score}%` : "Available"}
+                                    {isLocked
+                                      ? "Complete previous lesson first"
+                                      : isCompleted
+                                      ? `Passed • Score: ${userProgress?.quiz_score ?? 0}%`
+                                      : lesson.prev_quiz_passed === false
+                                      ? "Read available • Pass previous quiz to unlock yours"
+                                      : "Available"}
                                   </span>
                                 </div>
                               </div>
@@ -241,14 +251,22 @@ export default function ExternalSubjectView() {
 
                             <button
                               disabled={isLocked}
-                              onClick={() => navigate(`/external-lessons/${lesson.id}`)}
+                              onClick={() => !isLocked && navigate(`/external-lessons/${lesson.id}`)}
                               className={`w-full lg:w-auto px-10 py-5 rounded-[1.5rem] font-black text-xs uppercase tracking-[0.2em] transition-all shadow-xl flex items-center justify-center gap-3 ${
                                 isLocked
                                   ? "bg-gray-200 text-gray-400 cursor-not-allowed shadow-none"
+                                  : lesson.prev_quiz_passed === false && !isCompleted
+                                  ? "bg-[#3F2171]/60 text-white hover:bg-[#3F2171] active:scale-95"
                                   : "bg-[#3F2171] text-white hover:bg-black active:scale-95 hover:-translate-y-1"
                               }`}
                             >
-                              {isLocked ? "Locked" : isCompleted ? "Review" : "Start Now"}
+                              {isLocked
+                                ? "Locked"
+                                : isCompleted
+                                ? "Review"
+                                : lesson.prev_quiz_passed === false
+                                ? "Read Lesson"
+                                : "Start Now"}
                               {!isLocked && <ChevronRight size={16} />}
                             </button>
                           </div>

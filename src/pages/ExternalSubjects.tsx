@@ -80,7 +80,7 @@ const ExternalSubjects = () => {
           <div>
             <h2 className="text-4xl md:text-5xl font-black text-gray-800 tracking-tighter italic uppercase leading-none">
               Bonus{" "}
-              <span className="text-[#2D5A27]">Subjects</span>
+              <span className="text-[#3F2171]">Subjects</span>
             </h2>
             <div className="text-gray-400 font-bold mt-4 uppercase text-[10px] tracking-[0.3em] flex items-center gap-2">
               <Sparkles size={14} className="text-[#F4B400]" />
@@ -89,7 +89,7 @@ const ExternalSubjects = () => {
           </div>
 
           <div className="flex items-center gap-3 bg-white px-6 py-4 rounded-2xl shadow-sm border-2 border-gray-50">
-            <GraduationCap size={20} className="text-[#2D5A27]" />
+            <GraduationCap size={20} className="text-[#3F2171]" />
             <div className="text-left">
               <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
                 Your Level
@@ -103,7 +103,7 @@ const ExternalSubjects = () => {
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20">
-            <Loader2 className="animate-spin text-[#2D5A27] mb-4" size={40} />
+            <Loader2 className="animate-spin text-[#3F2171] mb-4" size={40} />
             <p className="text-[10px] font-black uppercase text-gray-300 tracking-[0.3em]">
               Loading Subjects...
             </p>
@@ -150,7 +150,7 @@ const ExternalSubjects = () => {
 
                       <div className="mt-auto flex items-center justify-between border-t border-gray-50 pt-8">
                         <div className="flex items-center gap-4 text-gray-400 font-black text-[10px] uppercase tracking-widest">
-                          <BookOpen size={14} className="text-[#2D5A27]" />
+                          <BookOpen size={14} className="text-[#3F2171]" />
                           <span>{subject.topics?.length || 0} Topics</span>
                         </div>
 
@@ -161,13 +161,13 @@ const ExternalSubjects = () => {
                           </p>
                           <div className="w-24 h-2 bg-gray-100 rounded-full overflow-hidden">
                             <div
-                              className="h-full bg-[#2D5A27] transition-all duration-500"
+                              className="h-full bg-[#3F2171] transition-all duration-500"
                               style={{ width: `${subject.pivot.progress_percentage}%` }}
                             ></div>
                           </div>
                         </div>
 
-                        <div className="w-12 h-12 rounded-[1.2rem] bg-gray-900 group-hover:bg-[#2D5A27] flex items-center justify-center transition-all duration-500 shadow-lg">
+                        <div className="w-12 h-12 rounded-[1.2rem] bg-gray-900 group-hover:bg-[#3F2171] flex items-center justify-center transition-all duration-500 shadow-lg">
                           <ChevronRight className="text-white" size={20} />
                         </div>
                       </div>
@@ -179,17 +179,17 @@ const ExternalSubjects = () => {
               <div className="text-center py-32 bg-gray-50 rounded-[4rem] border-4 border-dashed border-gray-100 max-w-2xl mx-auto">
                 <AlertCircle
                   size={40}
-                  className="text-[#2D5A27] opacity-40 mx-auto mb-8"
+                  className="text-[#3F2171] opacity-40 mx-auto mb-8"
                 />
                 <h3 className="text-3xl font-black text-gray-800 mb-4 italic uppercase tracking-tighter">
                   No bonus subjects yet
                 </h3>
                 <p className="text-gray-400 font-bold text-sm max-w-xs mx-auto mb-8">
-                  Complete your African language enrollment to unlock Maths and English!
+                  Your enrolled Maths and English subjects will appear here.
                 </p>
                 <button
-                  onClick={() => navigate("/courses")}
-                  className="px-8 py-4 bg-gray-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-[#2D5A27] transition-all"
+                  onClick={() => navigate("/parent/dashboard")}
+                  className="px-8 py-4 bg-gray-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-[#3F2171] transition-all"
                 >
                   Browse Courses
                 </button>
