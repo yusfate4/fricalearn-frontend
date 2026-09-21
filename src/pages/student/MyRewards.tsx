@@ -71,7 +71,7 @@ export default function MyRewards() {
             </h1>
             <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px] mt-4 flex items-center gap-2">
               <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" />
-              Your redeemed Yoruba treasures
+              Your redeemed rewards will appear here.
             </p>
           </div>
           <Link
