@@ -15,6 +15,19 @@ export default function ExternalSubjectView() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [subject, setSubject] = useState<any>(null);
+
+  // Compute real progress from lesson userProgress data
+  const computedProgress = React.useMemo(() => {
+    if (!subject?.topics) return 0;
+    let total = 0, completed = 0;
+    for (const topic of subject.topics) {
+      for (const lesson of (topic.lessons || [])) {
+        total++;
+        if (lesson.userProgress?.[0]?.status === "completed") completed++;
+      }
+    }
+    return total > 0 ? Math.round((completed / total) * 100) : 0;
+  }, [subject]);
   const [loading, setLoading] = useState(true);
   const [expandedTopic, setExpandedTopic] = useState<number | null>(null);
 
@@ -121,12 +134,12 @@ export default function ExternalSubjectView() {
               <div className="space-y-2 mt-2 max-w-md">
                 <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-gray-400">
                   <span>Course Progress</span>
-                  <span>{subject.progress_percentage || 0}% Complete</span>
+                  <span>{computedProgress}% Complete</span>
                 </div>
                 <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-[#3F2171] transition-all duration-500 rounded-full"
-                    style={{ width: `${subject.progress_percentage || 0}%` }}
+                    style={{ width: `${computedProgress}%` }}
                   ></div>
                 </div>
               </div>

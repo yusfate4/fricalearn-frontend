@@ -159,11 +159,14 @@ const ExternalSubjects = () => {
                           <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
                             Progress
                           </p>
-                          <div className="w-24 h-2 bg-gray-100 rounded-full overflow-hidden">
-                            <div
-                              className="h-full bg-[#3F2171] transition-all duration-500"
-                              style={{ width: `${subject.pivot.progress_percentage}%` }}
-                            ></div>
+                          <div className="flex items-center gap-2">
+                            <div className="w-20 h-2 bg-gray-100 rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-[#3F2171] transition-all duration-500"
+                                style={{ width: `${subject.pivot?.progress_percentage || 0}%` }}
+                              ></div>
+                            </div>
+                            <span className="text-[10px] font-black text-gray-400">{subject.pivot?.progress_percentage || 0}%</span>
                           </div>
                         </div>
 
