@@ -7,17 +7,18 @@ import {
 } from "lucide-react";
 
 const SATURDAY_SLOTS = [
-  { label: "7:00 AM",  hour: 7,  minute: 0,  tag: "Morning Class"  },
-  { label: "1:00 PM",  hour: 13, minute: 0,  tag: "Afternoon Class" },
+  { label: "8:00 AM",  hour: 7,  minute: 0,  tag: "Morning Class"  },
+  { label: "2:00 PM",  hour: 13, minute: 0,  tag: "Afternoon Class" },
 ];
 
 function nextSaturday(hour: number, minute: number): string {
   const now = new Date();
   const sat = new Date(now);
-  sat.setDate(now.getDate() + ((6 - now.getDay() + 7) % 7 || 7));
-  sat.setHours(hour, minute, 0, 0);
-  // Convert WAT (UTC+1) to UTC for storage
-  return new Date(sat.getTime() - 60 * 60 * 1000).toISOString().slice(0, 16);
+  const daysUntilSat = (6 - now.getDay() + 7) % 7 || 7;
+  sat.setDate(now.getDate() + daysUntilSat);
+  // Set time in WAT (UTC+1): subtract 1 hour to store as UTC
+  sat.setUTCHours(hour - 1, minute, 0, 0);
+  return sat.toISOString().slice(0, 16);
 }
 
 export default function ManageLiveClasses() {
@@ -37,8 +38,11 @@ export default function ManageLiveClasses() {
   const fetch = async () => {
     setLoading(true);
     try {
-      const res = await api.get("/admin/live-classes");
-      setClasses(Array.isArray(res.data) ? res.data : []);
+      const res = await api.get("/admin/live-classes/admin-data");
+      const all = res.data?.upcoming || res.data?.past
+        ? [...(res.data.upcoming || []), ...(res.data.past || [])]
+        : (Array.isArray(res.data) ? res.data : []);
+      setClasses(all);
     } catch(e) { console.error(e); }
     finally { setLoading(false); }
   };
@@ -54,12 +58,8 @@ export default function ManageLiveClasses() {
         description: "Weekly group learning session - Yoruba, Maths and English practice with your tutor.",
         scheduled_at,
         duration_minutes: 90,
-        is_paid: false,
-        price: null,
-        meeting_url: "",
-        is_active: true,
         status: "scheduled",
-        max_students: 50,
+        max_attendees: 50,
       });
       setSuccess(`Scheduled: ${slot.tag} for next Saturday at ${slot.label} (Nigeria time)`);
       setTimeout(() => setSuccess(null), 4000);
@@ -78,12 +78,8 @@ export default function ManageLiveClasses() {
         description: form.description,
         scheduled_at: form.scheduled_at,
         duration_minutes: form.duration_minutes,
-        is_paid: form.is_paid,
-        price: form.is_paid ? Number(form.price) : null,
-        meeting_url: "",
-        is_active: true,
         status: "scheduled",
-        max_students: 50,
+        max_attendees: 50,
       });
       setShowManual(false);
       setForm({ title: "", description: "", scheduled_at: "", duration_minutes: 60, is_paid: false, price: "" });
