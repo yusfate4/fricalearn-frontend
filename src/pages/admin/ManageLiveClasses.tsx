@@ -7,8 +7,8 @@ import {
 } from "lucide-react";
 
 const SATURDAY_SLOTS = [
-  { label: "8:00 AM",  hour: 7,  minute: 0,  tag: "Morning Class"  },
-  { label: "2:00 PM",  hour: 13, minute: 0,  tag: "Afternoon Class" },
+  { label: "9:00 AM",  hour: 7,  minute: 0,  tag: "Morning Class"  },
+  { label: "3:00 PM",  hour: 13, minute: 0,  tag: "Afternoon Class" },
 ];
 
 function nextSaturday(hour: number, minute: number): string {
