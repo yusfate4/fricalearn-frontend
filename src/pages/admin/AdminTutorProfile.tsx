@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { TutorShell } from "../../components/admin/TutorShell";
 import api from "../../api/axios";
 
 import { 
@@ -63,7 +64,8 @@ export default function AdminTutorProfile() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-8 animate-in fade-in duration-700">
+    <TutorShell title="My Profile">
+    <div className="max-w-2xl mx-auto animate-in fade-in duration-500">
       <div className="mb-10">
         <h1 className="text-4xl font-black text-[#1A1A40] italic uppercase tracking-tighter">Tutor Credentials</h1>
         <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">
@@ -138,5 +140,6 @@ export default function AdminTutorProfile() {
         <ShieldCheck size={12} /> Verified Staff Member
       </div>
     </div>
+    </TutorShell>
   );
 }

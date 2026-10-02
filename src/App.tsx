@@ -22,7 +22,7 @@ import CookieConsent from "./components/CookieConsent";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
-import ChildProgressView from "./pages/parent/ChildProgressView";
+import ParentProgressView from "./pages/ParentProgressView";
 import StudentAnalytics from "./pages/student/StudentAnalytics";
 import LiveRoom from "./pages/LiveRoom";
 import VerifyNotice from "./pages/VerifyNotice"; 
@@ -74,7 +74,7 @@ import AdminPayments from "./pages/admin/AdminPayments";
 import AdminMasterSchedule from "./pages/admin/AdminMasterSchedule";
 import AdminCourseList from "./pages/admin/AdminCourseList";
 import AdminPaymentVerify from "./pages/admin/AdminPaymentVerify"; 
-import AdminTutorProfile from "./components/AdminTutorProfile"; 
+import AdminTutorProfile from "./pages/admin/AdminTutorProfile"; 
 import TutorDashboard from "./pages/admin/TutorDashboard";
 
 function App() {
@@ -180,10 +180,6 @@ function App() {
                     element={user?.role === "parent" ? <ParentDashboard /> : <Navigate to="/dashboard" />}
                   />
                   <Route
-                    path="/parent/progress/:childId"
-                    element={user?.role === "parent" ? <ChildProgressView /> : <Navigate to="/login" />}
-                  />
-                  <Route
                     path="/parent/messages"
                     element={user?.role === "parent" ? <ParentMessages /> : <Navigate to="/dashboard" />}
                   />
@@ -209,9 +205,7 @@ function App() {
                   <Route path="/leaderboard" element={canAccessStudentArea ? <Leaderboard /> : <Navigate to="/parent/dashboard" />} />
                   <Route path="/store" element={canAccessStudentArea ? <RewardsCatalog /> : <Navigate to="/parent/dashboard" />} />
                   <Route path="/my-rewards" element={canAccessStudentArea ? <MyRewards /> : <Navigate to="/parent/dashboard" />} />
-                  <Route path="/my-treasures" element={canAccessStudentArea ? <MyRewards /> : <Navigate to="/parent/dashboard" />} />
                   <Route path="/olu-chat" element={canAccessStudentArea ? <OluChat /> : <Navigate to="/parent/dashboard" />} />
-                  <Route path="/ai-tutor" element={canAccessStudentArea ? <OluChat /> : <Navigate to="/parent/dashboard" />} />
                   <Route path="/analytics/:userId?" element={canAccessStudentArea ? <StudentAnalytics /> : <Navigate to="/parent/dashboard" />} />
                   <Route path="/live-room/:id" element={<LiveRoom />} />
 
@@ -220,14 +214,15 @@ function App() {
                   <Route path="/admin/add-lesson" element={isStaff ? <AdminAddLesson /> : <Navigate to="/dashboard" />} />
                   <Route path="/admin/edit-lesson/:id" element={isStaff ? <AdminEditLesson /> : <Navigate to="/dashboard" />} />
                   <Route path="/admin/courses" element={isStaff ? <AdminCourses /> : <Navigate to="/dashboard" />} />
-                  <Route path="/admin/users" element={isStaff ? <AdminUsers /> : <Navigate to="/dashboard" />} />
-                  <Route path="/admin/parents" element={isStaff ? <AdminParentPortal /> : <Navigate to="/dashboard" />} />
+                  <Route path="/admin/users" element={isActuallyAdmin ? <AdminUsers /> : <Navigate to="/admin" />} />
+                  <Route path="/admin/parents" element={isActuallyAdmin ? <AdminParentPortal /> : <Navigate to="/admin" />} />
                   <Route path="/admin/questions" element={isStaff ? <AdminQuiz /> : <Navigate to="/dashboard" />} />
                   <Route path="/admin/schedule" element={isStaff ? <AdminMasterSchedule /> : <Navigate to="/dashboard" />} />
                   <Route path="/admin/analytics" element={isStaff ? <AdminAnalytics /> : <Navigate to="/dashboard" />} />
                   <Route path="/admin/live-classes" element={isStaff ? <ManageLiveClasses /> : <Navigate to="/dashboard" />} />
                   <Route path="/admin/courses/list" element={isStaff ? <AdminCourseList /> : <Navigate to="/dashboard" />} />
                   <Route path="/admin/profile" element={isStaff ? <AdminTutorProfile /> : <Navigate to="/dashboard" />} />
+                  <Route path="/tutor/profile" element={isTutor ? <AdminTutorProfile /> : <Navigate to="/admin" />} />
                   
                   {/* Enrollment History Path (Accessible to both Admin & Tutor) */}
                   <Route path="/admin/payments/history" element={isStaff ? <AdminPaymentVerify /> : <Navigate to="/admin" />} />
