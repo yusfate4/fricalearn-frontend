@@ -223,7 +223,7 @@ export default function LessonPlayer() {
           <div className="bg-white p-12 md:p-24 rounded-[3.5rem] shadow-2xl border-4 border-gray-50 text-center animate-in zoom-in-95 duration-500">
             <div className="text-9xl mb-10 animate-bounce">🦒</div>
             <h2 className="text-4xl md:text-5xl font-black text-gray-800 mb-6 italic uppercase tracking-tighter">
-              Ó tọ́ díẹ̀, {studentName}!
+              Welldone, {studentName}!
             </h2>
             <p className="text-gray-400 font-bold mb-10 text-xl leading-relaxed">
               Every master was once a student. <br/> Review Tutor's notes and try one more time!
