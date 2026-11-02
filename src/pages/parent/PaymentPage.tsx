@@ -112,15 +112,15 @@ export default function PaymentPage() {
               <div className="space-y-6">
                 {/* 🇳🇬 NGN Account */}
                 <div>
-                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Naira (PROVIDUS BANK)</p>
-                  <p className="text-lg font-black text-gray-800 tracking-tight">1309393680</p>
+                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">🇳🇬 Naira (TAJ Bank Ltd)</p>
+                  <p className="text-lg font-black text-gray-800 tracking-tight">0016979388</p>
                   <p className="text-[10px] font-bold text-gray-500 uppercase">FRICA SOLUTION LIMITED</p>
                 </div>
 
-                {/* 🇬🇧 GBP Account */}
+                {/* 🇬🇧 Dollar Account */}
                 <div>
-                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Pounds (Monzo/Revolut)</p>
-                  <p className="text-lg font-black text-gray-800 tracking-tight">012345678</p>
+                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">🇬🇧 Dollar (TAJ Bank Ltd)</p>
+                  <p className="text-lg font-black text-gray-800 tracking-tight">0016979395</p>
                   <p className="text-[10px] font-bold text-gray-500 uppercase">FRICA SOLUTION LIMITED</p>
                 </div>
               </div>
