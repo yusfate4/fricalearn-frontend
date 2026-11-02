@@ -200,7 +200,7 @@ export default function Leaderboard() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <p className="font-black text-sm text-gray-700 uppercase italic tracking-tight truncate">
-                            {p.user?.name || "Student"}
+                            {p.user?.name?.split(" ")[0] || "Student"}
                             {isMe && <span className="ml-1 text-[#3F2171] text-[9px]">(you)</span>}
                           </p>
                           <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full flex-shrink-0 ${cfg.bg} ${cfg.text}`}>

@@ -11,22 +11,58 @@ const AI_LIMIT = 60; // ✅ Reduced to 60 minutes
 
 export default function OluChat() {
   const { user } = useAuth();
-  const studentName      = user?.name || "Explorer";
+
+  // When a parent is viewing a child's portal, active_student_id is set in localStorage.
+  // In that case we must greet the child by name, not the parent.
+  const activeStudentId = localStorage.getItem("active_student_id");
+  const isParentImpersonating = user?.role === "parent" && !!activeStudentId;
+
+  const [studentName, setStudentName] = useState<string>("Explorer");
   const learningLanguage = user?.student_profile?.learning_language || "Learning";
 
   const [minutesUsed, setMinutesUsed]     = useState(user?.student_profile?.daily_ai_minutes || 0);
   const [isLimitReached, setIsLimitReached] = useState(false);
 
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: "assistant",
-      content: `Hi ${studentName}! I'm your AI Tutor. I can help you with Maths, English, Yoruba, Igbo, or Hausa. What would you like to work on today? 📚`,
-    },
-  ]);
-
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput]   = useState("");
   const [loading, setLoading] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+
+  // Resolve the correct name to greet:
+  // - If parent is impersonating a child → fetch child name from /students/{id}/info
+  // - Otherwise → use the authenticated user's own name
+  useEffect(() => {
+    if (isParentImpersonating) {
+      // FIX D03: Use confirmed route /students/{id}/info (not /profile)
+      api.get(`/students/${activeStudentId}/info`)
+        .then(res => {
+          const name = res.data?.name || "Explorer";
+          const firstName = name.split(" ")[0];
+          setStudentName(firstName);
+          setMessages([{
+            role: "assistant",
+            content: `Hi ${firstName}! I'm your AI Tutor. I can help you with Maths, English, Yoruba, Igbo, or Hausa. What would you like to work on today? 📚`,
+          }]);
+        })
+        .catch(() => {
+          // Fallback: use parent name stripped — better than wrong full name
+          const fallback = user?.name?.split(" ")[0] || "Explorer";
+          setStudentName(fallback);
+          setMessages([{
+            role: "assistant",
+            content: `Hi ${fallback}! I'm your AI Tutor. I can help you with Maths, English, Yoruba, Igbo, or Hausa. What would you like to work on today? 📚`,
+          }]);
+        });
+    } else {
+      const name = user?.name?.split(" ")[0] || "Explorer";
+      setStudentName(name);
+      setMessages([{
+        role: "assistant",
+        content: `Hi ${name}! I'm your AI Tutor. I can help you with Maths, English, Yoruba, Igbo, or Hausa. What would you like to work on today? 📚`,
+      }]);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id, activeStudentId]);
 
   useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
 
@@ -78,7 +114,6 @@ export default function OluChat() {
               <Bot size={24}/>
             </div>
             <div>
-              {/* ✅ Renamed to "AI Tutor" */}
               <h2 className="font-black text-gray-800 uppercase italic tracking-tighter">AI Tutor</h2>
               <div className="flex items-center gap-2">
                 <Clock size={12} className={isLimitReached ? "text-red-500" : "text-purple-500"}/>

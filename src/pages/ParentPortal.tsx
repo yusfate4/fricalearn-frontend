@@ -44,7 +44,7 @@ export default function ParentPortal() {
       <div className="max-w-md">
          <div className="text-6xl mb-6">🏜️</div>
          <h1 className="text-2xl font-black text-gray-800 uppercase italic tracking-tighter">Access Link Expired</h1>
-         <p className="text-gray-400 font-bold mt-2 leading-relaxed">Please ask Yusuf for a fresh progress link for your child.</p>
+         <p className="text-gray-400 font-bold mt-2 leading-relaxed">This link may have expired. Please contact <a href="mailto:hello@fricalearn.com" className="text-[#3F2171] font-black underline">hello@fricalearn.com</a> for a fresh progress report link.</p>
       </div>
     </div>
   );

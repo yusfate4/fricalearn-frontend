@@ -29,7 +29,7 @@ export default function ParentProgressView() {
 
   if (loading) return (
     <div className="min-h-screen bg-orange-50/30 flex items-center justify-center p-10 text-center">
-      <div className="animate-bounce text-orange-400 font-black text-2xl italic">Loading Ayo's Success...</div>
+      <div className="animate-bounce text-orange-400 font-black text-2xl italic">Loading progress report...</div>
     </div>
   );
 
@@ -38,7 +38,7 @@ export default function ParentProgressView() {
       <div className="max-w-md">
          <p className="text-4xl mb-4">🏠</p>
          <h1 className="text-2xl font-black text-gray-800 uppercase italic">Link Expired</h1>
-         <p className="text-gray-400 font-bold mt-2">Please ask Yusuf for a fresh progress link.</p>
+         <p className="text-gray-400 font-bold mt-2">This link may have expired. Please contact <a href="mailto:hello@fricalearn.com" className="text-[#3F2171] font-black underline">hello@fricalearn.com</a> for a fresh report link.</p>
       </div>
     </div>
   );

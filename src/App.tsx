@@ -35,6 +35,7 @@ import ParentDashboard from "./pages/parent/ParentDashboard";
 import ParentMessages from "./pages/parent/ParentMessages";
 import SelectCourses from "./pages/parent/SelectCourses";
 import PaymentPage from "./pages/parent/PaymentPage";
+import ChildProgressView from "./pages/parent/ChildProgressView";
 
 // --- 🎓 STUDENT PAGES ---
 import Courses from "./pages/Courses";
@@ -182,6 +183,11 @@ function App() {
                   <Route
                     path="/parent/messages"
                     element={user?.role === "parent" ? <ParentMessages /> : <Navigate to="/dashboard" />}
+                  />
+                  {/* D01 FIX: Child progress report view — was missing, causing navigation loop */}
+                  <Route
+                    path="/parent/progress/:childId"
+                    element={user?.role === "parent" ? <ChildProgressView /> : <Navigate to="/dashboard" />}
                   />
                   <Route path="/select-courses" element={user?.role === "parent" ? <SelectCourses /> : <Navigate to="/login" />} />
                   <Route path="/payment" element={user?.role === "parent" ? <PaymentPage /> : <Navigate to="/login" />} />
