@@ -5,7 +5,7 @@ import api from "../../api/axios";
 import {
   PlusCircle, GraduationCap, Clock, ArrowRight,
   Loader2, User, Headphones, BookOpen, Trophy,
-  ChevronRight, Bell
+  ChevronRight, Bell, ShieldCheck, AlertCircle, CalendarClock
 } from "lucide-react";
 import EnrollmentModal from "../../components/Parent/EnrollmentModal";
 import PaywallModal from "../../components/PaywallModal";
@@ -21,24 +21,128 @@ function CourseLabel({ courses }: { courses: any }) {
   } catch { return "Heritage Path"; }
 }
 
-function TrialBadge({ trialEndsAt }: { trialEndsAt: string | null }) {
-  if (!trialEndsAt) return null;
-  const end      = new Date(trialEndsAt);
-  const now      = new Date();
-  const expired  = end <= now;
-  const daysLeft = expired ? 0 : Math.ceil((end.getTime() - now.getTime()) / 86400000);
-  const urgent   = !expired && daysLeft <= 5;
+/** Derive a child's current subscription state from the data already
+ *  returned by GET /api/parent/dashboard  */
+function getSubState(child: any) {
+  const now = new Date();
+
+  // ── Premium (paid subscription) ──────────────────────────────
+  if (child.is_premium && child.premium_expires_at) {
+    const exp      = new Date(child.premium_expires_at);
+    const expired  = exp <= now;
+    const daysLeft = expired ? 0 : Math.ceil((exp.getTime() - now.getTime()) / 86400000);
+    return {
+      kind:     expired ? "expired" : "premium",
+      daysLeft,
+      expiresAt: exp,
+      label:    expired ? "Subscription Expired" : "Premium Active",
+    };
+  }
+
+  // ── Free trial ────────────────────────────────────────────────
+  if (child.trial_ends_at) {
+    const exp      = new Date(child.trial_ends_at);
+    const expired  = exp <= now;
+    const daysLeft = expired ? 0 : Math.ceil((exp.getTime() - now.getTime()) / 86400000);
+    return {
+      kind:     expired ? "expired" : "trial",
+      daysLeft,
+      expiresAt: exp,
+      label:    expired ? "Trial Ended" : "Free Trial",
+    };
+  }
+
+  return { kind: "none", daysLeft: 0, expiresAt: null, label: "No Active Plan" };
+}
+
+function SubscriptionStatus({ child }: { child: any }) {
+  const sub = getSubState(child);
+  const fmt = (d: Date) =>
+    d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+
+  // ── Colour palette ────────────────────────────────────────────
+  const expired  = sub.kind === "expired";
+  const isPremium = sub.kind === "premium";
+  const isTrial   = sub.kind === "trial";
+  const urgent    = !expired && sub.daysLeft <= 14 && sub.daysLeft > 0;
+
+  const bg = expired  ? "bg-red-50 border-red-100"
+           : urgent   ? "bg-orange-50 border-orange-100"
+           : isPremium ? "bg-[#3F2171]/8 border-[#3F2171]/15"
+           :             "bg-gray-50 border-gray-100";
+
+  const textAccent = expired  ? "text-red-500"
+                   : urgent   ? "text-orange-600"
+                   : isPremium ? "text-[#3F2171]"
+                   :             "text-gray-500";
+
+  const dotColor = expired  ? "bg-red-400"
+                 : urgent   ? "bg-orange-400 animate-pulse"
+                 : isPremium ? "bg-[#3F2171] animate-pulse"
+                 :             "bg-gray-400";
 
   return (
-    <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest ${
-      expired ? "bg-red-50 text-red-500" :
-      urgent  ? "bg-orange-50 text-orange-600" :
-                "bg-[#3F2171]/10 text-[#3F2171]"
-    }`}>
-      <div className={`w-1.5 h-1.5 rounded-full ${
-        expired ? "bg-red-400" : urgent ? "bg-orange-400 animate-pulse" : "bg-[#3F2171] animate-pulse"
-      }`}/>
-      {expired ? "Trial Ended" : `Free Trial · ${daysLeft}d left`}
+    <div className={`rounded-2xl border-2 p-4 ${bg}`}>
+      {/* Top row — badge + label */}
+      <div className="flex items-center justify-between mb-3">
+        <div className={`flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest ${textAccent}`}>
+          <div className={`w-1.5 h-1.5 rounded-full ${dotColor}`}/>
+          {sub.label}
+        </div>
+        {isPremium && (
+          <ShieldCheck size={14} className="text-[#3F2171]"/>
+        )}
+        {expired && (
+          <AlertCircle size={14} className="text-red-400"/>
+        )}
+        {isTrial && !urgent && (
+          <CalendarClock size={14} className="text-gray-400"/>
+        )}
+        {urgent && !expired && (
+          <AlertCircle size={14} className="text-orange-500"/>
+        )}
+      </div>
+
+      {/* Stats grid */}
+      <div className="grid grid-cols-2 gap-2">
+        <div className="bg-white/70 rounded-xl p-2.5 text-center">
+          <p className={`text-xl font-black italic ${expired ? "text-red-400" : textAccent}`}>
+            {expired ? "0" : sub.daysLeft}
+          </p>
+          <p className="text-[8px] font-black uppercase tracking-widest text-gray-400 leading-tight">
+            Days Left
+          </p>
+        </div>
+        <div className="bg-white/70 rounded-xl p-2.5 text-center">
+          <p className={`text-[10px] font-black ${expired ? "text-red-400" : "text-gray-700"} leading-tight`}>
+            {sub.expiresAt ? fmt(sub.expiresAt) : "—"}
+          </p>
+          <p className="text-[8px] font-black uppercase tracking-widest text-gray-400 leading-tight mt-0.5">
+            {expired ? "Expired On" : "Expires On"}
+          </p>
+        </div>
+      </div>
+
+      {/* Low-days warning bar */}
+      {!expired && sub.daysLeft > 0 && (
+        <div className="mt-2.5">
+          <div className="w-full bg-white/60 rounded-full h-1.5">
+            <div
+              className={`h-1.5 rounded-full transition-all ${
+                sub.daysLeft <= 7  ? "bg-red-400" :
+                sub.daysLeft <= 14 ? "bg-orange-400" :
+                isPremium          ? "bg-[#3F2171]" : "bg-gray-400"
+              }`}
+              style={{ width: `${Math.min(100, (sub.daysLeft / (isPremium ? 90 : 30)) * 100)}%` }}
+            />
+          </div>
+          {urgent && (
+            <p className="text-[8px] font-black text-orange-600 uppercase tracking-widest mt-1.5">
+              ⚠ Renew soon to keep access uninterrupted
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -183,11 +287,12 @@ export default function ParentDashboard() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6">
                   {children.map((child: any) => {
-                    const enrollment = data?.active_enrollments?.find(
+                    const enrollment   = data?.active_enrollments?.find(
                       (e: any) => Number(e.student_id) === Number(child.id)
                     );
-                    const trialExpired = child.trial_ends_at && new Date(child.trial_ends_at) <= new Date();
-                    const isPremium    = child.is_premium;
+                    const sub          = getSubState(child);
+                    const trialExpired = sub.kind === "expired";
+                    const isPremium    = sub.kind === "premium";
 
                     return (
                       <div key={child.id}
@@ -213,37 +318,27 @@ export default function ParentDashboard() {
                           </div>
                         </div>
 
-                        {/* Trial / premium badge */}
-                        <div className="mb-5">
-                          <TrialBadge trialEndsAt={child.trial_ends_at}/>
+                        {/* Subjects pill */}
+                        <div className="flex items-center gap-2 mb-4">
+                          <BookOpen size={13} className="text-[#3F2171] shrink-0"/>
+                          <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">
+                            {(() => {
+                              try {
+                                const list = typeof child.selected_courses === "string"
+                                  ? JSON.parse(child.selected_courses)
+                                  : (child.selected_courses || []);
+                                const paid = list.filter((x: string) => ["maths","english"].includes(x));
+                                if (paid.length === 2) return "Maths + English";
+                                if (paid.length === 1) return paid[0] === "maths" ? "Maths" : "English";
+                                return "Language Course";
+                              } catch { return "Enrolled"; }
+                            })()}
+                          </p>
                         </div>
 
-                        {/* Stats row */}
-                        <div className="grid grid-cols-2 gap-3 mb-6">
-                          <div className="bg-gray-50 rounded-xl p-3 text-center">
-                            <BookOpen size={16} className="text-[#3F2171] mx-auto mb-1"/>
-                            <p className="text-[9px] font-black uppercase tracking-widest text-gray-400">Subjects</p>
-                            <p className="text-xs font-black text-gray-700 mt-0.5 leading-tight">
-                              {(() => {
-                                try {
-                                  const list = typeof child.selected_courses === "string"
-                                    ? JSON.parse(child.selected_courses)
-                                    : (child.selected_courses || []);
-                                  const paid = list.filter((x: string) => ["maths","english"].includes(x));
-                                  if (paid.length === 2) return "Maths + English";
-                                  if (paid.length === 1) return paid[0] === "maths" ? "Maths" : "English";
-                                  return "Language";
-                                } catch { return "Enrolled"; }
-                              })()}
-                            </p>
-                          </div>
-                          <div className="bg-gray-50 rounded-xl p-3 text-center">
-                            <Trophy size={16} className="text-[#FFFF00] mx-auto mb-1"/>
-                            <p className="text-[9px] font-black uppercase tracking-widest text-gray-400">Status</p>
-                            <p className="text-sm font-black text-gray-700 mt-0.5">
-                              {isPremium ? "Premium" : trialExpired ? "Expired" : "Trial"}
-                            </p>
-                          </div>
+                        {/* Subscription status block */}
+                        <div className="mb-5">
+                          <SubscriptionStatus child={child}/>
                         </div>
 
                         {/* CTA */}
