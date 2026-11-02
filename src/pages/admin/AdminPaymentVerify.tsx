@@ -20,7 +20,7 @@ export default function AdminPaymentVerify() {
                p.parent?.name?.toLowerCase().includes(search.toLowerCase())
   );
 
-  const totalApproved = payments.filter(p => p.status === "approved").reduce((s, p) => s + Number(p.amount), 0);
+  const totalApproved = payments.filter(p => p.status === "approved" || p.status === "temporary_approved").reduce((s, p) => s + Number(p.amount), 0);
   const totalRejected = payments.filter(p => p.status === "rejected").length;
 
   return (
@@ -41,7 +41,7 @@ export default function AdminPaymentVerify() {
             <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 mt-1">Total Records</p>
           </div>
           <div className="bg-green-50 rounded-2xl border-2 border-green-100 p-4 text-center">
-            <p className="text-2xl font-black text-green-600">{payments.filter(p => p.status === "approved").length}</p>
+            <p className="text-2xl font-black text-green-600">{payments.filter(p => p.status === "approved" || p.status === "temporary_approved").length}</p>
             <p className="text-[9px] font-black uppercase tracking-widest text-green-500 mt-1">Approved</p>
           </div>
           <div className="bg-red-50 rounded-2xl border-2 border-red-100 p-4 text-center">
@@ -87,6 +87,8 @@ export default function AdminPaymentVerify() {
                       <td className="px-5 py-4">
                         {p.status === "approved"
                           ? <span className="flex items-center gap-1 text-green-600 font-black text-[10px] uppercase"><CheckCircle2 size={12}/> Approved</span>
+                          : p.status === "temporary_approved"
+                          ? <span className="flex items-center gap-1 text-purple-600 font-black text-[10px] uppercase"><CheckCircle2 size={12}/> Trial Active</span>
                           : <span className="flex items-center gap-1 text-red-400 font-black text-[10px] uppercase"><XCircle size={12}/> Rejected</span>}
                       </td>
                       <td className="px-5 py-4 text-gray-400 font-bold text-xs">
@@ -94,7 +96,7 @@ export default function AdminPaymentVerify() {
                       </td>
                       <td className="px-5 py-4">
                         {p.receipt_path && (
-                          <a href={p.receipt_path} target="_blank" rel="noreferrer"
+                          <a href={`https://api.fricalearn.com/storage/${p.receipt_path}`} target="_blank" rel="noreferrer"
                             className="p-2 rounded-xl bg-gray-100 text-gray-500 hover:bg-[#3F2171] hover:text-white transition-all inline-flex">
                             <ExternalLink size={13}/>
                           </a>
@@ -118,8 +120,8 @@ export default function AdminPaymentVerify() {
                         <span className="font-black text-gray-700 text-sm">
                           {p.currency === "GBP" ? "£" : "₦"}{Number(p.amount).toLocaleString()}
                         </span>
-                        {p.status === "approved"
-                          ? <CheckCircle2 size={16} className="text-green-500"/>
+                        {p.status === "approved" || p.status === "temporary_approved"
+                          ? <CheckCircle2 size={16} className={p.status === "temporary_approved" ? "text-purple-500" : "text-green-500"}/>
                           : <XCircle size={16} className="text-red-400"/>}
                       </div>
                     </div>

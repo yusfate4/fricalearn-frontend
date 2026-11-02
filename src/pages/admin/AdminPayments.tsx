@@ -114,7 +114,11 @@ export default function AdminPayments() {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
                               <p className="font-black text-gray-700">{p.child_name}</p>
-                              <span className="bg-orange-50 text-orange-500 text-[9px] font-black uppercase px-2 py-0.5 rounded-full">Pending</span>
+                              {p.status === "temporary_approved" ? (
+                                <span className="bg-purple-50 text-purple-600 text-[9px] font-black uppercase px-2 py-0.5 rounded-full">Trial Upgrade</span>
+                              ) : (
+                                <span className="bg-orange-50 text-orange-500 text-[9px] font-black uppercase px-2 py-0.5 rounded-full">Pending</span>
+                              )}
                             </div>
                             <p className="text-[11px] text-gray-400 font-bold">
                               Parent: {p.parent?.name} · {p.parent?.email}
@@ -126,7 +130,7 @@ export default function AdminPayments() {
                           <div className="flex items-center gap-3">
                             <CurrencyAmount amount={p.amount} currency={p.currency}/>
                             {p.receipt_path && (
-                              <a href={p.receipt_path} target="_blank" rel="noreferrer"
+                              <a href={`https://api.fricalearn.com/storage/${p.receipt_path}`} target="_blank" rel="noreferrer"
                                 className="p-2 rounded-xl bg-gray-100 text-gray-500 hover:bg-[#3F2171] hover:text-white transition-all">
                                 <ExternalLink size={14}/>
                               </a>
