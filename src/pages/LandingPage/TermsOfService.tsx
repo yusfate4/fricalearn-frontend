@@ -6,7 +6,7 @@ export default function TermsOfService() {
     <LegalLayout
       title="Terms of Service"
       subtitle="The agreement between you and FricaLearn when you use our learning platform."
-      lastUpdated="4 July 2026"
+      lastUpdated="2 November 2026"
     >
       <LegalSection number="01" title="Who We Are & Acceptance">
         <p>
@@ -46,10 +46,20 @@ export default function TermsOfService() {
 
       <LegalSection number="04" title="Subscriptions, Payment & Access">
         <LegalList items={[
-          <>Paid subjects (Mathematics and English) are billed <strong>monthly per subject</strong>: ₦20,000/month when paying in Naira, or £13.33/month when paying in Pounds. Language courses are free (one per enrolment). Prices may change with notice.</>,
+          <>
+            Paid subjects (Mathematics and English) are available on the following subscription plans (prices
+            cover all paid subjects per child):
+            <ul className="mt-2 ml-4 space-y-1">
+              <li>• <strong>3-Month Plan:</strong> ₦30,000 (₦10,000/mo) · £15 (£5/mo)</li>
+              <li>• <strong>6-Month Plan:</strong> ₦50,000 (₦8,333/mo) · £25 (£4.17/mo) — save 17%</li>
+              <li>• <strong>12-Month Plan:</strong> ₦80,000 (₦6,667/mo) · £40 (£3.33/mo) — save 33%</li>
+            </ul>
+            Heritage language courses (Yoruba, Igbo, Hausa — one per enrolment) are included free with any
+            paid plan. Prices may change with 30 days' notice.
+          </>,
           <>Payment is made by <strong>bank transfer</strong> to the account details shown at checkout, using your child's name as the payment reference, followed by uploading your payment receipt.</>,
           <>Access is granted <strong>immediately upon receipt submission</strong>. Our team verifies payments within approximately 24 hours. If a payment cannot be verified, is fraudulent, or was not made, we may suspend or revoke access until resolved.</>,
-          <>Subscriptions are <strong>not auto-renewing</strong>. Continued access requires a new monthly payment. We may send reminders before your access period ends.</>,
+          <>Subscriptions are <strong>not auto-renewing</strong>. Continued access requires a new payment before your plan period ends. We may send reminders before your access period expires.</>,
           <>Uploading a falsified or altered payment receipt is a material breach of these Terms and will result in immediate account termination.</>,
         ]} />
       </LegalSection>

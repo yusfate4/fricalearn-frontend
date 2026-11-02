@@ -53,7 +53,7 @@ const Courses: React.FC = () => {
   ];
 
   return (
-    <section className="py-28 bg-white" id="pricing">
+    <section className="py-28 bg-white" id="courses">
       <div className="container mx-auto px-6">
 
         {/* Section header */}

@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
+
+  // On the homepage, plain #anchor scrolls in-page.
+  // On any other page (e.g. /terms, /privacy) we must navigate to /#anchor.
+  const isHomepage = location.pathname === "/";
+  const anchorHref = (hash: string) => (isHomepage ? hash : `/${hash}`);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -13,10 +19,10 @@ const Header: React.FC = () => {
   }, []);
 
   const navLinks = [
-    { name: "About", href: "#about" },
-    { name: "Courses", href: "#courses" },
-    { name: "Tutors", href: "#tutors" },
-    { name: "FAQ", href: "#faq" },
+    { name: "About", hash: "#about" },
+    { name: "Courses", hash: "#courses" },
+    { name: "Tutors", hash: "#tutors" },
+    { name: "FAQ", hash: "#faq" },
   ];
 
   return (
@@ -34,7 +40,7 @@ const Header: React.FC = () => {
         {/* Desktop Nav */}
         <nav className="hidden lg:flex items-center gap-8">
           {navLinks.map((link) => (
-            <a key={link.name} href={link.href}
+            <a key={link.name} href={anchorHref(link.hash)}
               className={`font-black text-xs uppercase tracking-widest transition-all hover:opacity-70 ${
                 isScrolled ? "text-[#2A1650]" : "text-white"
               }`}>
@@ -80,7 +86,7 @@ const Header: React.FC = () => {
 
           <div className="flex flex-col items-center gap-8 mb-12">
             {navLinks.map((link) => (
-              <a key={link.name} href={link.href}
+              <a key={link.name} href={anchorHref(link.hash)}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="text-3xl font-black text-white uppercase tracking-tight hover:text-[#FFFF00] transition-colors">
                 {link.name}
